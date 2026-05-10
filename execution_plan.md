@@ -58,13 +58,13 @@ Rules you MUST follow when reading or modifying this document:
 **Status:** `not_started`
 
 ### Environment & Repository
-- [ ] Step 0.1: Create GitHub repository `whatsapp-thread-summarizer` with `main`, `develop`, `feature/*` branch strategy documented in `CONTRIBUTING.md`
+- [x] Step 0.1: Create GitHub repository `whatsapp-thread-summarizer` with `main`, `develop`, `feature/*` branch strategy documented in `CONTRIBUTING.md`
   - *Acceptance Criteria:* Repo is live, branches exist, README placeholder present
-- [ ] Step 0.2: Initialize `frontend/` with Create React App TypeScript template (`npx create-react-app frontend --template typescript`)
+- [x] Step 0.2: Initialize `frontend/` with Create React App TypeScript template (`npx create-react-app frontend --template typescript`)
   - *Acceptance Criteria:* `npm start` renders the default React app at localhost:3000
-- [ ] Step 0.3: Initialize `backend/` with `npm init` and install Express.js, dotenv, cors, multer, morgan
+- [x] Step 0.3: Initialize `backend/` with `npm init` and install Express.js, dotenv, cors, multer, morgan
   - *Acceptance Criteria:* `node server.js` starts without errors
-- [ ] Step 0.4: Create root `.gitignore` covering `node_modules/`, `.env`, `*.log`, `build/`, `dist/`
+- [x] Step 0.4: Create root `.gitignore` covering `node_modules/`, `.env`, `*.log`, `build/`, `dist/`
   - *Acceptance Criteria:* `git status` does not list any of those files
 - [ ] Step 0.5: Create `.env.example` in both `frontend/` and `backend/` listing all required env vars with placeholder values
   - *Acceptance Criteria:* All env vars used in code have a corresponding entry in `.env.example`
@@ -371,7 +371,7 @@ Rules you MUST follow when reading or modifying this document:
 
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
-| Phase 0 | Project Setup & Research | 1 | 16 | 0 | `not_started` |
+| Phase 0 | Project Setup & Research | 1 | 16 | 4 | `in_progress` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 0 | `not_started` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
@@ -379,7 +379,7 @@ Rules you MUST follow when reading or modifying this document:
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **0** | **0% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **4** | **4% complete** |
 
 ---
 
