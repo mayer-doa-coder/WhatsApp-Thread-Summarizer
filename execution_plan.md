@@ -66,11 +66,11 @@ Rules you MUST follow when reading or modifying this document:
   - *Acceptance Criteria:* `node server.js` starts without errors
 - [x] Step 0.4: Create root `.gitignore` covering `node_modules/`, `.env`, `*.log`, `build/`, `dist/`
   - *Acceptance Criteria:* `git status` does not list any of those files
-- [ ] Step 0.5: Create `.env.example` in both `frontend/` and `backend/` listing all required env vars with placeholder values
+- [x] Step 0.5: Create `.env.example` in both `frontend/` and `backend/` listing all required env vars with placeholder values
   - *Acceptance Criteria:* All env vars used in code have a corresponding entry in `.env.example`
-- [ ] Step 0.6: Install Tailwind CSS in `frontend/`, configure `tailwind.config.js` with brand color `#25D366`
+- [x] Step 0.6: Install Tailwind CSS in `frontend/`, configure `tailwind.config.js` with brand color `#25D366`
   - *Acceptance Criteria:* A component using `text-[#25D366]` class renders in green
-- [ ] Step 0.7: Set up ESLint + Prettier in both `frontend/` and `backend/`
+- [x] Step 0.7: Set up ESLint + Prettier in both `frontend/` and `backend/`
   - *Acceptance Criteria:* `npm run lint` runs without errors on the scaffold code
 
 ### Research: WhatsApp Export Format
@@ -371,7 +371,7 @@ Rules you MUST follow when reading or modifying this document:
 
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
-| Phase 0 | Project Setup & Research | 1 | 16 | 4 | `in_progress` |
+| Phase 0 | Project Setup & Research | 1 | 16 | 7 | `in_progress` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 0 | `not_started` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
@@ -379,7 +379,7 @@ Rules you MUST follow when reading or modifying this document:
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **4** | **4% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **7** | **7% complete** |
 
 ---
 
