@@ -55,7 +55,7 @@ Rules you MUST follow when reading or modifying this document:
 
 **Week:** 1 (Days 1–7)
 **Dependency:** None — this is the entry point.
-**Status:** `not_started`
+**Status:** `in_progress`
 
 ### Environment & Repository
 - [x] Step 0.1: Create GitHub repository `whatsapp-thread-summarizer` with `main`, `develop`, `feature/*` branch strategy documented in `CONTRIBUTING.md`
@@ -74,12 +74,12 @@ Rules you MUST follow when reading or modifying this document:
   - *Acceptance Criteria:* `npm run lint` runs without errors on the scaffold code
 
 ### Research: WhatsApp Export Format
-- [ ] Step 0.8: Collect at least 3 real exported `.txt` files (iOS group, iOS individual, Android individual)
+- [x] Step 0.8: Collect at least 3 real exported `.txt` files (iOS group, iOS individual, Android individual)
   - *Acceptance Criteria:* Files stored in `docs/fixtures/` with format variant documented
-- [ ] Step 0.9: Document timestamp format variations, media placeholders, and system messages in `docs/format-research.md`
+- [x] Step 0.9: Document timestamp format variations, media placeholders, and system messages in `docs/format-research.md`
   - *Dependency:* Step 0.8
   - *Acceptance Criteria:* `docs/format-research.md` lists all discovered variants with example strings
-- [ ] Step 0.10: Test base regex against all collected samples and record failure cases in `docs/format-research.md`
+- [x] Step 0.10: Test base regex against all collected samples and record failure cases in `docs/format-research.md`
   - *Dependency:* Step 0.9
   - *Acceptance Criteria:* Zero unresolved failures against the 3 fixture files
 
@@ -371,7 +371,7 @@ Rules you MUST follow when reading or modifying this document:
 
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
-| Phase 0 | Project Setup & Research | 1 | 16 | 7 | `in_progress` |
+| Phase 0 | Project Setup & Research | 1 | 16 | 10 | `in_progress` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 0 | `not_started` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
@@ -379,7 +379,7 @@ Rules you MUST follow when reading or modifying this document:
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **7** | **7% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **10** | **10% complete** |
 
 ---
 

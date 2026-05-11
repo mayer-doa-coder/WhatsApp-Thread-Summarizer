@@ -1,0 +1,208 @@
+3/15/25, 10:00 AM - Messages and calls are end-to-end encrypted. Only people in this chat can read, listen to, or share them. Learn more.
+3/15/25, 10:00 AM - Alice created group "Dev Team Q2"
+3/15/25, 10:01 AM - Alice added Bob, Carol
+3/15/25, 10:02 AM - Alice: Hey team, welcome to the project channel.
+3/15/25, 10:03 AM - Bob: Thanks for adding me.
+3/15/25, 10:03 AM - Carol: Hi everyone. Ready to get started.
+3/15/25, 10:05 AM - Alice: First sprint planning is tomorrow at 9 AM.
+Meeting link will be shared shortly.
+3/15/25, 10:06 AM - Bob: <Media omitted>
+3/15/25, 10:06 AM - Bob: Sharing the draft agenda.
+3/15/25, 10:08 AM - Carol: Reviewed it. Looks solid.
+3/15/25, 10:09 AM - Alice: This message was deleted
+3/15/25, 10:10 AM - Bob: Can we push the call to 10 AM?
+We have a client sync at 9 that may run long.
+3/15/25, 10:12 AM - Alice: 10 AM works. Updating the invite.
+3/15/25, 10:13 AM - Carol: Works for me too.
+3/15/25, 10:14 AM - +91 98281 01234: Just joined. Will be there at 10.
+3/15/25, 10:15 AM - Bob: Revised agenda for tomorrow:
+1. Sprint review - 20 mins
+2. Backlog grooming - 30 mins
+3. Risk discussion - 10 mins
+3/15/25, 10:20 AM - Alice: <Media omitted>
+3/15/25, 10:21 AM - Alice: Updated invite sent.
+3/15/25, 10:22 AM - Carol: Received.
+3/15/25, 11:00 AM - Dave joined using this group's invite link
+3/15/25, 11:01 AM - Dave: Hi all. Alice shared the invite link.
+3/15/25, 11:02 AM - Alice: Welcome Dave. He will handle QA this sprint.
+3/15/25, 11:03 AM - Bob: Good to have you Dave.
+3/16/25, 9:00 AM - Alice: Good morning. Stand-up in 30 minutes.
+3/16/25, 9:01 AM - Bob: On it.
+3/16/25, 9:02 AM - Carol: Working remotely today.
+3/16/25, 9:03 AM - Dave: Ready.
+3/16/25, 9:30 AM - Bob: Stand-up link: https://meet.example.com/devteam-standup
+3/16/25, 9:30 AM - Alice: null
+3/16/25, 10:15 AM - Carol: Good session. Action items logged in Jira.
+3/16/25, 10:16 AM - Dave: Test plan started. Covering upload, parse, and summarize flows. <This message was edited>
+3/16/25, 2:00 PM - Alice changed the group name from "Dev Team Q2" to "Dev Team Q2 - Sprint 1"
+3/16/25, 2:01 PM - Alice: Renamed to track sprint context.
+3/16/25, 2:02 PM - Bob: Good idea.
+3/17/25, 9:00 AM - Carol: Staging is down for maintenance until noon. Plan accordingly.
+3/17/25, 9:01 AM - Bob: Noted. Will focus on documentation.
+3/17/25, 9:02 AM - Dave: Same. Writing test cases offline.
+3/17/25, 12:05 PM - Carol: Staging is back up.
+3/17/25, 12:06 PM - Bob: Back to it.
+3/17/25, 3:44 PM - Alice removed +91 98281 01234
+3/17/25, 3:45 PM - Alice: Removed an inactive member.
+3/17/25, 4:00 PM - Bob pinned a message
+3/17/25, 4:01 PM - Dave: Noted.
+3/17/25, 4:30 PM - Carol: Parser PR reviewed. Left two inline comments.
+3/17/25, 4:31 PM - Bob: Checking now.
+3/17/25, 4:35 PM - Bob: Both addressed. Force pushed. Ready for re-review.
+3/17/25, 4:36 PM - Carol: Approved. Merging.
+3/17/25, 4:38 PM - Alice: Parser is in main. Good work today.
+3/17/25, 5:00 PM - Alice: End of day summary:
+- Parser merged
+- Test plan drafted
+- Staging back up
+All on track for Sprint 1 goal.
+3/17/25, 5:02 PM - Dave: Confirmed. Running smoke tests overnight.
+3/18/25, 9:00 AM - Alice: Good morning. Stand-up in 5 minutes.
+3/18/25, 9:05 AM - Bob: Done: parser, regex tests
+Today: upload endpoint, MIME validation
+Blocked: none
+3/18/25, 9:06 AM - Carol: Done: test plan
+Today: write Jest tests for parser
+Blocked: need sample inputs with edge cases
+3/18/25, 9:07 AM - Dave: Done: smoke test script
+Today: end-to-end upload flow test
+Blocked: upload endpoint not ready
+3/18/25, 9:08 AM - Alice: Done: sprint review notes
+Today: LLM comparison, API schema draft
+Blocked: none
+3/18/25, 9:10 AM - Bob: Carol, I can send the edge-case fixture.
+It covers null bodies, deleted messages, and multi-line examples.
+3/18/25, 9:11 AM - Carol: Please do.
+3/18/25, 9:12 AM - Bob: <Media omitted>
+3/18/25, 9:12 AM - Bob: ios-group.txt sent. Covers all 8 message types.
+3/18/25, 9:14 AM - Carol: Got it. Starting tests now.
+3/18/25, 11:30 AM - Alice: <Media omitted>
+3/18/25, 11:30 AM - Alice: API schema draft. Feedback welcome.
+3/18/25, 11:45 AM - Bob: Looks solid. One suggestion: add a status field to the summary response.
+Values should be pending, processing, done, or failed.
+3/18/25, 11:47 AM - Alice: Good call. Adding it now.
+3/18/25, 11:48 AM - Carol: Also add created_at and completed_at timestamps.
+3/18/25, 11:50 AM - Alice: Done. Updating the schema doc.
+3/18/25, 12:01 PM - Dave: Upload endpoint deployed to staging. Ready for QA.
+3/18/25, 12:03 PM - Dave: Smoke test results:
+POST /upload with valid .txt: 200 OK
+POST /upload with .png renamed to .txt: 415
+POST /upload with empty file: 400
+POST /upload exceeding size limit: 413
+All passing.
+3/18/25, 12:06 PM - Alice: Excellent. Clean first QA pass.
+3/18/25, 12:07 PM - Bob: <Media omitted>
+3/18/25, 12:07 PM - Bob: Upload flow diagram attached.
+3/18/25, 2:00 PM - Carol: Parser tests written. 23 unit tests, all passing.
+Covers: iOS timestamps, Android timestamps, multi-line, media, deleted, edited, null, system events.
+3/18/25, 2:02 PM - Alice: Great coverage. PR up?
+3/18/25, 2:03 PM - Carol: Up now.
+3/18/25, 2:30 PM - Bob: Carol, one test is missing the tilde-prefixed sender format. Added a comment.
+3/18/25, 2:31 PM - Carol: Fixed. Added test for the tilde prefix case.
+3/18/25, 2:33 PM - Bob: Good. Approving.
+3/18/25, 2:34 PM - Carol: Merging. Thanks.
+3/18/25, 4:45 PM - Alice: LLM comparison results:
+Model: GPT-4o-mini | Cost per 1k tokens: $0.00015 | Avg latency: 1.2s | Quality: 8.4
+Model: Claude Haiku | Cost per 1k tokens: $0.00025 | Avg latency: 1.5s | Quality: 8.7
+Model: GPT-3.5-turbo | Cost per 1k tokens: $0.0005 | Avg latency: 0.9s | Quality: 7.1
+Recommendation: GPT-4o-mini primary, Claude Haiku as fallback.
+3/18/25, 4:48 PM - Bob: Matches our earlier estimate. Locking in.
+3/18/25, 4:49 PM - Dave: Works from a QA perspective too.
+3/18/25, 4:50 PM - Carol: Agreed. Documenting in the decision log.
+3/18/25, 5:30 PM - Alice: This message was deleted
+3/19/25, 9:00 AM - Alice: Good morning. Short stand-up today.
+3/19/25, 9:02 AM - Bob: LLM integration endpoint started. Prompt template drafted.
+3/19/25, 9:03 AM - Carol: Writing integration tests for the summarize flow.
+3/19/25, 9:04 AM - Dave: Running full regression suite. Will report by noon.
+3/19/25, 9:05 AM - Alice: Working on API docs and frontend scaffold today.
+3/19/25, 10:15 AM - Bob: Prompt template draft:
+You are a helpful assistant that summarizes WhatsApp chat exports.
+Given the following conversation, provide:
+1. A 3-5 sentence summary of the main topics discussed.
+2. Key decisions or action items mentioned.
+3. A list of participants.
+Keep the tone neutral and factual. Max output: 300 tokens.
+3/19/25, 10:17 AM - Alice: Good start. Add an instruction to ignore system messages and media placeholders.
+3/19/25, 10:18 AM - Bob: Updated.
+3/19/25, 10:20 AM - Carol: Also cap output length explicitly. Avoids runaway responses.
+3/19/25, 10:21 AM - Bob: Already set to 300 tokens. Will tune based on feedback.
+3/19/25, 11:00 AM - Dave: Regression suite done.
+Pass: 31
+Fail: 2
+3/19/25, 11:01 AM - Dave: Failure details:
+1. Multi-line messages with blank separator lines are trimmed incorrectly.
+2. Sender name containing a colon breaks the parser regex.
+3/19/25, 11:03 AM - Bob: Issue 2 is a known edge case. Patching today.
+3/19/25, 11:04 AM - Carol: I can take issue 1. It is in the continuation logic.
+3/19/25, 11:05 AM - Dave: Thanks. Will rerun after both fixes land.
+3/19/25, 2:30 PM - Carol: Fix for issue 1 is up. Root cause was trimming entire blank lines instead of preserving internal whitespace.
+3/19/25, 2:31 PM - Bob: Fix for issue 2 also up. Regex now uses a lazy match up to the first colon-space pair.
+3/19/25, 2:50 PM - Dave: All 33 tests passing now.
+3/19/25, 2:51 PM - Alice: Good. Merging both PRs.
+3/19/25, 3:00 PM - Alice changed the group name from "Dev Team Q2 - Sprint 1" to "Dev Team Q2 - Sprint 1 Final"
+3/19/25, 3:01 PM - Bob: Getting close.
+3/19/25, 3:02 PM - Carol: On track.
+3/19/25, 4:00 PM - Bob: Summarize endpoint live on staging. Tested manually with ios-group.txt.
+Output coherent. Picked up 5 participants, sprint timeline, and key decisions correctly.
+3/19/25, 4:02 PM - Alice: Will test with ios-indiv.txt and android-indiv.txt after standup.
+3/19/25, 4:30 PM - Alice: Both tested. Results:
+ios-indiv.txt: Summary accurate. Participants detected correctly.
+android-indiv.txt: 24-hour timestamps parsed correctly.
+3/19/25, 4:32 PM - Dave: Running automated summarize endpoint tests now.
+3/20/25, 9:00 AM - Carol: Sprint ends today. Quick review?
+3/20/25, 9:01 AM - Alice: Yes. Meet at 10.
+3/20/25, 9:02 AM - Bob: Works.
+3/20/25, 9:03 AM - Dave: Confirmed.
+3/20/25, 10:45 AM - Alice: Sprint 1 complete. Delivered:
+- File upload with MIME validation
+- WhatsApp parser covering iOS and Android formats
+- LLM summarization endpoint
+- API schema v1
+- 33 unit and integration tests
+3/20/25, 10:46 AM - Bob: Clean sprint. On target with the plan.
+3/20/25, 10:47 AM - Dave: QA sign-off. All acceptance criteria met.
+3/20/25, 10:48 AM - Carol: Tests green across the board.
+3/20/25, 11:00 AM - Alice: Sprint 2 planning at 2 PM. Focus: frontend, auth, polish.
+3/20/25, 2:00 PM - Alice: Sprint 2 scope:
+Step 1: File upload UI
+Step 2: Summary display page
+Step 3: Auth with Supabase
+Step 4: Session history
+Step 5: Error handling and edge cases
+Step 6: Deployment to production
+3/20/25, 2:05 PM - Bob: I will handle the backend auth integration.
+3/20/25, 2:06 PM - Carol: I will take the frontend upload flow.
+3/20/25, 2:07 PM - Dave: I will write the e2e test plan.
+3/20/25, 2:08 PM - Alice pinned a message
+3/20/25, 2:09 PM - Bob: Sprint 2 starts Monday.
+3/21/25, 10:00 AM - Carol: Layout question: should the summary page show raw timestamps or relative time like "2 days ago"?
+3/21/25, 10:01 AM - Alice: Relative for display, ISO 8601 in the database.
+3/21/25, 10:02 AM - Bob: Agreed. Use date-fns on the frontend.
+3/21/25, 10:03 AM - Carol: Got it.
+3/21/25, 10:30 AM - Dave: <Media omitted>
+3/21/25, 10:30 AM - Dave: E2E test plan attached. Covers 12 scenarios.
+3/21/25, 10:32 AM - Alice: Good. Reviewing this afternoon.
+3/21/25, 11:00 AM - Bob: One more edge case to handle: what if the uploaded file has Windows-style CRLF line endings?
+3/21/25, 11:01 AM - Carol: Good catch. The parser should normalise to LF before splitting.
+3/21/25, 11:02 AM - Bob: Adding that to the parser. One-liner fix.
+3/21/25, 11:05 AM - Bob: Done and pushed. Covered by an existing test I updated.
+3/21/25, 11:06 AM - Alice: Merging. Thanks.
+3/21/25, 2:00 PM - Alice: Reviewed the e2e plan Dave. Looks thorough.
+One addition: add a scenario for session expiry mid-upload.
+3/21/25, 2:01 PM - Dave: Good edge case. Adding it as scenario 13.
+3/21/25, 2:10 PM - Carol: Frontend upload component PR up.
+Includes drag-and-drop, file type filter, size limit display, and error state.
+3/21/25, 2:12 PM - Alice: Reviewing now.
+3/21/25, 2:45 PM - Alice: Approved. Two minor nits resolved already.
+3/21/25, 2:46 PM - Carol: Merged.
+3/21/25, 3:00 PM - Dave: Running scenario 1 through 12 on staging. All passing.
+Will add scenario 13 tomorrow.
+3/21/25, 3:01 PM - Bob: Auth integration PR up as well.
+3/21/25, 3:30 PM - Alice: Reviewed Bob's auth PR. One comment: the token refresh logic needs a guard for concurrent requests.
+3/21/25, 3:31 PM - Bob: Good catch. Added a mutex. Pushing now.
+3/21/25, 3:35 PM - Alice: Approved. Merging.
+3/21/25, 4:00 PM - Alice: Good end to the week.
+Sprint 2 is off to a solid start.
+3/21/25, 4:01 PM - Bob: Agreed.
+3/21/25, 4:02 PM - Carol: See everyone Monday.
+3/21/25, 4:03 PM - Dave: Have a good weekend.

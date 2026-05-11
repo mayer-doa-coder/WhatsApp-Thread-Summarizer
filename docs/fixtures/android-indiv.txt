@@ -1,0 +1,145 @@
+Messages and calls are end-to-end encrypted. Only people in this chat can read, listen to, or share them. Learn more.
+
+15/03/2025, 08:30 - Alice: Morning. Ready for the hackathon briefing?
+15/03/2025, 08:32 - Tawhidul: Yes, just need 5 more minutes.
+15/03/2025, 08:35 - Alice: No rush. I will set up the laptop.
+15/03/2025, 09:00 - Tawhidul: All set. Starting the call.
+15/03/2025, 09:45 - Alice: Good session. Here is my summary:
+- Team name: StackCraft
+- Problem: WhatsApp chat overload
+- Solution: AI summarizer with reply drafter
+- Tech stack: React, Node.js, GPT-4o-mini
+15/03/2025, 09:47 - Tawhidul: Looks right. I will add the deployment plan tonight.
+15/03/2025, 09:48 - Alice: <Media omitted>
+15/03/2025, 09:48 - Alice: Wireframes attached.
+15/03/2025, 09:50 - Tawhidul: Clean designs. Will implement in Phase 2.
+15/03/2025, 09:52 - Alice: This message was deleted
+15/03/2025, 09:53 - Alice: One note: the upload endpoint needs MIME validation.
+A PNG renamed to .txt should be rejected with a 415 status.
+15/03/2025, 09:55 - Tawhidul: Already in the acceptance criteria. Covered in Step 1.8.
+15/03/2025, 09:56 - Alice: Perfect.
+16/03/2025, 14:00 - Tawhidul: Parser is done. All 3 fixture files parse without errors.
+16/03/2025, 14:02 - Alice: Which timestamp formats are covered?
+16/03/2025, 14:03 - Tawhidul: iOS 12-hour AM/PM, iOS 12-hour individual, Android 24-hour.
+All normalised to ISO 8601 on output.
+16/03/2025, 14:05 - Alice: What about multi-line messages?
+16/03/2025, 14:06 - Tawhidul: Handled. Continuation lines are appended to the prior message content field. <This message was edited>
+16/03/2025, 14:08 - Alice: Great work. PR up?
+16/03/2025, 14:09 - Tawhidul: Yes. Link shared in the team channel.
+16/03/2025, 14:10 - Alice: Will review by EOD.
+16/03/2025, 17:45 - Alice: Reviewed. Two minor comments, otherwise good to merge.
+16/03/2025, 17:46 - Tawhidul: Addressed both. Merging now.
+16/03/2025, 17:48 - Alice: Merged. Well done.
+17/03/2025, 09:00 - Alice: Morning. Prompt design next?
+17/03/2025, 09:01 - Tawhidul: Yes. I drafted a template last night.
+17/03/2025, 09:15 - Tawhidul: Here is the draft:
+System: You are a WhatsApp chat summarizer. Extract topics, decisions, and action items.
+Input: A parsed WhatsApp export as an array of message objects.
+Output:
+- summary: 3-5 sentences
+- topics: list of main topics
+- decisions: list of key decisions
+- action_items: list of tasks with owners
+17/03/2025, 09:18 - Alice: Good structure. Add a constraint: ignore system messages and media placeholders.
+17/03/2025, 09:19 - Tawhidul: Updated. Testing now.
+17/03/2025, 09:45 - Tawhidul: Test complete. Input: ios-group.txt (48 lines)
+Model: GPT-4o-mini
+Summary: accurate, captured sprint planning and team changes.
+Topics: sprint planning, upload endpoint, QA, group membership
+Decisions: 10 AM call time, parser approach, LLM selection
+Action items: Dave QA plan, Carol parser tests, Bob regex fix
+Latency: 1.3s
+17/03/2025, 09:47 - Alice: Good output. What is the cost per call?
+17/03/2025, 09:48 - Tawhidul: Approximately $0.00018 for that input size.
+For a 200-line chat, estimated $0.00045.
+17/03/2025, 09:50 - Alice: Acceptable. Add a token counter to log actual costs.
+17/03/2025, 09:51 - Tawhidul: Will add as middleware on the summarize route.
+17/03/2025, 10:30 - Tawhidul: <Media omitted>
+17/03/2025, 10:30 - Tawhidul: LLM integration PR up.
+17/03/2025, 10:32 - Alice: Reviewing now.
+17/03/2025, 11:00 - Alice: Three comments:
+1. Token counter should log to a costs table in Supabase.
+2. Error handling for LLM timeout needs a retry with exponential backoff.
+3. Return 503 if both primary and fallback models fail.
+17/03/2025, 11:02 - Tawhidul: All three are good. Implementing now.
+17/03/2025, 11:45 - Tawhidul: Done. Added retry with backoff, Supabase cost logging, and 503 fallback response.
+17/03/2025, 11:47 - Alice: Reviewed the changes. Approved. Merging.
+17/03/2025, 12:00 - Tawhidul: Merged.
+17/03/2025, 14:00 - Alice: Frontend upload component started. Using react-dropzone.
+17/03/2025, 14:01 - Tawhidul: Good choice. Handles drag-and-drop and file type filtering natively.
+17/03/2025, 14:02 - Alice: Exactly. Restricting to .txt only.
+17/03/2025, 14:30 - Alice: <Media omitted>
+17/03/2025, 14:30 - Alice: Upload component screenshot.
+17/03/2025, 14:32 - Tawhidul: Clean design. Is the file size limit shown to the user?
+17/03/2025, 14:33 - Alice: Adding a note: "Max 5 MB .txt file".
+17/03/2025, 14:34 - Tawhidul: Good. Also add an error state for invalid file type.
+17/03/2025, 14:35 - Alice: Already there. Shows "Only .txt files are accepted" inline.
+17/03/2025, 15:30 - Tawhidul: This message was deleted
+17/03/2025, 15:31 - Tawhidul: Should the upload button be disabled while processing?
+17/03/2025, 15:32 - Alice: Yes. Disable and show a spinner. Prevents double submit.
+17/03/2025, 15:33 - Tawhidul: Makes sense. Handling that on the frontend.
+17/03/2025, 16:45 - Alice: Upload UI PR ready. <This message was edited>
+17/03/2025, 16:46 - Tawhidul: Reviewing.
+17/03/2025, 17:00 - Tawhidul: Approved. Merging.
+17/03/2025, 17:01 - Alice: Merged.
+18/03/2025, 09:00 - Alice: Morning. Summary display page today.
+18/03/2025, 09:01 - Tawhidul: I will work on the session history API in parallel.
+18/03/2025, 09:30 - Alice: Layout question: show the full summary as a paragraph, or as collapsible sections?
+18/03/2025, 09:31 - Tawhidul: Collapsible sections. Users may want to jump to action items without reading everything.
+18/03/2025, 09:32 - Alice: Agreed. Sections: Summary, Topics, Decisions, Action Items.
+18/03/2025, 10:00 - Tawhidul: Session history endpoint done.
+GET /sessions returns:
+- session_id
+- file_name
+- created_at
+- summary snippet (first 100 chars)
+- participant_count
+18/03/2025, 10:02 - Alice: Good. The participant count is a nice addition.
+18/03/2025, 11:00 - Alice: Summary page done. Collapsible sections working.
+Tested with ios-group.txt output. All four sections render correctly.
+18/03/2025, 11:02 - Tawhidul: <Media omitted>
+18/03/2025, 11:02 - Tawhidul: Session history page screenshot.
+18/03/2025, 11:04 - Alice: Looks good. Add a delete button per session.
+18/03/2025, 11:05 - Tawhidul: Adding now. Will wire to DELETE /session/:id.
+18/03/2025, 13:00 - Tawhidul: Delete flow done and tested locally.
+18/03/2025, 13:01 - Alice: Confirmed on my end too.
+18/03/2025, 14:00 - Alice: Running a full end-to-end test now.
+Steps: login, upload ios-indiv.txt, view summary, check history, delete session.
+All steps passing.
+18/03/2025, 14:02 - Tawhidul: Any issues?
+18/03/2025, 14:03 - Alice: One issue: the summary page does not redirect to login if the session expires.
+It just shows a blank page instead.
+18/03/2025, 14:04 - Tawhidul: Auth guard is missing on that route. Fixing now.
+18/03/2025, 14:15 - Tawhidul: Fixed. Expired session now redirects to /auth with a session expired message.
+18/03/2025, 14:16 - Alice: Tested. Working. Merging.
+19/03/2025, 09:00 - Alice: Final day before demo. Full checks today.
+19/03/2025, 09:01 - Tawhidul: Running the full test suite first.
+19/03/2025, 09:30 - Tawhidul: Test results:
+Unit tests: 33/33 pass
+Integration tests: 12/12 pass
+E2E tests: 8/8 pass
+19/03/2025, 09:32 - Alice: Clean sweep. Good shape for demo.
+19/03/2025, 10:00 - Alice: Deploying to production now.
+19/03/2025, 10:15 - Alice: Production deployment done.
+Supabase production project is live and connected.
+19/03/2025, 10:17 - Tawhidul: Tested the live URL. Upload, parse, summarize all working.
+19/03/2025, 10:18 - Alice: Smoke test complete. We are good.
+19/03/2025, 11:00 - Tawhidul: Demo script ready.
+Flow:
+1. Open app and login with magic link.
+2. Upload ios-group.txt.
+3. Show summary with all four sections.
+4. Open history to show a prior session.
+5. Delete a session.
+6. Error handling demo: upload a non-.txt file.
+19/03/2025, 11:03 - Alice: Solid flow. Run it twice to confirm timing.
+19/03/2025, 11:04 - Tawhidul: Dry run at 14:00.
+19/03/2025, 14:00 - Alice: Ready for dry run.
+19/03/2025, 14:30 - Tawhidul: Dry run done. Total time: 4 minutes 20 seconds.
+One issue: the error state for wrong file type flashed too quickly.
+Added a 3-second minimum display duration.
+19/03/2025, 14:32 - Alice: Good catch. Anything else?
+19/03/2025, 14:33 - Tawhidul: No. Everything else was smooth.
+19/03/2025, 15:00 - Alice: Second dry run done. 4 minutes flat. Ready for tomorrow.
+19/03/2025, 15:01 - Tawhidul: Agreed. Good work on this build.
+19/03/2025, 15:02 - Alice: You too. See you at the demo.

@@ -1,0 +1,172 @@
+12/3/24, 2:15 PM - Messages and calls are end-to-end encrypted. Only people in this chat can read, listen to, or share them. Learn more.
+12/3/24, 2:15 PM - Alice: Hey, are you free this evening?
+12/3/24, 2:18 PM - Bob: Yeah, what is up?
+12/3/24, 2:19 PM - Alice: Want to grab coffee and review the project plan?
+12/3/24, 2:20 PM - Bob: Sure. 6 PM at the usual place?
+12/3/24, 2:21 PM - Alice: Perfect. See you then.
+12/3/24, 5:55 PM - Bob: Leaving now. 5 minutes late, traffic.
+12/3/24, 5:56 PM - Alice: No worries. I just arrived.
+12/3/24, 6:30 PM - Bob: <Media omitted>
+12/3/24, 6:30 PM - Bob: Sending you the revised timeline.
+12/3/24, 6:32 PM - Alice: Looking at it now. Phase 1 looks tight.
+12/3/24, 6:33 PM - Bob: We can push parser work to week 2
+if we finish the scaffold today.
+12/3/24, 6:35 PM - Alice: Agreed. What about the LLM comparison?
+12/3/24, 6:36 PM - Bob: I can run the test harness tonight. Results by morning.
+12/3/24, 6:37 PM - Alice: This message was deleted
+12/3/24, 6:38 PM - Alice: That works. I will update the plan.
+12/3/24, 6:39 PM - Bob: Great. Sending the updated fixtures too. <This message was edited>
+12/4/24, 9:05 AM - Alice: Got the results. GPT-4o-mini wins on cost and latency.
+12/4/24, 9:06 AM - Bob: Expected. Claude Haiku as fallback still makes sense.
+12/4/24, 9:07 AM - Alice: Agreed. Documenting the rationale now.
+12/4/24, 9:10 AM - Bob: <Media omitted>
+12/4/24, 9:10 AM - Bob: LLM comparison data attached.
+12/4/24, 9:12 AM - Alice: Perfect. Starting on the API schema next.
+12/4/24, 9:13 AM - Bob: I will handle the Supabase schema in parallel.
+12/4/24, 9:15 AM - Alice: Deal. Catch up this afternoon.
+12/4/24, 3:00 PM - Bob: Schema draft done.
+Three tables: users, summaries, sessions.
+Foreign keys and RLS policies in place.
+12/4/24, 3:04 PM - Alice: Looks clean. Will review before end of day.
+12/4/24, 3:05 PM - Bob: Take your time. No rush today.
+12/4/24, 5:30 PM - Alice: Reviewed. One note: sessions table needs a created_at index.
+12/4/24, 5:31 PM - Bob: Good catch. Adding it now.
+12/4/24, 5:33 PM - Bob: Done. Migration updated.
+12/4/24, 5:35 PM - Alice: Perfect. Merging.
+12/4/24, 5:36 PM - Bob: Good day overall. Parser foundation is solid.
+12/4/24, 5:37 PM - Alice: Agreed. Rest up. LLM work tomorrow.
+12/5/24, 9:00 AM - Bob: Good morning. Starting on the LLM test harness.
+12/5/24, 9:02 AM - Alice: Go ahead. I will work on the API schema first.
+12/5/24, 9:45 AM - Bob: Quick question on prompt design:
+Should we include sender names in the input or anonymize them?
+Concern is PII handling for real chat exports.
+12/5/24, 9:47 AM - Alice: Good point. Keep names for now, add an anonymization toggle in Phase 2.
+12/5/24, 9:48 AM - Bob: Logging it as a backlog item.
+12/5/24, 10:30 AM - Bob: GPT-4o-mini test complete. Results:
+Input: 48-line group chat fixture
+Summary quality: 8.5/10
+Latency: 1.1s average over 5 runs
+Cost: $0.0003 per call
+12/5/24, 10:32 AM - Alice: Solid. Run the same input through Claude Haiku.
+12/5/24, 11:15 AM - Bob: Claude Haiku results:
+Summary quality: 8.8/10
+Latency: 1.4s average
+Cost: $0.0005 per call
+12/5/24, 11:16 AM - Alice: Better quality but higher cost and latency.
+12/5/24, 11:17 AM - Bob: My take: GPT-4o-mini primary, Haiku as fallback for large inputs.
+12/5/24, 11:18 AM - Alice: Agreed. Documenting that decision now.
+12/5/24, 12:00 PM - Alice: <Media omitted>
+12/5/24, 12:00 PM - Alice: LLM comparison table attached.
+12/5/24, 12:02 PM - Bob: Will link this in the architecture doc.
+12/5/24, 1:00 PM - Bob: API schema v1 complete. Endpoints:
+POST /upload - accepts .txt, returns session_id
+GET /summary/:session_id - returns structured summary
+GET /sessions - list of past sessions
+DELETE /session/:session_id - remove a session
+12/5/24, 1:02 PM - Alice: Looks good. Add auth headers once Supabase is wired.
+12/5/24, 1:03 PM - Bob: Will do. Leaving auth placeholders for now.
+12/5/24, 1:30 PM - Bob: <Media omitted>
+12/5/24, 1:30 PM - Bob: Postman collection exported.
+12/5/24, 1:32 PM - Alice: Importing now. Very helpful.
+12/5/24, 3:00 PM - Alice: Supabase schema done. Three tables:
+users: id, email, created_at
+sessions: id, user_id, file_name, created_at
+summaries: id, session_id, content, model_used, created_at
+12/5/24, 3:03 PM - Bob: Clean. Foreign keys set?
+12/5/24, 3:04 PM - Alice: sessions.user_id references users.id.
+summaries.session_id references sessions.id.
+Both with CASCADE on delete.
+12/5/24, 3:05 PM - Bob: Perfect. Add RLS policies before deploying.
+12/5/24, 3:06 PM - Alice: Already planned for the auth step.
+12/5/24, 4:30 PM - Bob: Upload endpoint drafted. Handles:
+.txt MIME check
+File size limit at 5 MB
+UTF-8 validation
+Returns session_id on success
+12/5/24, 4:32 PM - Alice: Add a check for empty files too.
+12/5/24, 4:33 PM - Bob: Done. Returns 400 with message "File is empty".
+12/5/24, 5:00 PM - Alice: Wrapping up. PR by morning?
+12/5/24, 5:01 PM - Bob: Should be. Just cleaning up error messages.
+12/6/24, 8:30 AM - Alice: Morning. PR in?
+12/6/24, 8:31 AM - Bob: Just pushed. Upload and parse logic bundled together.
+12/6/24, 8:45 AM - Alice: Reviewing now.
+12/6/24, 9:30 AM - Alice: Three comments:
+1. Extract MIME check into a helper function.
+2. Parser should return an empty array, not null, for no-message files.
+3. Missing JSDoc on the classify function.
+12/6/24, 9:31 AM - Bob: All three are quick fixes.
+12/6/24, 9:45 AM - Bob: Done. Changes pushed.
+12/6/24, 9:46 AM - Alice: Approved. Merging.
+12/6/24, 10:00 AM - Alice: Merged. Starting frontend scaffold now.
+12/6/24, 11:00 AM - Bob: I will start the summarize endpoint while you do the frontend.
+12/6/24, 11:01 AM - Alice: Good split. Check in at 3?
+12/6/24, 11:02 AM - Bob: Works.
+12/6/24, 3:00 PM - Alice: Frontend scaffold done. Pages:
+/ - Landing with upload button
+/summary - Parsed stats and summary output
+/history - List of past sessions
+/auth - Login via Supabase magic link
+12/6/24, 3:02 PM - Bob: Clean structure. Matches the API shape well.
+12/6/24, 3:03 PM - Alice: Summarize endpoint done?
+12/6/24, 3:04 PM - Bob: Close. Prompt is tuned. Just wiring error handling.
+12/6/24, 3:30 PM - Bob: Endpoint live locally. Tested with ios-group.txt.
+Summary returned in 1.2s. Picked up 5 participants, sprint timeline, and key decisions.
+12/6/24, 3:32 PM - Alice: Great. Will test android-indiv.txt after our standup.
+12/6/24, 3:33 PM - Bob: Should handle 24-hour timestamps without issues.
+12/6/24, 4:00 PM - Alice: Tested. All good. 24-hour timestamps parsed cleanly.
+12/6/24, 4:01 PM - Bob: <Media omitted>
+12/6/24, 4:01 PM - Bob: Summarize endpoint PR up.
+12/6/24, 4:30 PM - Alice: Reviewed. Looks solid. One nit: rename processFile to parseUpload for clarity.
+12/6/24, 4:31 PM - Bob: Done. Pushed.
+12/6/24, 4:32 PM - Alice: Merging. Good progress today.
+12/8/24, 9:00 AM - Alice: Back after the weekend. Ready to tackle auth.
+12/8/24, 9:01 AM - Bob: Same. Setting up the Supabase project first.
+12/8/24, 9:45 AM - Bob: Supabase project live. Schema migrated. RLS policies applied.
+12/8/24, 9:47 AM - Alice: Sending env keys via the secure channel. Do not commit them.
+12/8/24, 9:48 AM - Bob: Understood. Added to .env.local only.
+12/8/24, 10:31 AM - Bob: This message was deleted
+12/8/24, 10:32 AM - Bob: Auth flow working. Magic link sent and received successfully.
+12/8/24, 10:33 AM - Alice: Excellent. Wire the session to the upload flow now.
+12/8/24, 11:00 AM - Bob: Done. Upload now requires a valid session token.
+Returns 401 if missing.
+12/8/24, 11:02 AM - Alice: Good. Testing the full flow end to end now.
+12/8/24, 11:45 AM - Alice: Full flow tested:
+Login with magic link: OK
+Upload authenticated file: OK
+View summary: OK
+Logout and re-upload without auth: 401 as expected
+12/8/24, 11:47 AM - Bob: Clean. Logging this scenario as a test case.
+12/8/24, 12:00 PM - Alice: <Media omitted>
+12/8/24, 12:00 PM - Alice: Updated Postman collection with auth headers.
+12/8/24, 12:02 PM - Bob: Importing now.
+12/8/24, 2:00 PM - Bob: One edge case: what happens if the same user uploads the same file twice?
+12/8/24, 2:01 PM - Alice: Create a new session each time. No deduplication for now.
+12/8/24, 2:02 PM - Bob: Makes sense. Noting it in the API docs.
+12/8/24, 3:30 PM - Alice: Auth page done. Using the Supabase Auth UI component.
+Looks clean. No custom styling needed.
+12/8/24, 3:32 PM - Bob: Will test the login redirect after your push.
+12/8/24, 3:45 PM - Alice: Pushed.
+12/8/24, 4:00 PM - Bob: Tested. Login, redirect to /, upload, view summary — all clean.
+12/8/24, 4:01 PM - Alice: Perfect. Flagging the sprint as done.
+12/9/24, 10:00 AM - Bob: One last thing before we close: the session expiry mid-upload edge case.
+What should happen if the token expires while the file is being processed?
+12/9/24, 10:02 AM - Alice: Return a 401 with a specific message: "Session expired during processing."
+Client should prompt re-login and let the user retry.
+12/9/24, 10:03 AM - Bob: Good. Adding that to the error handling layer.
+12/9/24, 10:15 AM - Bob: Done. PR up. Covers the expiry case and adds a corresponding test.
+12/9/24, 10:20 AM - Alice: Reviewed. Approved. Merging.
+12/9/24, 10:21 AM - Bob: Merged.
+12/9/24, 11:00 AM - Alice: Deployment checklist:
+- Production Supabase project configured
+- Environment variables set in Vercel
+- RLS policies confirmed
+- Domain added to Supabase auth allowed origins
+- Smoke test on production URL planned
+12/9/24, 11:03 AM - Bob: I can run the smoke test once you deploy.
+12/9/24, 11:04 AM - Alice: Deploying now.
+12/9/24, 11:20 AM - Alice: Live. Smoke test it.
+12/9/24, 11:35 AM - Bob: All good on production.
+Login, upload, summary, history — all working.
+Error states tested: 415, 400, 413 all return correct responses.
+12/9/24, 11:37 AM - Alice: Confirmed. Wrapping up.
+12/9/24, 11:38 AM - Bob: Great build. Ready for feedback from the team.
