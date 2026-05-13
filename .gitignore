@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 
-# Environment variables
+# Environment variables — never commit real keys
 .env
 .env.local
 .env.*.local
@@ -21,3 +21,10 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Raw WhatsApp exports — contain real phone numbers and personal data
+# Use docs/fixtures/ for anonymised test samples only
+WhatsApp Chat with*.txt
+
+# LLM comparison — generated report (large HTML, regenerate with: node generate-report.js)
+docs/llm-comparison/results/report.html

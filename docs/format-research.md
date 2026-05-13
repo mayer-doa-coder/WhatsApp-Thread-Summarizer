@@ -195,3 +195,53 @@ System message pattern (no sender colon):
 | **total** | 145 |
 
 **Overall result: PASS — 0 unresolved failures across all 3 fixture files.**
+
+---
+
+## LLM API Comparison (Steps 0.11–0.12)
+
+**Test harness:** `docs/llm-comparison/test-runner.js`
+**Visual report:** `docs/llm-comparison/results/report.html`
+**Raw data:** `docs/llm-comparison/results/comparison-results.json`
+**Fixtures tested:** all 3 (android-indiv.txt, ios-group.txt, ios-indiv.txt)
+
+### Scoring Methodology
+
+Each model response is scored out of 10:
+- +1 per required JSON field present and non-empty (6 fields = 6 pts max)
+- +2 if `summaryText` ≥ 50 words; +1 if ≥ 25 words
+- +1 if `keyDecisions` array has ≥ 1 item
+- +1 if `actionItems` array has ≥ 1 item
+
+### Results (8 reliable models, 3 fixtures each)
+
+| Model | Provider | Avg Score | Avg Latency | Pass Rate | Cost |
+|---|---|---|---|---|---|
+| Llama 4 Maverick 128E | SambaNova | 9.7/10 | 2,345ms | 3/3 | Free |
+| DeepSeek V3.2 | SambaNova | 9.7/10 | 3,688ms | 3/3 | Free |
+| Llama 3.1 8B | Cerebras | 9.7/10 | 997ms | 3/3 | Free |
+| Gemini 2.5 Flash | Google AI Studio | 9.7/10 | 15,552ms | 3/3 | Free |
+| Gemini Flash Latest | Google AI Studio | 9.7/10 | 11,528ms | 3/3 | Free |
+| GPT OSS 120B | SambaNova | 9.3/10 | 2,682ms | 3/3 | Free |
+| GPT OSS 120B | OpenRouter | 9.3/10 | 2,989ms | 3/3 | Free |
+| Llama 3.3 70B | SambaNova | 9.3/10 | 3,588ms | 3/3 | Free |
+
+**Excluded (unreliable):** Qwen 3 235B/Cerebras (persistent 429), Llama 3.3 70B/OpenRouter (always 429 — upstream capacity), GPT OSS 20B/OpenRouter (429 on 2/3 fixtures), MiniMax M2.7/SambaNova (422 — service tier), Gemini Flash Lite Latest (503 on 1/3 fixtures).
+
+### Chosen Models for Production
+
+| Role | Model | Provider | API Base |
+|---|---|---|---|
+| **Primary** | Llama 4 Maverick 128E (`Llama-4-Maverick-17B-128E-Instruct`) | SambaNova | `https://api.sambanova.ai/v1` |
+| **Fallback 1** | Llama 3.1 8B (`llama3.1-8b`) | Cerebras | `https://api.cerebras.ai/v1` |
+| **Fallback 2** | Gemini 2.5 Flash (`models/gemini-2.5-flash`) | Google AI Studio | `https://generativelanguage.googleapis.com/v1beta/openai` |
+
+**Rationale:**
+
+- **Primary — Llama 4 Maverick 128E (SambaNova):** Best quality-to-latency ratio among all tested models. Llama 4 architecture (newer than Llama 3.x), 9.7/10 average score, 2.3s average latency, 3/3 fixture pass rate. SambaNova's free tier is the most reliable of the three providers.
+- **Fallback 1 — Llama 3.1 8B (Cerebras):** Fastest model tested at under 1 second average latency. Same quality tier (9.7/10), completely different provider (Cerebras) from the primary, ensuring provider-level redundancy. Kicks in when SambaNova returns 429 or 5xx.
+- **Fallback 2 — Gemini 2.5 Flash (Google):** Slowest (~15s due to internal thinking tokens) but highest-capability model for complex or long group chats. Third independent provider (Google) as a final safety net. `max_tokens: 8000` required to accommodate thinking token budget.
+
+**Fallback strategy in `backend/src/config/llm.js`:** Primary → on 429/5xx → Fallback 1 → on 429/5xx → Fallback 2. All three use the OpenAI-compatible `/chat/completions` endpoint, so the swap requires only changing `apiBase` and `Authorization` header.
+
+**Cost note:** All three models are free-tier with no per-token charge. Rate limits: SambaNova ~100K tokens/day, Cerebras ~60 RPM, Google AI Studio ~1500 RPD / 15 RPM. These limits are sufficient for expected single-user usage volume.

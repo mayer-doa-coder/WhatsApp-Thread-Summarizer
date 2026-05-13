@@ -1,0 +1,1469 @@
+{
+  "runAt": "2026-05-13T08:55:19.781Z",
+  "fixtures": [
+    "android-indiv.txt",
+    "ios-group.txt",
+    "ios-indiv.txt"
+  ],
+  "models": [
+    {
+      "id": "qwen-3-235b-a22b-instruct-2507",
+      "name": "Qwen 3 235B (Cerebras)",
+      "provider": "Cerebras",
+      "color": "#06B6D4"
+    },
+    {
+      "id": "Meta-Llama-3.3-70B-Instruct",
+      "name": "Llama 3.3 70B (SambaNova)",
+      "provider": "SambaNova",
+      "color": "#0EA5E9"
+    },
+    {
+      "id": "llama3.1-8b",
+      "name": "Llama 3.1 8B (Cerebras)",
+      "provider": "Cerebras",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "DeepSeek-V3.2",
+      "name": "DeepSeek V3.2 (SambaNova)",
+      "provider": "SambaNova",
+      "color": "#10B981"
+    },
+    {
+      "id": "Llama-4-Maverick-17B-128E-Instruct",
+      "name": "Llama 4 Maverick 128E (SambaNova)",
+      "provider": "SambaNova",
+      "color": "#F97316"
+    },
+    {
+      "id": "gpt-oss-120b",
+      "name": "GPT OSS 120B (SambaNova)",
+      "provider": "SambaNova",
+      "color": "#F59E0B"
+    },
+    {
+      "id": "meta-llama/llama-3.3-70b-instruct:free",
+      "name": "Llama 3.3 70B (OpenRouter)",
+      "provider": "OpenRouter",
+      "color": "#8B5CF6"
+    },
+    {
+      "id": "openai/gpt-oss-120b:free",
+      "name": "GPT OSS 120B (OpenRouter)",
+      "provider": "OpenRouter",
+      "color": "#EC4899"
+    },
+    {
+      "id": "openai/gpt-oss-20b:free",
+      "name": "GPT OSS 20B (OpenRouter)",
+      "provider": "OpenRouter",
+      "color": "#A855F7"
+    },
+    {
+      "id": "MiniMax-M2.7",
+      "name": "MiniMax M2.7 (SambaNova)",
+      "provider": "SambaNova",
+      "color": "#4285F4"
+    },
+    {
+      "id": "models/gemini-2.5-flash",
+      "name": "Gemini 2.5 Flash (Google)",
+      "provider": "Google",
+      "color": "#EA4335"
+    },
+    {
+      "id": "models/gemini-flash-latest",
+      "name": "Gemini Flash Latest (Google)",
+      "provider": "Google",
+      "color": "#FBBC05"
+    },
+    {
+      "id": "models/gemini-flash-lite-latest",
+      "name": "Gemini Flash Lite Latest (Google)",
+      "provider": "Google",
+      "color": "#34A853"
+    }
+  ],
+  "raw": [
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "qwen-3-235b-a22b-instruct-2507",
+      "modelName": "Qwen 3 235B (Cerebras)",
+      "provider": "Cerebras",
+      "latency": 21029,
+      "tokensUsed": 0,
+      "error": "HTTP 429: {\"message\":\"Requests per minute limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "Meta-Llama-3.3-70B-Instruct",
+      "modelName": "Llama 3.3 70B (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 5374,
+      "tokensUsed": 3297,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 45,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat summarizer",
+        "keyDecisions": [
+          "Using React, Node.js, and GPT-4o-mini for the tech stack",
+          "Implementing a token counter to log actual costs",
+          "Adding a retry with exponential backoff for LLM timeout errors"
+        ],
+        "actionItems": [
+          "Alice to review the LLM integration PR",
+          "Tawhidul to implement the session history API",
+          "Alice to work on the summary display page"
+        ],
+        "notableFacts": [
+          "The parser can handle iOS 12-hour AM/PM, iOS 12-hour individual, and Android 24-hour timestamp formats",
+          "The cost per call is approximately $0.00018 for a small input size",
+          "The team successfully completed a full end-to-end test of the application"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul developed a WhatsApp chat summarizer using React, Node.js, and GPT-4o-mini, with features such as a token counter, retry mechanism, and session history API. They completed a full end-to-end test and prepared a demo script, resolving issues and finalizing the application for deployment."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "llama3.1-8b",
+      "modelName": "Llama 3.1 8B (Cerebras)",
+      "provider": "Cerebras",
+      "latency": 1219,
+      "tokensUsed": 3447,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 67,
+      "parsedOutput": {
+        "topic": "WhatsApp chat summarizer development",
+        "keyDecisions": [
+          "10 AM call time",
+          "Parser approach",
+          "LLM selection",
+          "Token counter to log actual costs",
+          "Error handling for LLM timeout needs a retry with exponential backoff",
+          "Return 503 if both primary and fallback models fail",
+          "Supabase cost logging",
+          "Add a delete button per session",
+          "Auth guard is missing on the summary page route"
+        ],
+        "actionItems": [
+          "Dave QA plan",
+          "Carol parser tests",
+          "Bob regex fix",
+          "Add a token counter to log actual costs",
+          "Implement retry with backoff, Supabase cost logging, and 503 fallback response",
+          "Restricting to .txt only",
+          "Add an error state for invalid file type",
+          "Disable and show a spinner while processing",
+          "Add a 3-second minimum display duration for error state",
+          "Deploy to production",
+          "Test the live URL",
+          "Run a full end-to-end test"
+        ],
+        "notableFacts": [
+          "The upload endpoint needs MIME validation.",
+          "Parser is done. All 3 fixture files parse without errors.",
+          "iOS 12-hour AM/PM, iOS 12-hour individual, Android 24-hour timestamp formats are covered.",
+          "Continuation lines are appended to the prior message content field.",
+          "The summary page does not redirect to login if the session expires."
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "The WhatsApp chat summarizer development team worked on implementing a summarizer with reply drafter, deploying to production, and testing the live URL. They addressed several key decisions, action items, and notable facts, including adding a token counter, implementing retry with backoff, and adding a delete button per session. The team also ran full end-to-end tests and deployed to production, with a successful dry run before the demo."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "DeepSeek-V3.2",
+      "modelName": "DeepSeek V3.2 (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 3918,
+      "tokensUsed": 3435,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 54,
+      "parsedOutput": {
+        "topic": "Development and deployment of an AI-powered WhatsApp chat summarizer web app for a hackathon project",
+        "keyDecisions": [
+          "Team name: StackCraft, problem: WhatsApp chat overload, solution: AI summarizer with reply drafter, tech stack: React, Node.js, GPT-4o-mini",
+          "Implement collapsible sections for summary display (Summary, Topics, Decisions, Action Items) instead of a single paragraph",
+          "Add token counter middleware to log costs to Supabase, implement retry with exponential backoff for LLM timeouts, and return 503 if both primary and fallback models fail"
+        ],
+        "actionItems": [
+          "Tawhidul to add deployment plan",
+          "Alice to review PR by end of day",
+          "Tawhidul to implement upload button disabling with spinner to prevent double submit",
+          "Tawhidul to add delete button per session wired to DELETE /session/:id endpoint",
+          "Tawhidul to fix missing auth guard on summary page to redirect expired sessions to login"
+        ],
+        "notableFacts": [
+          "Parser handles iOS 12-hour AM/PM, iOS 12-hour individual, and Android 24-hour timestamp formats, normalizing to ISO 8601",
+          "Multi-line messages are handled by appending continuation lines to the prior message content field",
+          "Cost per call estimated at $0.00018 for 48-line input and $0.00045 for 200-line chat",
+          "Full test suite passed: 33 unit tests, 12 integration tests, 8 E2E tests",
+          "Production deployment completed and connected to Supabase production project"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul collaborated on developing an AI-powered WhatsApp chat summarizer web app for a hackathon. They defined the project scope, built and tested components including a parser, LLM integration, frontend upload, and summary display, and successfully deployed to production. The conversation covered technical decisions, code reviews, testing, and preparation for a final demo."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "Llama-4-Maverick-17B-128E-Instruct",
+      "modelName": "Llama 4 Maverick 128E (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 1657,
+      "tokensUsed": 3167,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 53,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat summarizer application",
+        "keyDecisions": [
+          "Using React, Node.js, and GPT-4o-mini for the tech stack",
+          "Implementing MIME validation for file uploads",
+          "Adding a token counter to log actual LLM costs"
+        ],
+        "actionItems": [
+          "Tawhidul to add deployment plan",
+          "Alice to review PRs",
+          "Tawhidul to implement LLM integration with retry mechanism"
+        ],
+        "notableFacts": [
+          "The application will handle multi-line messages and different timestamp formats",
+          "The LLM integration includes error handling with exponential backoff",
+          "The frontend uses react-dropzone for file uploads"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul collaborated on developing a WhatsApp chat summarizer application, discussing tech stack, implementation details, and testing throughout the hackathon. They successfully deployed the application to production and prepared a demo script. The application features file upload, parsing, and summarization using an LLM, with a frontend displaying summary sections and session history."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "gpt-oss-120b",
+      "modelName": "GPT OSS 120B (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 2387,
+      "tokensUsed": 3912,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 49,
+      "parsedOutput": {
+        "topic": "Development and deployment of the StackCraft AI WhatsApp chat summarizer for the hackathon",
+        "keyDecisions": [
+          "Team name set to StackCraft and tech stack chosen as React, Node.js, GPT-4o-mini",
+          "Upload endpoint must enforce MIME validation and reject renamed PNG files with a 415 status",
+          "Summary page will use collapsible sections (Summary, Topics, Decisions, Action Items) and include auth guard redirects"
+        ],
+        "actionItems": [
+          "Tawhidul: add deployment plan and implement Phase 2 designs",
+          "Tawhidul: add token counter middleware to log costs in Supabase",
+          "Tawhidul: implement exponential backoff retry, 503 fallback, and error handling for LLM timeouts",
+          "Alice: review and merge PRs, add max 5 MB .txt note to upload UI",
+          "Tawhidul: disable upload button with spinner during processing and add delete endpoint",
+          "Both: run final dry‑runs, finalize demo script, and deploy to production"
+        ],
+        "notableFacts": [
+          "Problem addressed: WhatsApp chat overload",
+          "Solution: AI summarizer with reply drafter",
+          "Cost per summarization call: ~$0.00018 for 48‑line input, ~$0.00045 for 200 lines",
+          "Parser supports iOS 12‑hour, Android 24‑hour timestamps and normalises to ISO‑8601",
+          "All unit, integration, and end‑to‑end tests passed before production deployment"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul coordinated the design, implementation, and deployment of their StackCraft AI summarizer, iterating on backend parsing, LLM integration, and frontend upload UI. They made key decisions on validation, cost logging, error handling, and UI layout, completed testing, and successfully deployed the app in time for the demo."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "meta-llama/llama-3.3-70b-instruct:free",
+      "modelName": "Llama 3.3 70B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 22658,
+      "tokensUsed": 0,
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"meta-llama/llama-3.3-70b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or ad",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "openai/gpt-oss-120b:free",
+      "modelName": "GPT OSS 120B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 4020,
+      "tokensUsed": 3498,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 45,
+      "parsedOutput": {
+        "topic": "Development and deployment of the StackCraft WhatsApp chat summarizer application",
+        "keyDecisions": [
+          "Use React, Node.js, and GPT-4o-mini for the tech stack",
+          "Enforce MIME validation for uploads and reject invalid files with 415",
+          "Add token counter middleware to log actual API costs in Supabase",
+          "Implement auth guard on summary page and 503 fallback for LLM failures",
+          "Design UI with collapsible sections and disable upload button during processing"
+        ],
+        "actionItems": [
+          "Tawhidul to add deployment plan and push deployment PR",
+          "Alice to add token cost logging to Supabase costs table",
+          "Tawhidul to implement retry with exponential backoff for LLM timeouts",
+          "Alice to add delete button and wire DELETE /session/:id endpoint",
+          "Tawhidul to ensure error state for wrong file type displays for at least 3 seconds"
+        ],
+        "notableFacts": [
+          "Parser supports iOS 12‑hour, Android 24‑hour timestamps and normalises to ISO‑8601",
+          "Upload component restricts to .txt files, max 5 MB, with inline error messages",
+          "Cost per summarisation call is approx $0.00018 for 48‑line input",
+          "All unit, integration, and end‑to‑end tests passed before production deployment",
+          "Demo flow includes login, upload, summary view, history navigation, delete, and error handling"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul collaboratively built the StackCraft WhatsApp summarizer, deciding on a React/Node.js stack, implementing strict MIME validation, token cost logging, and robust error handling. They completed UI components, API endpoints, extensive testing, and successfully deployed the product to production, preparing a polished demo flow."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "openai/gpt-oss-20b:free",
+      "modelName": "GPT OSS 20B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 2534,
+      "tokensUsed": 3371,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 69,
+      "parsedOutput": {
+        "topic": "AI‑powered WhatsApp chat summarizer hackathon project",
+        "keyDecisions": [
+          "Add MIME validation and 415 status for invalid uploads",
+          "Implement token counter and Supabase cost logging",
+          "Add retry with exponential backoff and 503 fallback for LLM failures",
+          "Fix auth guard on summary page"
+        ],
+        "actionItems": [
+          "Add retry logic and cost logging to summarize route",
+          "Implement delete session UI and DELETE /session/:id endpoint",
+          "Update upload component to enforce .txt only and size limit",
+          "Add auth guard to summary page",
+          "Prepare demo script and dry runs"
+        ],
+        "notableFacts": [
+          "Parser covers iOS 12‑hour AM/PM, iOS 12‑hour individual, Android 24‑hour timestamps, normalised to ISO 8601",
+          "Full test suite passes: 33 unit, 12 integration, 8 E2E",
+          "Production deployment completed with Supabase live project",
+          "Demo dry run took 4 minutes 20 seconds"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul collaborated to build an AI summarizer for WhatsApp chats, completing backend parsing, LLM integration, and a React frontend with file upload and session history. They addressed key decisions such as MIME validation, cost logging, retry logic, and auth protection, and successfully tested and deployed the application to production. The team finished on schedule, ready for a demo with a smooth user flow and robust error handling."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "MiniMax-M2.7",
+      "modelName": "MiniMax M2.7 (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 668,
+      "tokensUsed": 0,
+      "error": "HTTP 422: Couldn't find valid service tier! Please contact your administrator\n",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "models/gemini-2.5-flash",
+      "modelName": "Gemini 2.5 Flash (Google)",
+      "provider": "Google",
+      "latency": 16151,
+      "tokensUsed": 6936,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 47,
+      "parsedOutput": {
+        "topic": "Development and deployment of a WhatsApp Chat Summarizer for a hackathon",
+        "keyDecisions": [
+          "Team name: StackCraft",
+          "Solution: AI summarizer with reply drafter for WhatsApp chat overload using React, Node.js, GPT-4o-mini",
+          "Wireframes to be implemented in Phase 2",
+          "Parser to support iOS 12-hour AM/PM, iOS 12-hour individual, and Android 24-hour timestamp formats, normalizing to ISO 8601",
+          "Multi-line messages handled by appending continuation lines",
+          "Prompt design to ignore system messages and media placeholders",
+          "Implement token counter for cost logging, storing data in a Supabase costs table",
+          "LLM integration to include retry with exponential backoff for timeouts and return 503 if both primary and fallback models fail",
+          "Frontend upload component to use react-dropzone, restrict to .txt files, max 5MB, and disable the upload button with a spinner during processing",
+          "Summary display page to use collapsible sections: Summary, Topics, Decisions, Action Items",
+          "Session history page to include a delete button per session",
+          "Summary page to redirect to login upon session expiration",
+          "Error state for invalid file type to have a 3-second minimum display duration during demo"
+        ],
+        "actionItems": [
+          "Tawhidul to add the deployment plan",
+          "Alice to review the parser Pull Request (PR) by EOD",
+          "Tawhidul to implement prompt design template",
+          "Tawhidul to add token counter as middleware on the summarize route",
+          "Tawhidul to implement LLM integration changes (retry, Supabase cost logging, 503 fallback)",
+          "Alice to add 'Max 5 MB .txt file' note to the upload component",
+          "Tawhidul to work on the session history API",
+          "Tawhidul to add a delete button to the session history page",
+          "Tawhidul to fix the auth guard on the summary page route",
+          "Alice to deploy the application to production",
+          "Tawhidul to conduct demo dry runs"
+        ],
+        "notableFacts": [
+          "The team name is StackCraft and the project aims to solve WhatsApp chat overload with an AI summarizer and reply drafter.",
+          "The tech stack includes React, Node.js, and GPT-4o-mini.",
+          "The parser component was completed, handling various timestamp formats and multi-line messages, and its PR was merged.",
+          "A prompt design template was drafted and refined, and testing with GPT-4o-mini showed accurate summarization, low latency, and low cost.",
+          "LLM integration, including cost logging to Supabase, retry mechanisms, and error handling, was completed and merged.",
+          "The frontend upload component was built using react-dropzone, restricting to .txt files up to 5MB, with appropriate error states and UI feedback.",
+          "The summary display page with collapsible sections and the session history page with delete functionality were implemented.",
+          "All unit, integration, and E2E tests passed, and the application was successfully deployed to production.",
+          "A demo script was prepared, and dry runs were conducted, leading to a minor UI improvement for error message display duration."
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul collaborated on developing a WhatsApp chat summarizer for a hackathon, covering backend parsing, AI integration with GPT-4o-mini, and frontend UI for upload, summary display, and session history. They successfully completed development, testing, and production deployment, finalizing a demo script with dry runs for presentation."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "models/gemini-flash-latest",
+      "modelName": "Gemini Flash Latest (Google)",
+      "provider": "Google",
+      "latency": 11292,
+      "tokensUsed": 4851,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 52,
+      "parsedOutput": {
+        "topic": "Development and deployment of the StackCraft WhatsApp chat summarizer",
+        "keyDecisions": [
+          "Use React, Node.js, GPT-4o-mini, and Supabase for the tech stack",
+          "Display summaries using collapsible sections for better UX",
+          "Implement exponential backoff for LLM retries and log costs to Supabase",
+          "Restrict file uploads to .txt format with a 5MB size limit"
+        ],
+        "actionItems": [
+          "Tawhidul to implement the session history API and delete flow",
+          "Alice to develop the frontend upload component and summary display page",
+          "Tawhidul to add an auth guard to prevent blank pages on session expiry",
+          "Conduct dry runs to finalize the 4-minute demo script"
+        ],
+        "notableFacts": [
+          "The parser normalizes iOS 12-hour and Android 24-hour formats to ISO 8601",
+          "Estimated cost for a 200-line chat summary is approximately $0.00045",
+          "The system handles multi-line messages by appending them to the prior message content field",
+          "The final test suite passed with 100% success across unit, integration, and E2E tests"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul developed StackCraft, an AI-powered tool designed to summarize WhatsApp chat exports. They successfully implemented a full-stack solution featuring multi-format parsing, LLM integration with cost tracking, and a secure frontend with session history. The project was deployed to production and validated through successful dry runs ahead of their hackathon demo."
+      }
+    },
+    {
+      "fixture": "android-indiv.txt",
+      "modelId": "models/gemini-flash-lite-latest",
+      "modelName": "Gemini Flash Lite Latest (Google)",
+      "provider": "Google",
+      "latency": 6980,
+      "tokensUsed": 4010,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 49,
+      "parsedOutput": {
+        "topic": "Development of an AI-powered WhatsApp chat summarizer for a hackathon",
+        "keyDecisions": [
+          "Use React, Node.js, and GPT-4o-mini for the tech stack",
+          "Display summaries in collapsible sections (Summary, Topics, Decisions, Action Items)",
+          "Implement Supabase for cost logging and session history",
+          "Add a 3-second minimum display duration for error states"
+        ],
+        "actionItems": [
+          "Finalize demo script and dry run",
+          "Deploy to production",
+          "Implement auth guard for the summary page"
+        ],
+        "notableFacts": [
+          "The application supports multiple timestamp formats (iOS and Android) normalized to ISO 8601",
+          "The cost per summary is approximately $0.00018 for small inputs",
+          "The team successfully passed all 53 unit, integration, and E2E tests",
+          "The final demo flow takes approximately 4 minutes"
+        ],
+        "participants": [
+          "Alice",
+          "Tawhidul"
+        ],
+        "summaryText": "Alice and Tawhidul collaborated on building an AI-powered WhatsApp chat summarizer for a hackathon, covering everything from backend parsing and LLM integration to frontend UI design. They successfully implemented features like session history, cost tracking, and robust error handling, concluding with a successful production deployment and demo dry run."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "qwen-3-235b-a22b-instruct-2507",
+      "modelName": "Qwen 3 235B (Cerebras)",
+      "provider": "Cerebras",
+      "latency": 1588,
+      "tokensUsed": 5033,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 56,
+      "parsedOutput": {
+        "topic": "Dev Team Q2 project planning and execution for Sprint 1 and initial Sprint 2 preparations",
+        "keyDecisions": [
+          "Sprint planning meeting rescheduled from 9 AM to 10 AM",
+          "GPT-4o-mini selected as primary LLM with Claude Haiku as fallback",
+          "API schema updated to include status field and timestamps (created_at, completed_at)"
+        ],
+        "actionItems": [
+          "Bob to handle backend auth integration and fix parser edge cases",
+          "Carol to write frontend upload flow and Jest tests for parser",
+          "Dave to develop e2e test plan and run regression suites",
+          "Alice to finalize API docs and lead sprint planning"
+        ],
+        "notableFacts": [
+          "Parser successfully merged after addressing edge cases like tilde-prefixed senders and colon in names",
+          "Upload endpoint deployed with full MIME validation and error handling",
+          "Staging environment had a maintenance window but resumed by noon on 3/17"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The Dev Team coordinated Sprint 1 activities including parser development, LLM selection, and API design, successfully delivering core features on schedule. Key decisions were made around system architecture and edge case handling, with Sprint 2 planning initiated focusing on frontend, authentication, and enhanced testing. The team maintained strong collaboration through daily stand-ups and timely issue resolution."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "Meta-Llama-3.3-70B-Instruct",
+      "modelName": "Llama 3.3 70B (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 2863,
+      "tokensUsed": 4430,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 51,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat export summarizer",
+        "keyDecisions": [
+          "Choosing GPT-4o-mini as the primary LLM model",
+          "Deciding on the API schema v1",
+          "Selecting relative time display for the summary page"
+        ],
+        "actionItems": [
+          "Implementing file upload UI",
+          "Developing summary display page",
+          "Integrating auth with Supabase",
+          "Creating session history and error handling"
+        ],
+        "notableFacts": [
+          "Sprint 1 delivered file upload, WhatsApp parser, LLM summarization endpoint, and API schema v1",
+          "33 unit and integration tests were completed",
+          "Sprint 2 will focus on frontend, auth, and polish"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The Dev Team Q2 discussed and worked on the development of a WhatsApp chat export summarizer, completing Sprint 1 and starting Sprint 2. Key decisions included choosing the primary LLM model and deciding on the API schema. The team made significant progress on the project, delivering key features and completing tests."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "llama3.1-8b",
+      "modelName": "Llama 3.1 8B (Cerebras)",
+      "provider": "Cerebras",
+      "latency": 809,
+      "tokensUsed": 4555,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 60,
+      "parsedOutput": {
+        "topic": "Dev Team Q2 Sprint Planning and Execution",
+        "keyDecisions": [
+          "GPT-4o-mini primary, Claude Haiku as fallback for LLM summarization",
+          "Relative time for display, ISO 8601 in the database for timestamps",
+          "Use date-fns on the frontend for date formatting",
+          "Normalise to LF before splitting for uploaded file with Windows-style CRLF line endings"
+        ],
+        "actionItems": [
+          "File upload UI",
+          "Summary display page",
+          "Auth with Supabase",
+          "Session history",
+          "Error handling and edge cases",
+          "Deployment to production",
+          "Write e2e test plan",
+          "Session expiry mid-upload scenario",
+          "Token refresh logic with guard for concurrent requests"
+        ],
+        "notableFacts": [
+          "Sprint 1 complete, delivered file upload with MIME validation, WhatsApp parser, LLM summarization endpoint, API schema v1, and 33 unit and integration tests",
+          "Sprint 2 planning at 2 PM, focus on frontend, auth, polish",
+          "Sprint 2 scope: file upload UI, summary display page, auth with Supabase, session history, error handling and edge cases, deployment to production"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The Dev Team Q2 completed Sprint 1, delivering file upload with MIME validation, WhatsApp parser, LLM summarization endpoint, API schema v1, and 33 unit and integration tests. Sprint 2 planning focused on frontend, auth, and polish, with a scope including file upload UI, summary display page, auth with Supabase, session history, error handling and edge cases, and deployment to production."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "DeepSeek-V3.2",
+      "modelName": "DeepSeek V3.2 (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 4465,
+      "tokensUsed": 4479,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 58,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat summarizer application",
+        "keyDecisions": [
+          "Reschedule sprint planning to 10 AM",
+          "Select GPT-4o-mini as primary LLM with Claude Haiku as fallback",
+          "Use relative time for display and ISO 8601 in database"
+        ],
+        "actionItems": [
+          "Alice to update meeting invite",
+          "Bob to send edge-case fixture to Carol",
+          "Carol to write Jest tests for parser",
+          "Dave to run regression suite",
+          "Bob to handle backend auth integration",
+          "Carol to take frontend upload flow",
+          "Dave to write e2e test plan"
+        ],
+        "notableFacts": [
+          "Parser merged with 23 unit tests covering iOS/Android formats",
+          "Upload endpoint deployed to staging with successful QA pass",
+          "Sprint 1 delivered file upload, parser, LLM summarization endpoint, API schema, and 33 tests",
+          "Sprint 2 will focus on frontend, auth, and deployment"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The development team planned and executed Sprint 1 for a WhatsApp chat summarizer application, delivering core features like file upload, parsing, and an LLM summarization endpoint. They resolved scheduling conflicts, fixed parser edge cases, selected an LLM model, and completed QA testing. The team then transitioned to Sprint 2, assigning tasks for frontend development, authentication, and end-to-end testing."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "Llama-4-Maverick-17B-128E-Instruct",
+      "modelName": "Llama 4 Maverick 128E (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 1363,
+      "tokensUsed": 4373,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 56,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat export summarization tool",
+        "keyDecisions": [
+          "Using GPT-4o-mini as the primary LLM model and Claude Haiku as a fallback",
+          "Implementing authentication with Supabase",
+          "Normalizing line endings to LF in the parser"
+        ],
+        "actionItems": [
+          "Completing the frontend upload flow",
+          "Writing e2e tests for the summarization endpoint",
+          "Deploying to production"
+        ],
+        "notableFacts": [
+          "The team successfully delivered the file upload, WhatsApp parser, and LLM summarization endpoint in Sprint 1",
+          "33 unit and integration tests were written",
+          "The parser was updated to handle Windows-style CRLF line endings"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The development team discussed and worked on a WhatsApp chat export summarization tool over several days, completing Sprint 1 and starting Sprint 2 with a focus on frontend development, authentication, and deployment. Key decisions were made regarding the LLM model and authentication method. The team made significant progress, delivering several key features and writing comprehensive tests."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "gpt-oss-120b",
+      "modelName": "GPT OSS 120B (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 3174,
+      "tokensUsed": 5311,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 71,
+      "parsedOutput": {
+        "topic": "Development team coordination for Sprint 1 delivery and Sprint 2 planning, covering sprint meetings, parser and upload feature implementation, LLM integration, testing, and deployment decisions.",
+        "keyDecisions": [
+          "Sprint planning call moved from 9 AM to 10 AM.",
+          "Group renamed to track sprint context (\"Dev Team Q2 - Sprint 1\" then \"... Final\").",
+          "GPT-4o-mini selected as primary LLM model with Claude Haiku as fallback.",
+          "API schema updated to include status, created_at, and completed_at fields.",
+          "UI will display relative timestamps; database stores ISO‑8601.",
+          "Use date-fns for date handling on the frontend.",
+          "Parser will normalise Windows CRLF to LF before processing.",
+          "Add a session‑expiry scenario to the e2e test plan.",
+          "Auth token refresh logic protected by a mutex to avoid concurrent requests."
+        ],
+        "actionItems": [
+          "Bob to send edge‑case fixture for parser tests.",
+          "Carol to add tilde‑prefixed sender test case.",
+          "Dave to run smoke tests and full regression suite.",
+          "Alice to update and share the meeting invite and API schema draft.",
+          "Bob to patch parser regex for colon‑space edge case.",
+          "Carol to fix blank‑line trimming issue in parser continuation logic.",
+          "Bob to implement backend auth integration with Supabase.",
+          "Carol to develop frontend upload UI with drag‑and‑drop and validation.",
+          "Dave to write and execute the e2e test plan (including scenario 13).",
+          "Alice to review and merge PRs for parser, auth, and frontend components."
+        ],
+        "notableFacts": [
+          "Sprint 1 delivered file upload with MIME validation, a cross‑platform WhatsApp parser, LLM summarisation endpoint, and API schema v1.",
+          "33 unit and integration tests passed for Sprint 1.",
+          "LLM comparison showed GPT‑4o‑mini cheapest and performant; Claude Haiku as fallback.",
+          "Staging environment was down for maintenance on 3/17 but restored same day.",
+          "Group name changed twice to reflect sprint phases."
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The Dev Team coordinated sprint planning, execution, and handover across two sprints, delivering file upload, a WhatsApp parser, and an LLM summarisation endpoint while completing extensive testing. Key decisions included moving the sprint call to 10 AM, selecting GPT‑4o‑mini as the primary model, and updating the API schema with status and timestamps. Action items were assigned for backend auth, frontend UI, parser fixes, and e2e testing to kick off Sprint 2."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "meta-llama/llama-3.3-70b-instruct:free",
+      "modelName": "Llama 3.3 70B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 22658,
+      "tokensUsed": 0,
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"meta-llama/llama-3.3-70b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or ad",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "openai/gpt-oss-120b:free",
+      "modelName": "GPT OSS 120B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 3322,
+      "tokensUsed": 4785,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 61,
+      "parsedOutput": {
+        "topic": "Coordination of Dev Team sprint planning, execution, and handover of features including file upload, parser, LLM summarization, and upcoming sprint 2 tasks",
+        "keyDecisions": [
+          "Adopt GPT-4o-mini as primary LLM model with Claude Haiku as fallback",
+          "Rename group to reflect sprint context (Sprint 1, then Sprint 1 Final)",
+          "Use relative timestamps for UI display and ISO‑8601 in the database",
+          "Add token‑refresh mutex in auth integration to prevent concurrent requests",
+          "Include session‑expiry scenario in e2e test plan"
+        ],
+        "actionItems": [
+          "Bob to provide edge‑case fixture for parser tests",
+          "Carol to write and merge parser unit tests and frontend upload component",
+          "Dave to run and finalize e2e test plan, adding session‑expiry scenario",
+          "Bob to implement CRLF line‑ending normalization in parser",
+          "Alice to review and merge PRs, update API schema, and plan Sprint 2 kickoff"
+        ],
+        "notableFacts": [
+          "Sprint 1 delivered file upload with MIME validation, WhatsApp parser, LLM summarization endpoint, API schema v1, and 33 passing tests",
+          "LLM comparison showed GPT‑4o‑mini cheapest and high quality, Claude Haiku slightly higher cost but better quality",
+          "Upload endpoint deployed to staging and passed smoke tests",
+          "Parser PR merged and main branch updated on 3/17",
+          "Sprint 2 scope includes UI upload flow, summary display, Supabase auth, session history, error handling, and production deployment"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave",
+          "+91 98281 01234"
+        ],
+        "summaryText": "The team organized sprint planning, executed Sprint 1 delivering core upload, parsing, and LLM summarization features, and reviewed performance metrics before closing the sprint. Decisions were made on LLM model selection, timestamp handling, and authentication safeguards, while action items focused on testing, bug fixes, and preparing Sprint 2 tasks. The conversation documents progress, approvals, and next‑step assignments for the upcoming sprint."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "openai/gpt-oss-20b:free",
+      "modelName": "GPT OSS 20B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 41167,
+      "tokensUsed": 4559,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 66,
+      "parsedOutput": {
+        "topic": "Sprint planning, development, and delivery of a WhatsApp parser and summarization API",
+        "keyDecisions": [
+          "Renamed group to track sprint context and finalized GPT‑4o‑mini as primary LLM model",
+          "Merged parser PR into main after successful QA and test coverage",
+          "Approved sprint 1 completion and set sprint 2 scope"
+        ],
+        "actionItems": [
+          "Deploy final API schema and upload endpoint to production",
+          "Write and run full regression suite for LLM endpoint",
+          "Begin frontend upload UI, auth integration, and e2e test plan for sprint 2"
+        ],
+        "notableFacts": [
+          "33 unit and integration tests passed for parser; 5 participants (Alice, Bob, Carol, Dave, and an inactive member removed)",
+          "Staging maintenance caused temporary downtime on 17th March",
+          "Sprint 1 delivered file upload, parser, LLM summarization, and API schema with complete test coverage"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The Dev Team coordinated sprint 1, delivering a WhatsApp parser, file upload with MIME validation, and an LLM summarization endpoint, all backed by extensive testing. Key decisions included renaming the group to reflect sprint context, selecting GPT‑4o‑mini as the primary LLM, and merging the parser into main after QA success. Sprint 2 planning was set to focus on frontend upload UI, auth, and deployment to production."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "MiniMax-M2.7",
+      "modelName": "MiniMax M2.7 (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 603,
+      "tokensUsed": 0,
+      "error": "HTTP 422: Couldn't find valid service tier! Please contact your administrator\n",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "models/gemini-2.5-flash",
+      "modelName": "Gemini 2.5 Flash (Google)",
+      "provider": "Google",
+      "latency": 16241,
+      "tokensUsed": 7575,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 64,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat summarizer application (Sprint 1 completion & Sprint 2 initiation)",
+        "keyDecisions": [
+          "First sprint planning meeting rescheduled from 9 AM to 10 AM.",
+          "Dave was assigned to handle QA for Sprint 1.",
+          "Group name changed to 'Dev Team Q2 - Sprint 1' and later 'Dev Team Q2 - Sprint 1 Final' for context.",
+          "API schema updated to include a 'status' field and 'created_at'/'completed_at' timestamps.",
+          "GPT-4o-mini selected as the primary LLM, with Claude Haiku as fallback.",
+          "Prompt template refined to ignore system messages/media and cap output length at 300 tokens.",
+          "Parser fixes implemented for multi-line messages with blank lines and sender names containing colons.",
+          "Sprint 1 goals (file upload, parser, LLM summarization, API schema, tests) were completed.",
+          "Sprint 2 scope defined: frontend UI, authentication, session history, error handling, and production deployment.",
+          "Summary page timestamps decided: relative time for display, ISO 8601 in the database.",
+          "Parser updated to normalize Windows-style CRLF line endings to LF.",
+          "E2E test plan updated to include a scenario for session expiry mid-upload."
+        ],
+        "actionItems": [
+          "Alice: Update sprint planning invite, send updated invite, draft API schema, work on LLM comparison, work on API docs and frontend scaffold, test summarize endpoint, lead sprint reviews/planning, review E2E plan, review frontend upload PR, review auth integration PR.",
+          "Bob: Share draft agenda, send edge-case fixture, work on upload endpoint and MIME validation, work on LLM integration endpoint and prompt template, fix sender name regex, handle backend auth integration, add CRLF normalization to parser.",
+          "Carol: Write Jest tests for parser, fix multi-line blank line issue, write integration tests for summarize flow, take frontend upload flow, document LLM decision.",
+          "Dave: Start test plan, run smoke tests, work on end-to-end upload flow test, deploy upload endpoint, run regression suite, run automated summarize endpoint tests, write e2e test plan, add session expiry scenario."
+        ],
+        "notableFacts": [
+          "The project team consists of Alice (lead), Bob (developer), Carol (developer), and Dave (QA).",
+          "A draft agenda for sprint planning was shared and approved.",
+          "Staging environment was temporarily down for maintenance.",
+          "The parser component was developed, reviewed, and merged, including fixes for specific edge cases.",
+          "An API schema draft was created and refined based on team feedback.",
+          "The upload endpoint was deployed to staging and passed initial smoke tests.",
+          "LLM comparison results were shared, informing the choice of GPT-4o-mini.",
+          "Two critical parser bugs were identified via regression tests and promptly fixed.",
+          "The summarize endpoint was deployed to staging and manually tested with various chat exports.",
+          "Sprint 1 successfully delivered core features including file upload, WhatsApp parser, LLM summarization, and API schema.",
+          "Sprint 2 commenced with initial progress on frontend upload component and backend authentication integration."
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave"
+        ],
+        "summaryText": "The Dev Team Q2 successfully completed Sprint 1, delivering a WhatsApp chat summarizer with file upload, parsing for iOS/Android formats, an LLM summarization endpoint using GPT-4o-mini, and a defined API schema. They also fixed critical parser bugs and conducted thorough testing. Sprint 2 has commenced, focusing on frontend UI, authentication, session management, and preparing for production deployment, with initial progress made on key components."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "models/gemini-flash-latest",
+      "modelName": "Gemini Flash Latest (Google)",
+      "provider": "Google",
+      "latency": 7094,
+      "tokensUsed": 6057,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 54,
+      "parsedOutput": {
+        "topic": "Development and sprint planning for a WhatsApp chat summarization tool",
+        "keyDecisions": [
+          "Selected GPT-4o-mini as the primary LLM with Claude Haiku as a fallback",
+          "Decided to use relative time for frontend display and ISO 8601 for database storage",
+          "Chose Supabase for authentication integration",
+          "Agreed to normalize Windows-style CRLF line endings to LF in the parser"
+        ],
+        "actionItems": [
+          "Bob to send edge-case fixture to Carol for parser testing",
+          "Carol to implement the frontend upload flow component",
+          "Dave to add a session expiry scenario to the E2E test plan",
+          "Bob to handle backend authentication integration with Supabase"
+        ],
+        "notableFacts": [
+          "The parser successfully handles both iOS and Android timestamp formats and 8 different message types",
+          "Sprint 1 concluded with 33 unit and integration tests all passing",
+          "GPT-4o-mini was chosen due to its balance of cost ($0.00015/1k tokens) and quality (8.4/10)",
+          "The team resolved specific parser edge cases involving sender names with colons and multi-line message trimming"
+        ],
+        "participants": [
+          "Alice",
+          "Bob",
+          "Carol",
+          "Dave",
+          "+91 98281 01234"
+        ],
+        "summaryText": "The development team successfully completed Sprint 1, delivering a robust WhatsApp chat parser, file upload system, and an LLM-based summarization endpoint. The conversation transitioned into Sprint 2 planning, focusing on frontend UI development, Supabase authentication, and expanded E2E testing. The project remains on schedule with high test coverage and all initial acceptance criteria met."
+      }
+    },
+    {
+      "fixture": "ios-group.txt",
+      "modelId": "models/gemini-flash-lite-latest",
+      "modelName": "Gemini Flash Lite Latest (Google)",
+      "provider": "Google",
+      "latency": 7186,
+      "tokensUsed": 0,
+      "error": "HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "qwen-3-235b-a22b-instruct-2507",
+      "modelName": "Qwen 3 235B (Cerebras)",
+      "provider": "Cerebras",
+      "latency": 20958,
+      "tokensUsed": 0,
+      "error": "HTTP 429: {\"message\":\"Requests per minute limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "Meta-Llama-3.3-70B-Instruct",
+      "modelName": "Llama 3.3 70B (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 2526,
+      "tokensUsed": 3711,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 45,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat summarizer application",
+        "keyDecisions": [
+          "Choosing GPT-4o-mini as the primary LLM with Claude Haiku as fallback",
+          "Implementing authentication using Supabase",
+          "Deciding not to deduplicate file uploads from the same user"
+        ],
+        "actionItems": [
+          "Refine the LLM comparison table",
+          "Complete the API documentation",
+          "Test the application with various file types and sizes"
+        ],
+        "notableFacts": [
+          "GPT-4o-mini outperformed Claude Haiku in cost and latency",
+          "The application uses a Postman collection for testing",
+          "Supabase is used for authentication and database management"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob developed a WhatsApp chat summarizer application, choosing GPT-4o-mini as the primary LLM and implementing authentication using Supabase. They tested the application, refined the LLM comparison, and completed the API documentation. The application is now live and ready for feedback from the team."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "llama3.1-8b",
+      "modelName": "Llama 3.1 8B (Cerebras)",
+      "provider": "Cerebras",
+      "latency": 963,
+      "tokensUsed": 3694,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 35,
+      "parsedOutput": {
+        "topic": "Project Plan Review and Implementation",
+        "keyDecisions": [
+          "GPT-4o-mini primary, Haiku as fallback for large inputs",
+          "Create a new session each time, no deduplication for now",
+          "Return a 401 with a specific message: 'Session expired during processing.'"
+        ],
+        "actionItems": [
+          "Documenting the rationale for the LLM comparison",
+          "Reviewing the Supabase schema before deploying",
+          "Testing the full flow end to end"
+        ],
+        "notableFacts": [
+          "End-to-end encryption is enabled in the chat",
+          "The project plan review was done over coffee",
+          "The summarize endpoint returned a summary in 1.2s"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob reviewed the project plan over coffee and implemented the plan, including setting up Supabase, implementing authentication, and deploying the application. They made key decisions on LLM comparison, session handling, and error handling."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "DeepSeek-V3.2",
+      "modelName": "DeepSeek V3.2 (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 2680,
+      "tokensUsed": 3726,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 44,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat summarizer application",
+        "keyDecisions": [
+          "Use GPT-4o-mini as primary LLM with Claude Haiku as fallback",
+          "Add anonymization toggle for PII handling in Phase 2",
+          "Create new session for each file upload without deduplication"
+        ],
+        "actionItems": [
+          "Alice to update project plan and document LLM rationale",
+          "Bob to run LLM test harness and handle Supabase schema",
+          "Both to implement auth flow with Supabase magic link"
+        ],
+        "notableFacts": [
+          "GPT-4o-mini selected for cost and latency, Claude Haiku for better quality on large inputs",
+          "Supabase schema includes users, sessions, and summaries tables with foreign keys and RLS",
+          "Application deployed successfully with full auth and file upload functionality"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob collaborated on building a WhatsApp chat summarizer application, covering planning, development, and deployment. They made key decisions on LLM selection and PII handling, implemented features like file upload, summarization, and authentication using Supabase, and successfully deployed the application after thorough testing."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "Llama-4-Maverick-17B-128E-Instruct",
+      "modelName": "Llama 4 Maverick 128E (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 4014,
+      "tokensUsed": 3628,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 45,
+      "parsedOutput": {
+        "topic": "Development of a chat summary tool",
+        "keyDecisions": [
+          "Use GPT-4o-mini as primary LLM and Claude Haiku as fallback",
+          "Implement auth using Supabase magic link",
+          "Create a new session for each file upload"
+        ],
+        "actionItems": [
+          "Deploy to production",
+          "Run smoke test on production URL",
+          "Document the architecture and API"
+        ],
+        "notableFacts": [
+          "The tool handles .txt file uploads up to 5MB",
+          "LLM comparison showed GPT-4o-mini wins on cost and latency",
+          "Supabase schema includes RLS policies for security"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob collaborated on developing a chat summary tool using GPT-4o-mini and Supabase, implementing features like file upload, summary generation, and authentication. They discussed and decided on key technical decisions throughout the development process. The project was successfully deployed to production after thorough testing."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "gpt-oss-120b",
+      "modelName": "GPT OSS 120B (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 2484,
+      "tokensUsed": 4344,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 47,
+      "parsedOutput": {
+        "topic": "Development and deployment of a chat summarization tool, covering project planning, LLM selection, database schema, API design, authentication, and production rollout",
+        "keyDecisions": [
+          "Use GPT-4o-mini as the primary LLM with Claude Haiku as a fallback for larger inputs",
+          "Push parser work to week 2 after completing scaffold",
+          "Add an anonymization toggle for sender names in Phase 2",
+          "Return a 401 with message \"Session expired during processing\" if auth token expires mid‑upload",
+          "Do not deduplicate duplicate file uploads; create a new session each time"
+        ],
+        "actionItems": [
+          "Alice to update the project plan and document LLM rationale",
+          "Bob to run LLM test harness and provide comparison data",
+          "Alice to add a created_at index to the sessions table and merge schema changes",
+          "Bob to implement the upload endpoint with MIME, size, and empty‑file checks",
+          "Alice to rename processFile to parseUpload for clarity",
+          "Bob to set up Supabase project, apply RLS policies, and integrate auth flow",
+          "Both to test full end‑to‑end flow and add edge‑case tests",
+          "Alice and Bob to deploy to production and run smoke tests"
+        ],
+        "notableFacts": [
+          "Revised timeline allows parser work to start in week 2",
+          "GPT-4o-mini outperforms on cost ($0.0003 per call) and latency (1.1 s) while Claude Haiku scores slightly higher quality (8.8/10) but higher cost",
+          "Supabase schema consists of users, sessions, and summaries tables with foreign keys and RLS policies",
+          "Upload endpoint validates .txt MIME type, limits size to 5 MB, rejects empty files, and requires a valid session token",
+          "Production deployment succeeded with all API endpoints and error handling verified"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob coordinated the design, implementation, and launch of a chat summarizer, deciding on GPT-4o-mini as the main LLM and building a Supabase‑backed API with authentication. They iteratively refined the database schema, API endpoints, and error handling, completed testing, and successfully deployed the system to production."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "meta-llama/llama-3.3-70b-instruct:free",
+      "modelName": "Llama 3.3 70B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 22475,
+      "tokensUsed": 0,
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"meta-llama/llama-3.3-70b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or ad",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "openai/gpt-oss-120b:free",
+      "modelName": "GPT OSS 120B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 1626,
+      "tokensUsed": 3826,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 39,
+      "parsedOutput": {
+        "topic": "Development and deployment of a chat summarization tool with LLM evaluation, API and Supabase integration",
+        "keyDecisions": [
+          "Use GPT-4o-mini as primary LLM with Claude Haiku as fallback",
+          "Add anonymization toggle for sender names in Phase 2",
+          "Create a new session for each upload, no deduplication"
+        ],
+        "actionItems": [
+          "Alice to update project plan with timeline changes",
+          "Bob to add created_at index to sessions table",
+          "Implement auth flow with Supabase magic link",
+          "Add error handling for session expiry during processing",
+          "Run production smoke test after deployment"
+        ],
+        "notableFacts": [
+          "GPT-4o-mini showed lower cost ($0.0003) and latency (1.1s) than Claude Haiku",
+          "Supabase schema includes users, sessions, and summaries tables with RLS policies",
+          "Upload endpoint validates MIME type, size limit, UTF-8, and empty files",
+          "Frontend scaffold includes landing, summary, history, and auth pages"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob coordinated the planning, implementation, and deployment of a chat summarization service, iterating on timelines, LLM selection, API design, and Supabase schema. They completed backend endpoints, frontend scaffolding, authentication, and extensive testing before a successful production launch."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "openai/gpt-oss-20b:free",
+      "modelName": "GPT OSS 20B (OpenRouter)",
+      "provider": "OpenRouter",
+      "latency": 23242,
+      "tokensUsed": 0,
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"openai/gpt-oss-20b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key ",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "MiniMax-M2.7",
+      "modelName": "MiniMax M2.7 (SambaNova)",
+      "provider": "SambaNova",
+      "latency": 1048,
+      "tokensUsed": 0,
+      "error": "HTTP 422: Couldn't find valid service tier! Please contact your administrator\n",
+      "jsonValid": false,
+      "score": 0,
+      "fieldsPresent": 0,
+      "summaryWordCount": 0,
+      "parsedOutput": null
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "models/gemini-2.5-flash",
+      "modelName": "Gemini 2.5 Flash (Google)",
+      "provider": "Google",
+      "latency": 14263,
+      "tokensUsed": 6882,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 52,
+      "parsedOutput": {
+        "topic": "Development and Deployment of a Chat Summarization Application",
+        "keyDecisions": [
+          "To adjust the project timeline by pushing parser work to week 2 if the scaffold is completed today.",
+          "To use GPT-4o-mini as the primary LLM due to better cost and latency, with Claude Haiku as a fallback for large inputs.",
+          "To keep sender names in the prompt input for now and add an anonymization toggle in Phase 2.",
+          "To create a new session for each file upload, without deduplication.",
+          "To return a specific 'Session expired during processing' 401 error if a token expires mid-upload."
+        ],
+        "actionItems": [
+          "Alice to update the project plan.",
+          "Bob to run the LLM test harness tonight and provide results by morning.",
+          "Alice to start on the API schema.",
+          "Bob to handle the Supabase schema in parallel.",
+          "Alice to review Bob's schema draft.",
+          "Bob to add a `created_at` index to the sessions table.",
+          "Bob to log the anonymization toggle as a backlog item.",
+          "Alice to document the LLM selection decision.",
+          "Bob to link the LLM comparison table in the architecture document.",
+          "Bob to add auth headers once Supabase is wired (using placeholders for now).",
+          "Alice to add RLS policies to the Supabase schema before deployment.",
+          "Bob to add a check for empty files to the upload endpoint.",
+          "Bob to clean up error messages for the PR.",
+          "Alice to review Bob's PR for upload and parse logic.",
+          "Bob to fix PR comments (MIME check helper, empty array for no-message files, JSDoc).",
+          "Alice to start the frontend scaffold.",
+          "Bob to start the summarize endpoint.",
+          "Alice to test `android-indiv.txt` after standup.",
+          "Bob to rename `processFile` to `parseUpload` in the summarize endpoint PR.",
+          "Bob to set up the Supabase project.",
+          "Alice to send environment keys securely.",
+          "Bob to wire the session to the upload flow.",
+          "Bob to note duplicate file upload behavior in the API documentation.",
+          "Bob to add session expiry error handling.",
+          "Alice to review the session expiry PR.",
+          "Alice to deploy the application.",
+          "Bob to run a smoke test on the production URL."
+        ],
+        "notableFacts": [
+          "Alice and Bob met for coffee to review the project plan.",
+          "Bob provided a revised project timeline.",
+          "GPT-4o-mini was found to be superior to Claude Haiku in terms of cost and latency for LLM summarization.",
+          "Bob completed the Supabase schema draft, including users, summaries, and sessions tables.",
+          "Alice completed the API schema v1 with endpoints for upload, summary, sessions, and delete.",
+          "The upload endpoint handles .txt MIME check, file size limit, UTF-8 validation, and empty file checks.",
+          "The frontend scaffold includes landing, summary, history, and auth pages.",
+          "The summarize endpoint was developed and tested locally, handling 24-hour timestamps.",
+          "Supabase project was set up, schema migrated, and RLS policies applied.",
+          "The authentication flow using Supabase magic links was successfully implemented and tested.",
+          "The full application flow (login, upload, view summary, logout, re-upload without auth) was tested end-to-end.",
+          "The project sprint was flagged as done, and the application was successfully deployed and smoke-tested on production."
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob collaborated on developing and deploying a chat summarization application. They made key decisions regarding project timelines, LLM selection (GPT-4o-mini primary, Claude Haiku fallback), and authentication flow. The project involved developing API endpoints, database schemas, frontend components, and robust error handling, culminating in a successful production deployment and smoke test."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "models/gemini-flash-latest",
+      "modelName": "Gemini Flash Latest (Google)",
+      "provider": "Google",
+      "latency": 16197,
+      "tokensUsed": 5360,
+      "error": null,
+      "jsonValid": true,
+      "score": 9,
+      "fieldsPresent": 6,
+      "summaryWordCount": 42,
+      "parsedOutput": {
+        "topic": "Development and deployment of a WhatsApp chat summarizer application",
+        "keyDecisions": [
+          "Selected GPT-4o-mini as the primary LLM for cost and latency, with Claude Haiku as a fallback",
+          "Adopted Supabase for database management and magic link authentication",
+          "Decided to create new sessions for duplicate file uploads rather than deduplicating",
+          "Implemented Row Level Security (RLS) policies for data protection"
+        ],
+        "actionItems": [
+          "Configure production environment variables in Vercel",
+          "Perform production smoke tests on the live URL",
+          "Add PII anonymization toggle to the Phase 2 backlog"
+        ],
+        "notableFacts": [
+          "GPT-4o-mini showed 1.1s latency and $0.0003 cost per call in testing",
+          "The parser successfully handles both iOS and Android 24-hour timestamp formats",
+          "File uploads are restricted to a 5 MB limit with UTF-8 validation"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob collaborated to build a full-stack WhatsApp chat summarizer, covering LLM benchmarking, API development, and Supabase integration. The project concluded with a successful production deployment on Vercel, featuring secure authentication and robust error handling for edge cases like session expiry."
+      }
+    },
+    {
+      "fixture": "ios-indiv.txt",
+      "modelId": "models/gemini-flash-lite-latest",
+      "modelName": "Gemini Flash Lite Latest (Google)",
+      "provider": "Google",
+      "latency": 23064,
+      "tokensUsed": 4367,
+      "error": null,
+      "jsonValid": true,
+      "score": 10,
+      "fieldsPresent": 6,
+      "summaryWordCount": 53,
+      "parsedOutput": {
+        "topic": "Development of a WhatsApp chat summarization application",
+        "keyDecisions": [
+          "Use GPT-4o-mini as the primary LLM with Claude Haiku as a fallback",
+          "Implement Supabase for database management and authentication",
+          "Use magic link authentication for user sessions",
+          "No deduplication for repeated file uploads by the same user",
+          "Handle session expiry during processing with a specific 401 error message"
+        ],
+        "actionItems": [
+          "Deploy the application to production",
+          "Conduct smoke tests on the production environment",
+          "Gather feedback from the wider team"
+        ],
+        "notableFacts": [
+          "GPT-4o-mini was chosen for its superior cost and latency profile",
+          "The API handles .txt files with a 5MB size limit",
+          "The database schema includes tables for users, sessions, and summaries with RLS policies",
+          "The application supports 24-hour timestamp parsing",
+          "The project was successfully deployed and verified on Vercel"
+        ],
+        "participants": [
+          "Alice",
+          "Bob"
+        ],
+        "summaryText": "Alice and Bob collaborated on building a WhatsApp chat summarization tool, successfully implementing an API, database schema, and authentication flow. They selected GPT-4o-mini as their primary LLM and completed full end-to-end testing of the upload and summarization features. The project was successfully deployed to production after passing all smoke tests and error-handling checks."
+      }
+    }
+  ]
+}

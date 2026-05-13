@@ -35,7 +35,7 @@ Rules you MUST follow when reading or modifying this document:
 | **This file** | `execution_plan.md` |
 | **Source document** | [`WhatsApp_Summarizer_Project_Plan.md`](./WhatsApp_Summarizer_Project_Plan.md) |
 | **Relationship** | This file operationalizes the plan described in the source document into a sprint-by-sprint checkbox checklist. The source document defines *what* to build and *why*; this file defines *when* and *how* to build it. |
-| **Last synced** | 2026-05-10 |
+| **Last synced** | 2026-05-13 |
 
 ---
 
@@ -44,10 +44,47 @@ Rules you MUST follow when reading or modifying this document:
 | Field | Value |
 |---|---|
 | **Status** | `in_progress` |
-| **Current Phase** | Phase 0 — Project Setup & Research |
-| **Overall Completion** | 0 / 8 phases complete |
+| **Current Phase** | Phase 1 — Core Parser + API Foundation |
+| **Overall Completion** | 1 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
+
+---
+
+## Git Workflow
+
+**Two permanent branches:**
+
+| Branch | Purpose |
+|---|---|
+| `main` | Stable code only. Receives a merge from `develop` at the end of each completed phase. |
+| `develop` | Active development. All phase branches are cut from here and merged back here. |
+
+**One short-lived branch per phase:**
+
+| Branch name | Cut from | Merge back to | When |
+|---|---|---|---|
+| `feature/phase-1-parser` | `develop` | `develop` | Start of Phase 1; merge when all Phase 1 steps are checked |
+| `feature/phase-2-summarizer` | `develop` | `develop` | Start of Phase 2 |
+| `feature/phase-3-reply-drafter` | `develop` | `develop` | Start of Phase 3 |
+| `feature/phase-4-daily-brief` | `develop` | `develop` | Start of Phase 4 |
+| `feature/phase-5-auth-history` | `develop` | `develop` | Start of Phase 5 |
+| `feature/phase-6-polish` | `develop` | `develop` | Start of Phase 6 |
+| `feature/phase-7-testing-deploy` | `develop` | `develop` | Start of Phase 7 |
+
+**Rules:**
+- Never commit directly to `main`.
+- Both teammates push to the same feature branch and open a PR into `develop` when the phase is done.
+- After the PR into `develop` is merged and smoke-tested, open a second PR: `develop` → `main`.
+- Delete the feature branch after its PR is merged.
+
+**Right now — setup step (do this once before starting Phase 1):**
+```
+git checkout main
+git pull
+git checkout -b develop
+git push -u origin develop
+```
 
 ---
 
@@ -55,7 +92,8 @@ Rules you MUST follow when reading or modifying this document:
 
 **Week:** 1 (Days 1–7)
 **Dependency:** None — this is the entry point.
-**Status:** `in_progress`
+**Status:** `complete`
+**Branch:** All Phase 0 work was committed directly to `main`. Before Phase 1, create `develop` from `main` (see Git Workflow above).
 
 ### Environment & Repository
 - [x] Step 0.1: Create GitHub repository `whatsapp-thread-summarizer` with `main`, `develop`, `feature/*` branch strategy documented in `CONTRIBUTING.md`
@@ -84,9 +122,9 @@ Rules you MUST follow when reading or modifying this document:
   - *Acceptance Criteria:* Zero unresolved failures against the 3 fixture files
 
 ### Research: LLM API Comparison
-- [ ] Step 0.11: Create test harness `docs/llm-comparison/test-runner.js` sending 5 chat samples to GPT-4o-mini and Claude Haiku
+- [x] Step 0.11: Create test harness `docs/llm-comparison/test-runner.js` sending 3 fixture files to 8 free cloud models across Cerebras, SambaNova, OpenRouter, and Google AI Studio
   - *Acceptance Criteria:* Script runs and outputs comparison data without errors
-- [ ] Step 0.12: Record quality score, latency, cost, and JSON adherence for each model; document rationale for GPT-4o-mini (primary) and Claude Haiku (fallback) in `docs/format-research.md`
+- [x] Step 0.12: Record quality score, latency, cost, and JSON adherence for each model; document rationale for Llama 4 Maverick 128E (primary), Llama 3.1 8B (fallback 1), and Gemini 2.5 Flash (fallback 2) in `docs/format-research.md`
   - *Dependency:* Step 0.11
   - *Acceptance Criteria:* Decision is documented with data supporting it
 
@@ -107,6 +145,8 @@ Rules you MUST follow when reading or modifying this document:
 **Week:** 2 (Days 8–14)
 **Dependency:** Phase 0 complete — repo initialized, format research done, API schema documented
 **Status:** `not_started`
+**Branch:** `git checkout develop && git checkout -b feature/phase-1-parser && git push -u origin feature/phase-1-parser`
+**Merge when done:** PR `feature/phase-1-parser` → `develop`, then PR `develop` → `main`
 
 ### Chat Parser Module (`backend/src/parser/`)
 - [ ] Step 1.1: Create `backend/src/parser/whatsappParser.js` — `parseWhatsAppExport(rawText)` returns `[{ date, time, timestamp, sender, content, type }]`
@@ -151,6 +191,8 @@ Rules you MUST follow when reading or modifying this document:
 **Week:** 3 (Days 15–21)
 **Dependency:** Phase 1 complete — parser tested, `/api/summarize` operational, React upload flow connected
 **Status:** `not_started`
+**Branch:** `git checkout develop && git checkout -b feature/phase-2-summarizer && git push -u origin feature/phase-2-summarizer`
+**Merge when done:** PR `feature/phase-2-summarizer` → `develop`, then PR `develop` → `main`
 
 ### Summarizer Module (`backend/src/summarizer/`)
 - [ ] Step 2.1: Create `backend/src/summarizer/promptBuilder.js` — `buildSummarizationPrompt(messages, summaryLength)` using v1 template from `docs/prompt-templates.md`; `summaryLength` accepts `'short' | 'medium' | 'detailed'`
@@ -182,6 +224,8 @@ Rules you MUST follow when reading or modifying this document:
 **Week:** 4 (Days 22–28)
 **Dependency:** Phase 2 complete — summarizer pipeline tested, SummaryPage rendering correctly
 **Status:** `not_started`
+**Branch:** `git checkout develop && git checkout -b feature/phase-3-reply-drafter && git push -u origin feature/phase-3-reply-drafter`
+**Merge when done:** PR `feature/phase-3-reply-drafter` → `develop`, then PR `develop` → `main`
 
 ### Reply Drafter Backend
 - [ ] Step 3.1: Create `backend/src/summarizer/replyDrafter.js` — `draftReplies(messages, userIntent, tone)` returns exactly 3 reply options; validates non-empty strings
@@ -210,6 +254,8 @@ Rules you MUST follow when reading or modifying this document:
 **Week:** 5 (Days 29–35)
 **Dependency:** Phase 3 complete — reply drafter endpoint tested, panel UI wired
 **Status:** `not_started`
+**Branch:** `git checkout develop && git checkout -b feature/phase-4-daily-brief && git push -u origin feature/phase-4-daily-brief`
+**Merge when done:** PR `feature/phase-4-daily-brief` → `develop`, then PR `develop` → `main`
 
 ### Multi-File Upload
 - [ ] Step 4.1: Update `POST /api/upload` to accept up to 10 files via Multer `array('files', 10)`; validate each file individually
@@ -241,6 +287,8 @@ Rules you MUST follow when reading or modifying this document:
 **Week:** 6 (Days 36–42)
 **Dependency:** Phase 4 complete — all three core feature pipelines operational
 **Status:** `not_started`
+**Branch:** `git checkout develop && git checkout -b feature/phase-5-auth-history && git push -u origin feature/phase-5-auth-history`
+**Merge when done:** PR `feature/phase-5-auth-history` → `develop`, then PR `develop` → `main`
 
 ### Auth Backend
 - [ ] Step 5.1: Install `bcrypt`, `jsonwebtoken`, `express-validator` in backend
@@ -278,6 +326,8 @@ Rules you MUST follow when reading or modifying this document:
 **Week:** 7 (Days 43–49)
 **Dependency:** Phase 5 complete — auth and history fully functional
 **Status:** `not_started`
+**Branch:** `git checkout develop && git checkout -b feature/phase-6-polish && git push -u origin feature/phase-6-polish`
+**Merge when done:** PR `feature/phase-6-polish` → `develop`, then PR `develop` → `main`
 
 ### PDF Export
 - [ ] Step 6.1: Install `puppeteer` in backend
@@ -317,6 +367,8 @@ Rules you MUST follow when reading or modifying this document:
 **Week:** 8 (Days 50–56)
 **Dependency:** Phase 6 complete — UI polish done, PDF export working, dark mode and responsive layout complete
 **Status:** `not_started`
+**Branch:** `git checkout develop && git checkout -b feature/phase-7-testing-deploy && git push -u origin feature/phase-7-testing-deploy`
+**Merge when done:** PR `feature/phase-7-testing-deploy` → `develop`, then final PR `develop` → `main` (this is the production release)
 
 ### Integration Testing
 - [ ] Step 7.1: Write `backend/tests/integration/api.test.js` with Supertest — minimum 8 cases covering all critical endpoints
@@ -371,7 +423,7 @@ Rules you MUST follow when reading or modifying this document:
 
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
-| Phase 0 | Project Setup & Research | 1 | 16 | 10 | `in_progress` |
+| Phase 0 | Project Setup & Research | 1 | 16 | 12 | `complete` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 0 | `not_started` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
@@ -379,8 +431,8 @@ Rules you MUST follow when reading or modifying this document:
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **10** | **10% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **12** | **12% complete** |
 
 ---
 
-*Bidirectionally linked to `WhatsApp_Summarizer_Project_Plan.md`. Both files must be updated together when scope changes. Last updated: 2026-05-10.*
+*Bidirectionally linked to `WhatsApp_Summarizer_Project_Plan.md`. Both files must be updated together when scope changes. Last updated: 2026-05-13.*
