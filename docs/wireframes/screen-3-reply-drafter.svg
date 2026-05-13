@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900"
+     font-family="'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <filter id="neu-up" x="-35%" y="-35%" width="170%" height="170%">
+      <feOffset dx="-7" dy="-7" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="8" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.75" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="7" dy="7" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="8" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-in" x="-5%" y="-5%" width="110%" height="110%">
+      <feFlood flood-color="white" result="white"/>
+      <feComposite in="white" in2="SourceAlpha" operator="out" result="inv"/>
+      <feOffset dx="-4" dy="-4" in="inv" result="di_off"/>
+      <feGaussianBlur stdDeviation="5" in="di_off" result="di_blur"/>
+      <feFlood flood-color="#06070f" flood-opacity="0.9" result="di_col"/>
+      <feComposite in="di_col" in2="di_blur" operator="in" result="di_raw"/>
+      <feComposite in="di_raw" in2="SourceAlpha" operator="in" result="dark_in"/>
+      <feOffset dx="4" dy="4" in="inv" result="li_off"/>
+      <feGaussianBlur stdDeviation="5" in="li_off" result="li_blur"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.6" result="li_col"/>
+      <feComposite in="li_col" in2="li_blur" operator="in" result="li_raw"/>
+      <feComposite in="li_raw" in2="SourceAlpha" operator="in" result="light_in"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic"/><feMergeNode in="dark_in"/><feMergeNode in="light_in"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-sm" x="-40%" y="-40%" width="180%" height="180%">
+      <feOffset dx="-4" dy="-4" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="5" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.70" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="4" dy="4" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="5" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="btn-glow" x="-20%" y="-30%" width="140%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="g-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#6edfa0"/>
+    </linearGradient>
+    <linearGradient id="g-btn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#2bcc60"/>
+      <stop offset="100%" stop-color="#1a9946"/>
+    </linearGradient>
+    <radialGradient id="center-haze" cx="50%" cy="50%" r="40%">
+      <stop offset="0%"   stop-color="#25D366" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#25D366" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 48 48 M 0 48 L 48 48" fill="none" stroke="#e8eaf6" stroke-width="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- Background (summary page dimmed behind panel) -->
+  <rect width="1280" height="900" fill="#0e1020"/>
+  <rect width="1280" height="900" fill="url(#grid)" opacity="0.045"/>
+  <ellipse cx="640" cy="450" rx="460" ry="360" fill="url(#center-haze)"/>
+
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="52"   cy="32"  r="0.9" opacity="0.55"/>
+    <circle cx="198"  cy="19"  r="0.7" opacity="0.65"/>
+    <circle cx="874"  cy="14"  r="0.7" opacity="0.6"/>
+    <circle cx="1060" cy="41"  r="0.9" opacity="0.4"/>
+    <circle cx="1224" cy="23"  r="0.6" opacity="0.55"/>
+    <circle cx="88"   cy="800" r="0.5" opacity="0.35"/>
+    <circle cx="1186" cy="780" r="0.7" opacity="0.4"/>
+    <circle cx="300"  cy="750" r="0.5" opacity="0.2"/>
+    <circle cx="980"  cy="760" r="0.6" opacity="0.22"/>
+  </g>
+
+  <!-- Nav -->
+  <rect width="1280" height="64" fill="#0e1020" filter="url(#neu-up)"/>
+  <line x1="0" y1="64" x2="1280" y2="64" stroke="#25D366" stroke-width="0.4" opacity="0.2"/>
+  <rect x="28" y="18" width="30" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <polyline points="36,26 40,38 43,31 46,38 50,26" fill="none" stroke="#25D366" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="68" y="38" font-size="15" font-weight="700" fill="#e8eaf6">WA Summarizer</text>
+  <text x="820" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">Upload</text>
+  <text x="896" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">Daily Brief</text>
+  <text x="980" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">History</text>
+  <rect x="1188" y="18" width="72" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="1224" y="36" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.5">Sign in</text>
+
+  <!-- Summary page ghost (dimmed behind scrim) -->
+  <rect x="0" y="64" width="740" height="836" fill="#06070f" opacity="0.6"/>
+  <text x="40"  y="120" font-size="11" fill="#e8eaf6" opacity="0.06" letter-spacing="1.5">SUMMARY</text>
+  <text x="40"  y="146" font-size="22" font-weight="700" fill="#e8eaf6" opacity="0.08">chat-work.txt</text>
+  <rect x="40"  y="162" width="680" height="560" rx="18" fill="#0e1020" opacity="0.4"/>
+  <!-- Ghost action items visible behind -->
+  <text x="60"  y="200" font-size="10" fill="#e8eaf6" opacity="0.05" letter-spacing="1.5">ACTION ITEMS</text>
+  <rect x="60"  y="208" width="640" height="28" rx="6" fill="#25D366" fill-opacity="0.03"/>
+  <rect x="60"  y="244" width="640" height="28" rx="6" fill="#25D366" fill-opacity="0.02"/>
+  <rect x="60"  y="280" width="640" height="28" rx="6" fill="#25D366" fill-opacity="0.02"/>
+
+  <!-- Separator line between dimmed bg and panel -->
+  <line x1="740" y1="0" x2="740" y2="900" stroke="#25D366" stroke-width="1.5" opacity="0.25"/>
+
+  <!-- Reply drafter panel -->
+  <rect x="740" y="64" width="540" height="836" fill="#0d0f1e"/>
+  <rect x="740" y="64" width="540" height="836" fill="url(#grid)" opacity="0.03"/>
+
+  <!-- Panel header -->
+  <rect x="740" y="64" width="540" height="68" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="768" y="104" font-size="16" font-weight="700" fill="url(#g-text)">Reply Drafter</text>
+  <!-- Close button -->
+  <rect x="1244" y="78" width="28" height="28" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <line x1="1252" y1="86" x2="1264" y2="98" stroke="#e8eaf6" stroke-width="1.5" stroke-opacity="0.3" stroke-linecap="round"/>
+  <line x1="1264" y1="86" x2="1252" y2="98" stroke="#e8eaf6" stroke-width="1.5" stroke-opacity="0.3" stroke-linecap="round"/>
+
+  <!-- Context section -->
+  <text x="768" y="160" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">CONTEXT</text>
+  <rect x="760" y="168" width="504" height="70" rx="10" fill="#0e1020" filter="url(#neu-in)"/>
+  <rect x="760" y="168" width="4" height="70" rx="2" fill="#25D366" opacity="0.5"/>
+  <text x="778" y="188" font-size="12" fill="#e8eaf6" opacity="0.6">Q2 project delivery timeline · 5 participants</text>
+  <text x="778" y="206" font-size="12" fill="#e8eaf6" opacity="0.6">3 action items · deadline Friday 3pm</text>
+  <text x="778" y="224" font-size="11" fill="#e8eaf6" opacity="0.3">Last message: Ali — "Will send revised estimate tonight"</text>
+
+  <!-- Tone selector -->
+  <text x="768" y="264" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">TONE</text>
+  <rect x="760" y="272" width="504" height="44" rx="10" fill="#0e1020" filter="url(#neu-in)"/>
+  <!-- Formal (active) -->
+  <rect x="764" y="276" width="96" height="36" rx="8" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="764" y="276" width="96" height="36" rx="8" fill="none" stroke="#25D366" stroke-width="0.8" opacity="0.5"/>
+  <text x="812" y="298" text-anchor="middle" font-size="12" font-weight="700" fill="#25D366">Formal</text>
+  <!-- Casual -->
+  <text x="900" y="298" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.3">Casual</text>
+  <!-- Concise -->
+  <text x="992" y="298" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.3">Concise</text>
+  <!-- Apologetic -->
+  <text x="1094" y="298" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.3">Apologetic</text>
+  <!-- Assertive -->
+  <text x="1196" y="298" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.3">Assertive</text>
+
+  <!-- Intent field -->
+  <text x="768" y="336" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">YOUR INTENT  <tspan opacity="0.15">(optional)</tspan></text>
+  <rect x="760" y="344" width="504" height="56" rx="10" fill="#0e1020" filter="url(#neu-in)"/>
+  <text x="778" y="368" font-size="13" fill="#e8eaf6" opacity="0.22">e.g. "Confirm I'll review Ali's estimate and join the call"</text>
+  <!-- Cursor blink indicator -->
+  <line x1="778" y1="374" x2="778" y2="388" stroke="#25D366" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Generate button -->
+  <rect x="760" y="414" width="504" height="50" rx="11" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="760" y="414" width="504" height="50" rx="11" fill="url(#g-btn)" filter="url(#btn-glow)"/>
+  <text x="1012" y="444" text-anchor="middle" font-size="14" font-weight="700" fill="white">Generate 3 Drafts →</text>
+  <ellipse cx="1012" cy="468" rx="110" ry="6" fill="#25D366" opacity="0.1"/>
+
+  <!-- Divider -->
+  <line x1="760" y1="488" x2="1264" y2="488" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <text x="1012" y="504" text-anchor="middle" font-size="10" fill="#e8eaf6" opacity="0.2" letter-spacing="1">3 DRAFTS — FORMAL TONE</text>
+
+  <!-- Reply card 1 (active / selected) -->
+  <rect x="760" y="514" width="504" height="102" rx="12" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="760" y="514" width="504" height="102" rx="12" fill="none" stroke="#25D366" stroke-width="1" opacity="0.4"/>
+  <rect x="760" y="514" width="504" height="1.5" rx="0.75" fill="url(#g-text)" opacity="0.5"/>
+  <text x="778" y="536" font-size="10" font-weight="600" fill="#25D366" letter-spacing="1">OPTION 1 · FORMAL</text>
+  <text x="778" y="556" font-size="12" fill="#e8eaf6" opacity="0.75">Thank you for the update. I'll review Ali's revised estimate</text>
+  <text x="778" y="572" font-size="12" fill="#e8eaf6" opacity="0.75">once received and confirm our availability for Friday's 3pm</text>
+  <text x="778" y="588" font-size="12" fill="#e8eaf6" opacity="0.75">client review call.</text>
+  <!-- Copy button -->
+  <rect x="1192" y="522" width="60" height="26" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="1222" y="539" text-anchor="middle" font-size="11" fill="#25D366" opacity="0.7">Copy</text>
+
+  <!-- Reply card 2 -->
+  <rect x="760" y="628" width="504" height="102" rx="12" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="778" y="650" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.2" letter-spacing="1">OPTION 2 · FORMAL</text>
+  <text x="778" y="670" font-size="12" fill="#e8eaf6" opacity="0.5">Acknowledged. I will await Ali's estimate before confirming</text>
+  <text x="778" y="686" font-size="12" fill="#e8eaf6" opacity="0.5">the final sprint scope. Please send the calendar invite for</text>
+  <text x="778" y="702" font-size="12" fill="#e8eaf6" opacity="0.5">the Friday call at your earliest convenience.</text>
+  <rect x="1192" y="636" width="60" height="26" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="1222" y="653" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.35">Copy</text>
+
+  <!-- Reply card 3 -->
+  <rect x="760" y="742" width="504" height="102" rx="12" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="778" y="764" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.2" letter-spacing="1">OPTION 3 · FORMAL</text>
+  <text x="778" y="784" font-size="12" fill="#e8eaf6" opacity="0.5">Noted, Ali. I will review the estimate Thursday evening.</text>
+  <text x="778" y="800" font-size="12" fill="#e8eaf6" opacity="0.5">Friday's 3pm review is in my calendar. Nadia, please share</text>
+  <text x="778" y="816" font-size="12" fill="#e8eaf6" opacity="0.5">the Figma link by Thursday noon so I can review ahead.</text>
+  <rect x="1192" y="750" width="60" height="26" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="1222" y="767" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.35">Copy</text>
+
+  <!-- Keyboard hint -->
+  <text x="1012" y="870" text-anchor="middle" font-size="10" fill="#e8eaf6" opacity="0.15">Esc to close · Tab to cycle cards</text>
+  <text x="40"   y="880" font-size="10" fill="#e8eaf6" opacity="0.12" letter-spacing="1">03 — REPLY DRAFTER PANEL</text>
+</svg>

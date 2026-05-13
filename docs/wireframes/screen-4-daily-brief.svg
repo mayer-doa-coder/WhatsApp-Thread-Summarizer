@@ -1,0 +1,225 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900"
+     font-family="'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <filter id="neu-up" x="-35%" y="-35%" width="170%" height="170%">
+      <feOffset dx="-7" dy="-7" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="8" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.75" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="7" dy="7" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="8" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-in" x="-5%" y="-5%" width="110%" height="110%">
+      <feFlood flood-color="white" result="white"/>
+      <feComposite in="white" in2="SourceAlpha" operator="out" result="inv"/>
+      <feOffset dx="-4" dy="-4" in="inv" result="di_off"/>
+      <feGaussianBlur stdDeviation="5" in="di_off" result="di_blur"/>
+      <feFlood flood-color="#06070f" flood-opacity="0.9" result="di_col"/>
+      <feComposite in="di_col" in2="di_blur" operator="in" result="di_raw"/>
+      <feComposite in="di_raw" in2="SourceAlpha" operator="in" result="dark_in"/>
+      <feOffset dx="4" dy="4" in="inv" result="li_off"/>
+      <feGaussianBlur stdDeviation="5" in="li_off" result="li_blur"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.6" result="li_col"/>
+      <feComposite in="li_col" in2="li_blur" operator="in" result="li_raw"/>
+      <feComposite in="li_raw" in2="SourceAlpha" operator="in" result="light_in"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic"/><feMergeNode in="dark_in"/><feMergeNode in="light_in"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-sm" x="-40%" y="-40%" width="180%" height="180%">
+      <feOffset dx="-4" dy="-4" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="5" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.70" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="4" dy="4" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="5" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="btn-glow" x="-20%" y="-30%" width="140%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="g-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#6edfa0"/>
+    </linearGradient>
+    <linearGradient id="g-btn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#2bcc60"/>
+      <stop offset="100%" stop-color="#1a9946"/>
+    </linearGradient>
+    <radialGradient id="center-haze" cx="50%" cy="50%" r="40%">
+      <stop offset="0%"   stop-color="#25D366" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#25D366" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 48 48 M 0 48 L 48 48" fill="none" stroke="#e8eaf6" stroke-width="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="900" fill="#0e1020"/>
+  <rect width="1280" height="900" fill="url(#grid)" opacity="0.045"/>
+  <ellipse cx="640" cy="450" rx="460" ry="360" fill="url(#center-haze)"/>
+
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="52"   cy="32"  r="0.9" opacity="0.55"/>
+    <circle cx="198"  cy="19"  r="0.7" opacity="0.65"/>
+    <circle cx="874"  cy="14"  r="0.7" opacity="0.6"/>
+    <circle cx="1060" cy="41"  r="0.9" opacity="0.4"/>
+    <circle cx="1224" cy="23"  r="0.6" opacity="0.55"/>
+    <circle cx="88"   cy="800" r="0.5" opacity="0.35"/>
+    <circle cx="1186" cy="780" r="0.7" opacity="0.4"/>
+    <circle cx="44"   cy="860" r="0.6" opacity="0.3"/>
+    <circle cx="1238" cy="840" r="0.8" opacity="0.35"/>
+    <circle cx="300"  cy="750" r="0.5" opacity="0.2"/>
+    <circle cx="980"  cy="760" r="0.6" opacity="0.22"/>
+  </g>
+
+  <!-- Nav -->
+  <rect width="1280" height="64" fill="#0e1020" filter="url(#neu-up)"/>
+  <line x1="0" y1="64" x2="1280" y2="64" stroke="#25D366" stroke-width="0.4" opacity="0.2"/>
+  <rect x="28" y="18" width="30" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <polyline points="36,26 40,38 43,31 46,38 50,26" fill="none" stroke="#25D366" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="68" y="38" font-size="15" font-weight="700" fill="#e8eaf6">WA Summarizer</text>
+  <text x="820" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">Upload</text>
+  <text x="896" y="37" font-size="13" fill="#25D366">Daily Brief</text>
+  <line x1="896" y1="56" x2="956" y2="56" stroke="#25D366" stroke-width="1.5" opacity="0.5"/>
+  <text x="980" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">History</text>
+  <rect x="1168" y="18" width="84" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <circle cx="1182" cy="32" r="7" fill="#25D366" fill-opacity="0.3"/>
+  <text x="1182" y="37" text-anchor="middle" font-size="10" font-weight="700" fill="#25D366">M</text>
+  <text x="1200" y="36" font-size="11" fill="#e8eaf6" opacity="0.5">Mehdi</text>
+
+  <!-- Page header -->
+  <text x="40" y="104" font-size="22" font-weight="700" fill="#e8eaf6">Daily Brief</text>
+  <text x="40" y="124" font-size="13" fill="#e8eaf6" opacity="0.35">Wednesday, May 13 · 5 conversations</text>
+  <rect x="1060" y="82" width="96" height="34" rx="9" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="1108" y="104" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.45">Copy HTML</text>
+  <rect x="1168" y="82" width="96" height="34" rx="9" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="1168" y="82" width="96" height="34" rx="9" fill="url(#g-btn)" filter="url(#btn-glow)"/>
+  <text x="1216" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="white">Download PDF</text>
+  <ellipse cx="1216" cy="120" rx="44" ry="5" fill="#25D366" opacity="0.1"/>
+
+  <!-- Overview card -->
+  <rect x="40" y="142" width="1200" height="96" rx="14" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="60" y="168" font-size="11" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">OVERVIEW</text>
+  <text x="60" y="188" font-size="13" fill="#e8eaf6" opacity="0.65">Today you were active in 5 chats. Key themes: project delivery timeline, weekend plans, and team onboarding.</text>
+  <text x="60" y="208" font-size="13" fill="#e8eaf6" opacity="0.65">3 action items require your attention. 2 decisions were made across chats.</text>
+  <line x1="920" y1="158" x2="920" y2="228" stroke="#e8eaf6" stroke-opacity="0.05"/>
+  <text x="948" y="176" font-size="11" fill="#e8eaf6" opacity="0.22">Total messages</text>
+  <text x="948" y="200" font-size="22" font-weight="700" fill="url(#g-text)">847</text>
+  <text x="1060" y="176" font-size="11" fill="#e8eaf6" opacity="0.22">Action items</text>
+  <text x="1060" y="200" font-size="22" font-weight="700" fill="url(#g-text)">3</text>
+  <text x="1170" y="176" font-size="11" fill="#e8eaf6" opacity="0.22">Chats</text>
+  <text x="1170" y="200" font-size="22" font-weight="700" fill="url(#g-text)">5</text>
+
+  <!-- Conversations label -->
+  <text x="40"   y="262" font-size="11" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">CONVERSATIONS</text>
+  <text x="1240" y="262" text-anchor="end" font-size="11" fill="#25D366" opacity="0.5">scroll →</text>
+
+  <!-- Chat card 1 (active) -->
+  <rect x="40"  y="274" width="286" height="222" rx="14" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="40"  y="274" width="286" height="222" rx="14" fill="none" stroke="#25D366" stroke-width="1" opacity="0.35"/>
+  <rect x="40"  y="274" width="4"   height="222" rx="2" fill="#25D366" opacity="0.5"/>
+  <text x="56"  y="302" font-size="13" font-weight="700" fill="#e8eaf6">Work Project Chat</text>
+  <text x="56"  y="320" font-size="11" fill="#e8eaf6" opacity="0.35">198 msgs · 6 people · 4h ago</text>
+  <line x1="56" y1="332" x2="310" y2="332" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <text x="56"  y="352" font-size="12" fill="#e8eaf6" opacity="0.65">Deadline moved to Friday.</text>
+  <text x="56"  y="370" font-size="12" fill="#e8eaf6" opacity="0.65">Ali to send revised estimate.</text>
+  <text x="56"  y="388" font-size="12" fill="#e8eaf6" opacity="0.65">Client review call confirmed.</text>
+  <rect x="56"  y="402" width="18" height="18" rx="4" fill="#0e1020" filter="url(#neu-sm)"/>
+  <rect x="56"  y="402" width="18" height="18" rx="4" fill="none" stroke="#25D366" opacity="0.4"/>
+  <text x="65"  y="415" text-anchor="middle" font-size="10" font-weight="700" fill="#25D366">3</text>
+  <text x="80"  y="415" font-size="11" fill="#25D366" opacity="0.8">action items</text>
+  <rect x="56"  y="460" width="108" height="26" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="110" y="477" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.4">View Full →</text>
+
+  <!-- Chat card 2 -->
+  <rect x="340"  y="274" width="270" height="222" rx="14" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="356"  y="302" font-size="13" font-weight="700" fill="#e8eaf6">Family Group</text>
+  <text x="356"  y="320" font-size="11" fill="#e8eaf6" opacity="0.35">74 msgs · 9 people · 2h ago</text>
+  <line x1="356" y1="332" x2="594" y2="332" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <text x="356"  y="352" font-size="12" fill="#e8eaf6" opacity="0.6">Weekend gathering at mom's</text>
+  <text x="356"  y="370" font-size="12" fill="#e8eaf6" opacity="0.6">confirmed for Saturday 4pm.</text>
+  <text x="356"  y="388" font-size="12" fill="#e8eaf6" opacity="0.6">Everyone bringing a dish.</text>
+  <rect x="356"  y="402" width="18" height="18" rx="4" fill="#0e1020" filter="url(#neu-sm)"/>
+  <rect x="356"  y="402" width="18" height="18" rx="4" fill="none" stroke="#25D366" opacity="0.35"/>
+  <text x="365"  y="415" text-anchor="middle" font-size="10" font-weight="700" fill="#25D366">1</text>
+  <text x="380"  y="415" font-size="11" fill="#25D366" opacity="0.7">action item</text>
+  <rect x="356"  y="460" width="108" height="26" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="410"  y="477" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.4">View Full →</text>
+
+  <!-- Chat card 3 -->
+  <rect x="624"  y="274" width="270" height="222" rx="14" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="640"  y="302" font-size="13" font-weight="700" fill="#e8eaf6">Design Team</text>
+  <text x="640"  y="320" font-size="11" fill="#e8eaf6" opacity="0.35">122 msgs · 5 people · 5h ago</text>
+  <line x1="640" y1="332" x2="878" y2="332" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <text x="640"  y="352" font-size="12" fill="#e8eaf6" opacity="0.6">New brand guidelines shared.</text>
+  <text x="640"  y="370" font-size="12" fill="#e8eaf6" opacity="0.6">Figma prototype ready for</text>
+  <text x="640"  y="388" font-size="12" fill="#e8eaf6" opacity="0.6">client review Thursday.</text>
+  <text x="640"  y="415" font-size="11" fill="#e8eaf6" opacity="0.28">0 action items</text>
+  <rect x="640"  y="460" width="108" height="26" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="694"  y="477" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.4">View Full →</text>
+
+  <!-- Chat card 4 -->
+  <rect x="908"  y="274" width="270" height="222" rx="14" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="924"  y="302" font-size="13" font-weight="700" fill="#e8eaf6">Onboarding Buddy</text>
+  <text x="924"  y="320" font-size="11" fill="#e8eaf6" opacity="0.35">43 msgs · 2 people · 1h ago</text>
+  <line x1="924" y1="332" x2="1162" y2="332" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <text x="924"  y="352" font-size="12" fill="#e8eaf6" opacity="0.6">Sara completed onboarding</text>
+  <text x="924"  y="370" font-size="12" fill="#e8eaf6" opacity="0.6">checklist. Credentials pending</text>
+  <text x="924"  y="388" font-size="12" fill="#e8eaf6" opacity="0.6">IT ticket #4421.</text>
+  <rect x="924"  y="402" width="18" height="18" rx="4" fill="#0e1020" filter="url(#neu-sm)"/>
+  <rect x="924"  y="402" width="18" height="18" rx="4" fill="none" stroke="#25D366" opacity="0.35"/>
+  <text x="933"  y="415" text-anchor="middle" font-size="10" font-weight="700" fill="#25D366">1</text>
+  <text x="948"  y="415" font-size="11" fill="#25D366" opacity="0.7">action item</text>
+  <rect x="924"  y="460" width="108" height="26" rx="7" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="978"  y="477" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.4">View Full →</text>
+
+  <!-- Cross-chat insights -->
+  <text x="40"  y="526" font-size="11" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">CROSS-CHAT INSIGHTS</text>
+  <rect x="40"  y="536" width="574" height="122" rx="14" fill="#0e1020" filter="url(#neu-up)"/>
+  <circle cx="60" cy="560" r="3" fill="#25D366" opacity="0.7"/>
+  <text   x="74" y="564" font-size="12" fill="#e8eaf6" opacity="0.65">Friday deadline mentioned in Work Project and Design Team.</text>
+  <circle cx="60" cy="584" r="3" fill="#25D366" opacity="0.7"/>
+  <text   x="74" y="588" font-size="12" fill="#e8eaf6" opacity="0.65">Ali and Sara both need follow-ups from you today.</text>
+  <circle cx="60" cy="608" r="3" fill="#e8eaf6" opacity="0.2"/>
+  <text   x="74" y="612" font-size="12" fill="#e8eaf6" opacity="0.4">No urgent items in Family Group.</text>
+  <circle cx="60" cy="632" r="3" fill="#e8eaf6" opacity="0.2"/>
+  <text   x="74" y="636" font-size="12" fill="#e8eaf6" opacity="0.4">Client review Thursday — check calendar conflict.</text>
+
+  <!-- Key people -->
+  <text x="634" y="526" font-size="11" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">KEY PEOPLE TODAY</text>
+  <rect x="634" y="536" width="606" height="122" rx="14" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="654" y="554" width="54" height="24" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <rect x="654" y="554" width="54" height="24" rx="8" fill="none" stroke="#25D366" opacity="0.4"/>
+  <text x="681" y="570" text-anchor="middle" font-size="11" fill="#25D366">Ali</text>
+  <rect x="716" y="554" width="58" height="24" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <rect x="716" y="554" width="58" height="24" rx="8" fill="none" stroke="#25D366" opacity="0.35"/>
+  <text x="745" y="570" text-anchor="middle" font-size="11" fill="#25D366">Sara</text>
+  <rect x="782" y="554" width="64" height="24" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="814" y="570" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.4">Client</text>
+  <rect x="854" y="554" width="60" height="24" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="884" y="570" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.4">Nadia</text>
+  <rect x="922" y="554" width="54" height="24" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="949" y="570" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.4">Mom</text>
+  <text x="654" y="606" font-size="11" fill="#e8eaf6" opacity="0.2">Sorted by mention frequency</text>
+  <rect x="654" y="616" width="130" height="6" rx="3" fill="#25D366" opacity="0.45"/>
+  <text x="790" y="625" font-size="10" fill="#e8eaf6" opacity="0.28">Ali · 14 mentions</text>
+  <rect x="654" y="628" width="96"  height="6" rx="3" fill="#25D366" opacity="0.3"/>
+  <text x="756" y="637" font-size="10" fill="#e8eaf6" opacity="0.28">Sara · 9 mentions</text>
+  <rect x="654" y="640" width="66"  height="6" rx="3" fill="#e8eaf6" opacity="0.12"/>
+  <text x="726" y="649" font-size="10" fill="#e8eaf6" opacity="0.28">Client · 6 mentions</text>
+
+  <text x="40" y="880" font-size="10" fill="#e8eaf6" opacity="0.12" letter-spacing="1">04 — DAILY BRIEF PAGE</text>
+</svg>

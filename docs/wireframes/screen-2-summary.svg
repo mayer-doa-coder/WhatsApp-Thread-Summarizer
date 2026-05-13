@@ -1,0 +1,223 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900"
+     font-family="'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <filter id="neu-up" x="-35%" y="-35%" width="170%" height="170%">
+      <feOffset dx="-7" dy="-7" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="8" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.75" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="7" dy="7" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="8" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-in" x="-5%" y="-5%" width="110%" height="110%">
+      <feFlood flood-color="white" result="white"/>
+      <feComposite in="white" in2="SourceAlpha" operator="out" result="inv"/>
+      <feOffset dx="-4" dy="-4" in="inv" result="di_off"/>
+      <feGaussianBlur stdDeviation="5" in="di_off" result="di_blur"/>
+      <feFlood flood-color="#06070f" flood-opacity="0.9" result="di_col"/>
+      <feComposite in="di_col" in2="di_blur" operator="in" result="di_raw"/>
+      <feComposite in="di_raw" in2="SourceAlpha" operator="in" result="dark_in"/>
+      <feOffset dx="4" dy="4" in="inv" result="li_off"/>
+      <feGaussianBlur stdDeviation="5" in="li_off" result="li_blur"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.6" result="li_col"/>
+      <feComposite in="li_col" in2="li_blur" operator="in" result="li_raw"/>
+      <feComposite in="li_raw" in2="SourceAlpha" operator="in" result="light_in"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic"/><feMergeNode in="dark_in"/><feMergeNode in="light_in"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-sm" x="-40%" y="-40%" width="180%" height="180%">
+      <feOffset dx="-4" dy="-4" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="5" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.70" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="4" dy="4" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="5" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="btn-glow" x="-20%" y="-30%" width="140%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="g-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#6edfa0"/>
+    </linearGradient>
+    <linearGradient id="g-btn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#2bcc60"/>
+      <stop offset="100%" stop-color="#1a9946"/>
+    </linearGradient>
+    <radialGradient id="center-haze" cx="50%" cy="50%" r="40%">
+      <stop offset="0%"   stop-color="#25D366" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#25D366" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 48 48 M 0 48 L 48 48" fill="none" stroke="#e8eaf6" stroke-width="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="900" fill="#0e1020"/>
+  <rect width="1280" height="900" fill="url(#grid)" opacity="0.045"/>
+  <ellipse cx="640" cy="450" rx="460" ry="360" fill="url(#center-haze)"/>
+
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="52"   cy="32"  r="0.9" opacity="0.55"/>
+    <circle cx="198"  cy="19"  r="0.7" opacity="0.65"/>
+    <circle cx="874"  cy="14"  r="0.7" opacity="0.6"/>
+    <circle cx="1060" cy="41"  r="0.9" opacity="0.4"/>
+    <circle cx="1224" cy="23"  r="0.6" opacity="0.55"/>
+    <circle cx="88"   cy="800" r="0.5" opacity="0.35"/>
+    <circle cx="1186" cy="780" r="0.7" opacity="0.4"/>
+    <circle cx="44"   cy="860" r="0.6" opacity="0.3"/>
+    <circle cx="1238" cy="840" r="0.8" opacity="0.35"/>
+    <circle cx="300"  cy="750" r="0.5" opacity="0.2"/>
+    <circle cx="980"  cy="760" r="0.6" opacity="0.22"/>
+  </g>
+
+  <!-- Nav -->
+  <rect width="1280" height="64" fill="#0e1020" filter="url(#neu-up)"/>
+  <line x1="0" y1="64" x2="1280" y2="64" stroke="#25D366" stroke-width="0.4" opacity="0.2"/>
+  <rect x="28" y="18" width="30" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <polyline points="36,26 40,38 43,31 46,38 50,26" fill="none" stroke="#25D366" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="68" y="38" font-size="15" font-weight="700" fill="#e8eaf6">WA Summarizer</text>
+  <text x="820" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">Upload</text>
+  <text x="896" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">Daily Brief</text>
+  <text x="980" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">History</text>
+  <rect x="1188" y="18" width="72" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="1224" y="36" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.5">Sign in</text>
+
+  <!-- Page title row -->
+  <text x="40" y="100" font-size="11" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">SUMMARY</text>
+  <text x="40" y="126" font-size="22" font-weight="700" fill="#e8eaf6">chat-work.txt</text>
+  <text x="40" y="148" font-size="13" fill="#e8eaf6" opacity="0.35">247 messages · 5 participants · 3 days</text>
+  <!-- Action buttons top right -->
+  <rect x="1008" y="88" width="112" height="36" rx="9" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="1064" y="110" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.45">Start over</text>
+  <rect x="1132" y="88" width="148" height="36" rx="9" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="1132" y="88" width="148" height="36" rx="9" fill="url(#g-btn)" filter="url(#btn-glow)"/>
+  <text x="1206" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="white">Draft a Reply →</text>
+  <ellipse cx="1206" cy="128" rx="60" ry="5" fill="#25D366" opacity="0.1"/>
+
+  <!-- LEFT: Summary card -->
+  <rect x="40" y="162" width="772" height="700" rx="18" fill="#0e1020" filter="url(#neu-up)"/>
+
+  <!-- Stats strip inside card -->
+  <rect x="60" y="182" width="732" height="56" rx="10" fill="#0e1020" filter="url(#neu-in)"/>
+  <text x="88"  y="202" font-size="10" fill="#e8eaf6" opacity="0.22">MESSAGES</text>
+  <text x="88"  y="222" font-size="18" font-weight="700" fill="url(#g-text)">247</text>
+  <line x1="176" y1="196" x2="176" y2="228" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <text x="196" y="202" font-size="10" fill="#e8eaf6" opacity="0.22">PARTICIPANTS</text>
+  <text x="196" y="222" font-size="18" font-weight="700" fill="url(#g-text)">5</text>
+  <line x1="296" y1="196" x2="296" y2="228" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <text x="316" y="202" font-size="10" fill="#e8eaf6" opacity="0.22">DURATION</text>
+  <text x="316" y="222" font-size="18" font-weight="700" fill="url(#g-text)">3 days</text>
+  <line x1="430" y1="196" x2="430" y2="228" stroke="#e8eaf6" stroke-opacity="0.06"/>
+  <!-- Model badge -->
+  <rect x="610" y="196" width="172" height="24" rx="6" fill="#0e1020" filter="url(#neu-sm)"/>
+  <circle cx="626" cy="208" r="4" fill="#25D366" opacity="0.7"/>
+  <text x="636" y="212" font-size="10" fill="#e8eaf6" opacity="0.4">GPT-4o-mini · 1.2s</text>
+
+  <!-- Topic -->
+  <text x="60" y="268" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">TOPIC</text>
+  <rect x="60" y="276" width="732" height="44" rx="8" fill="#0e1020" filter="url(#neu-in)"/>
+  <text x="78" y="303" font-size="14" font-weight="600" fill="#e8eaf6" opacity="0.8">Q2 project delivery timeline and resource allocation</text>
+
+  <!-- Summary text -->
+  <text x="60" y="346" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">SUMMARY</text>
+  <rect x="60" y="354" width="732" height="120" rx="8" fill="#0e1020" filter="url(#neu-in)"/>
+  <text x="78" y="374" font-size="13" fill="#e8eaf6" opacity="0.65">The team discussed the Q2 roadmap after the client pushed the deadline to</text>
+  <text x="78" y="392" font-size="13" fill="#e8eaf6" opacity="0.65">Friday. Ali will send a revised estimate by EOD Thursday. The client review</text>
+  <text x="78" y="410" font-size="13" fill="#e8eaf6" opacity="0.65">call was confirmed for Friday 3pm. Nadia flagged a dependency on the</text>
+  <text x="78" y="428" font-size="13" fill="#e8eaf6" opacity="0.65">design team's Figma prototype before development can proceed.</text>
+  <text x="78" y="456" font-size="11" fill="#e8eaf6" opacity="0.28">+3 more lines · click to expand</text>
+
+  <!-- Key Decisions -->
+  <text x="60" y="504" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">KEY DECISIONS</text>
+  <rect x="60" y="512" width="732" height="100" rx="8" fill="#0e1020" filter="url(#neu-in)"/>
+  <circle cx="80"  cy="534" r="3" fill="#25D366" opacity="0.6"/>
+  <text   x="92"  y="538" font-size="13" fill="#e8eaf6" opacity="0.65">Deadline moved from next Monday to this Friday</text>
+  <circle cx="80"  cy="558" r="3" fill="#25D366" opacity="0.6"/>
+  <text   x="92"  y="562" font-size="13" fill="#e8eaf6" opacity="0.65">Ali's estimate will inform final sprint scope</text>
+  <circle cx="80"  cy="582" r="3" fill="#25D366" opacity="0.5"/>
+  <text   x="92"  y="586" font-size="13" fill="#e8eaf6" opacity="0.5">Figma hand-off is blocker for dev kickoff</text>
+  <circle cx="80"  cy="600" r="3" fill="#e8eaf6" opacity="0.12"/>
+  <text   x="92"  y="604" font-size="13" fill="#e8eaf6" opacity="0.3">+1 more</text>
+
+  <!-- Action Items -->
+  <text x="60" y="640" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">ACTION ITEMS</text>
+  <rect x="60" y="648" width="732" height="120" rx="8" fill="#0e1020" filter="url(#neu-in)"/>
+  <!-- Item 1 (highlighted) -->
+  <rect x="76" y="664" width="700" height="28" rx="6" fill="#25D366" fill-opacity="0.08"/>
+  <rect x="76" y="664" width="4" height="28" rx="2" fill="#25D366" opacity="0.6"/>
+  <text x="90"  y="682" font-size="13" fill="#25D366" opacity="0.9">Ali → send revised sprint estimate by Thursday EOD</text>
+  <!-- Item 2 -->
+  <rect x="76" y="698" width="700" height="28" rx="6" fill="#25D366" fill-opacity="0.05"/>
+  <rect x="76" y="698" width="4" height="28" rx="2" fill="#25D366" opacity="0.35"/>
+  <text x="90"  y="716" font-size="13" fill="#e8eaf6" opacity="0.65">Nadia → share Figma link in channel before Friday call</text>
+  <!-- Item 3 -->
+  <rect x="76" y="732" width="700" height="28" rx="6" fill="#25D366" fill-opacity="0.04"/>
+  <rect x="76" y="732" width="4" height="28" rx="2" fill="#25D366" opacity="0.25"/>
+  <text x="90"  y="750" font-size="13" fill="#e8eaf6" opacity="0.5">You → confirm Friday 3pm with client via email</text>
+
+  <!-- Participants -->
+  <text x="60" y="796" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">PARTICIPANTS</text>
+  <rect x="60" y="804" width="732" height="44" rx="8" fill="#0e1020" filter="url(#neu-in)"/>
+  <text x="78"  y="830" font-size="13" fill="#e8eaf6" opacity="0.55">Ali · Nadia · Omar · Sara · You</text>
+
+  <!-- RIGHT: Actions sidebar -->
+  <rect x="840" y="162" width="400" height="700" rx="18" fill="#0e1020" filter="url(#neu-up)"/>
+
+  <!-- Reply Draft button (primary) -->
+  <text x="860" y="200" font-size="11" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">QUICK ACTIONS</text>
+  <rect x="860" y="210" width="360" height="52" rx="11" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="860" y="210" width="360" height="52" rx="11" fill="url(#g-btn)" filter="url(#btn-glow)"/>
+  <text x="1040" y="241" text-anchor="middle" font-size="14" font-weight="700" fill="white">Draft a Reply</text>
+  <line x1="1130" y1="236" x2="1139" y2="236" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  <polyline points="1135,232 1140,236 1135,240" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="1040" cy="266" rx="90" ry="5" fill="#25D366" opacity="0.1"/>
+
+  <!-- Save to History -->
+  <rect x="860" y="278" width="360" height="44" rx="11" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="860" y="278" width="360" height="44" rx="11" fill="none" stroke="#25D366" stroke-width="0.8" opacity="0.3"/>
+  <text x="1040" y="304" text-anchor="middle" font-size="13" fill="#25D366" opacity="0.8">Save to History</text>
+
+  <!-- Export options -->
+  <text x="860" y="352" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">EXPORT</text>
+  <rect x="860" y="360" width="172" height="40" rx="9" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="946" y="384" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.4">Copy text</text>
+  <rect x="1044" y="360" width="176" height="40" rx="9" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="1132" y="384" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.4">Download PDF</text>
+
+  <!-- Notable facts -->
+  <text x="860" y="432" font-size="10" font-weight="600" fill="#e8eaf6" opacity="0.22" letter-spacing="1.5">NOTABLE FACTS</text>
+  <rect x="860" y="440" width="360" height="160" rx="10" fill="#0e1020" filter="url(#neu-in)"/>
+  <circle cx="878" cy="464" r="2.5" fill="#25D366" opacity="0.5"/>
+  <text x="890" y="468" font-size="12" fill="#e8eaf6" opacity="0.6">Ali sent 48% of all messages</text>
+  <circle cx="878" cy="490" r="2.5" fill="#25D366" opacity="0.5"/>
+  <text x="890" y="494" font-size="12" fill="#e8eaf6" opacity="0.6">Peak activity: Tuesday 10–11am</text>
+  <circle cx="878" cy="516" r="2.5" fill="#25D366" opacity="0.5"/>
+  <text x="890" y="520" font-size="12" fill="#e8eaf6" opacity="0.6">3 images and 1 document shared</text>
+  <circle cx="878" cy="542" r="2.5" fill="#e8eaf6" opacity="0.2"/>
+  <text x="890" y="546" font-size="12" fill="#e8eaf6" opacity="0.4">Friday deadline mentioned 7 times</text>
+  <circle cx="878" cy="568" r="2.5" fill="#e8eaf6" opacity="0.2"/>
+  <text x="890" y="572" font-size="12" fill="#e8eaf6" opacity="0.4">No messages between 11pm – 7am</text>
+  <circle cx="878" cy="590" r="2" fill="#e8eaf6" opacity="0.12"/>
+  <text x="890" y="594" font-size="12" fill="#e8eaf6" opacity="0.28">+2 more</text>
+
+  <!-- New Summary cta -->
+  <rect x="860" y="626" width="360" height="44" rx="11" fill="#0e1020" filter="url(#neu-up)"/>
+  <text x="1040" y="652" text-anchor="middle" font-size="13" fill="#e8eaf6" opacity="0.3">Summarize another file</text>
+
+  <text x="40" y="880" font-size="10" fill="#e8eaf6" opacity="0.12" letter-spacing="1">02 — SUMMARY PAGE</text>
+</svg>

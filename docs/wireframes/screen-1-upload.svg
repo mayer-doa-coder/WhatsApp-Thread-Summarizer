@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900"
+     font-family="'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <filter id="neu-up" x="-35%" y="-35%" width="170%" height="170%">
+      <feOffset dx="-7" dy="-7" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="8" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.75" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="7" dy="7" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="8" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-in" x="-5%" y="-5%" width="110%" height="110%">
+      <feFlood flood-color="white" result="white"/>
+      <feComposite in="white" in2="SourceAlpha" operator="out" result="inv"/>
+      <feOffset dx="-4" dy="-4" in="inv" result="di_off"/>
+      <feGaussianBlur stdDeviation="5" in="di_off" result="di_blur"/>
+      <feFlood flood-color="#06070f" flood-opacity="0.9" result="di_col"/>
+      <feComposite in="di_col" in2="di_blur" operator="in" result="di_raw"/>
+      <feComposite in="di_raw" in2="SourceAlpha" operator="in" result="dark_in"/>
+      <feOffset dx="4" dy="4" in="inv" result="li_off"/>
+      <feGaussianBlur stdDeviation="5" in="li_off" result="li_blur"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.6" result="li_col"/>
+      <feComposite in="li_col" in2="li_blur" operator="in" result="li_raw"/>
+      <feComposite in="li_raw" in2="SourceAlpha" operator="in" result="light_in"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic"/><feMergeNode in="dark_in"/><feMergeNode in="light_in"/>
+      </feMerge>
+    </filter>
+    <filter id="neu-sm" x="-40%" y="-40%" width="180%" height="180%">
+      <feOffset dx="-4" dy="-4" in="SourceAlpha" result="a1"/>
+      <feGaussianBlur stdDeviation="5" in="a1" result="b1"/>
+      <feFlood flood-color="#1d2138" flood-opacity="0.70" result="c1"/>
+      <feComposite in="c1" in2="b1" operator="in" result="light"/>
+      <feOffset dx="4" dy="4" in="SourceAlpha" result="a2"/>
+      <feGaussianBlur stdDeviation="5" in="a2" result="b2"/>
+      <feFlood flood-color="#06070f" flood-opacity="1" result="c2"/>
+      <feComposite in="c2" in2="b2" operator="in" result="dark"/>
+      <feMerge>
+        <feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="btn-glow" x="-20%" y="-30%" width="140%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="g-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#6edfa0"/>
+    </linearGradient>
+    <linearGradient id="g-btn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#2bcc60"/>
+      <stop offset="100%" stop-color="#1a9946"/>
+    </linearGradient>
+    <radialGradient id="center-haze" cx="50%" cy="50%" r="40%">
+      <stop offset="0%"   stop-color="#25D366" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#25D366" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 48 48 M 0 48 L 48 48" fill="none" stroke="#e8eaf6" stroke-width="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="900" fill="#0e1020"/>
+  <rect width="1280" height="900" fill="url(#grid)" opacity="0.045"/>
+  <ellipse cx="640" cy="450" rx="460" ry="360" fill="url(#center-haze)"/>
+
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="52"   cy="32"  r="0.9" opacity="0.55"/>
+    <circle cx="198"  cy="19"  r="0.7" opacity="0.65"/>
+    <circle cx="874"  cy="14"  r="0.7" opacity="0.6"/>
+    <circle cx="1060" cy="41"  r="0.9" opacity="0.4"/>
+    <circle cx="1224" cy="23"  r="0.6" opacity="0.55"/>
+    <circle cx="88"   cy="800" r="0.5" opacity="0.35"/>
+    <circle cx="1186" cy="780" r="0.7" opacity="0.4"/>
+    <circle cx="44"   cy="860" r="0.6" opacity="0.3"/>
+    <circle cx="1238" cy="840" r="0.8" opacity="0.35"/>
+    <circle cx="300"  cy="750" r="0.5" opacity="0.2"/>
+    <circle cx="980"  cy="760" r="0.6" opacity="0.22"/>
+  </g>
+
+  <!-- Nav -->
+  <rect width="1280" height="64" fill="#0e1020" filter="url(#neu-up)"/>
+  <line x1="0" y1="64" x2="1280" y2="64" stroke="#25D366" stroke-width="0.4" opacity="0.2"/>
+  <rect x="28" y="18" width="30" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <polyline points="36,26 40,38 43,31 46,38 50,26" fill="none" stroke="#25D366" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="68" y="38" font-size="15" font-weight="700" fill="#e8eaf6">WA Summarizer</text>
+  <text x="820" y="37" font-size="13" fill="#25D366">Upload</text>
+  <line x1="820" y1="56" x2="858" y2="56" stroke="#25D366" stroke-width="1.5" opacity="0.5"/>
+  <text x="896" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">Daily Brief</text>
+  <text x="980" y="37" font-size="13" fill="#e8eaf6" opacity="0.35">History</text>
+  <rect x="1188" y="18" width="72" height="28" rx="8" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="1224" y="36" text-anchor="middle" font-size="12" fill="#e8eaf6" opacity="0.5">Sign in</text>
+
+  <!-- Hero -->
+  <text x="640" y="120" text-anchor="middle" font-size="32" font-weight="700" fill="url(#g-text)">Summarize any WhatsApp thread</text>
+  <text x="640" y="150" text-anchor="middle" font-size="15" fill="#e8eaf6" opacity="0.4">Upload your exported .txt file · get key decisions, action items and a reply draft</text>
+
+  <!-- Summary type selector -->
+  <rect x="390" y="172" width="500" height="44" rx="12" fill="#0e1020" filter="url(#neu-in)"/>
+  <rect x="394" y="176" width="152" height="36" rx="9" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="394" y="176" width="152" height="36" rx="9" fill="none" stroke="#25D366" stroke-width="0.8" opacity="0.5"/>
+  <text x="470" y="198" text-anchor="middle" font-size="13" font-weight="700" fill="#25D366">Short</text>
+  <text x="640" y="198" text-anchor="middle" font-size="13" fill="#e8eaf6" opacity="0.3">Medium</text>
+  <text x="806" y="198" text-anchor="middle" font-size="13" fill="#e8eaf6" opacity="0.3">Detailed</text>
+
+  <!-- Upload zone card -->
+  <rect x="240" y="232" width="800" height="360" rx="18" fill="#0e1020" filter="url(#neu-up)"/>
+
+  <!-- Drop zone inner (inset) -->
+  <rect x="270" y="258" width="740" height="280" rx="12" fill="#0e1020" filter="url(#neu-in)"/>
+  <rect x="290" y="274" width="700" height="248" rx="10" fill="none" stroke="#25D366" stroke-width="1.2" stroke-dasharray="8 5" opacity="0.25"/>
+
+  <!-- Upload icon -->
+  <rect x="598" y="308" width="44" height="44" rx="12" fill="#0e1020" filter="url(#neu-sm)"/>
+  <polyline points="620,318 620,338" stroke="#25D366" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="612,326 620,318 628,326" fill="none" stroke="#25D366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="608" y1="344" x2="632" y2="344" stroke="#25D366" stroke-width="2" stroke-linecap="round"/>
+
+  <text x="640" y="376" text-anchor="middle" font-size="16" font-weight="600" fill="#e8eaf6" opacity="0.75">Drop your WhatsApp export here</text>
+  <text x="640" y="400" text-anchor="middle" font-size="13" fill="#e8eaf6" opacity="0.3">or</text>
+
+  <!-- Browse button -->
+  <rect x="554" y="412" width="172" height="44" rx="10" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="554" y="412" width="172" height="44" rx="10" fill="none" stroke="#25D366" stroke-width="0.8" opacity="0.35"/>
+  <text x="640" y="438" text-anchor="middle" font-size="13" font-weight="600" fill="#25D366">Browse files</text>
+
+  <text x="640" y="472" text-anchor="middle" font-size="11" fill="#e8eaf6" opacity="0.2">.txt only · max 5 MB · iOS and Android exports supported</text>
+
+  <!-- Process button -->
+  <rect x="376" y="514" width="528" height="54" rx="12" fill="#0e1020" filter="url(#neu-up)"/>
+  <rect x="376" y="514" width="528" height="54" rx="12" fill="url(#g-btn)" filter="url(#btn-glow)"/>
+  <text x="640" y="546" text-anchor="middle" font-size="16" font-weight="700" fill="white">Summarize chat →</text>
+  <ellipse cx="640" cy="572" rx="140" ry="7" fill="#25D366" opacity="0.12"/>
+
+  <!-- File selected chip -->
+  <rect x="400" y="604" width="240" height="38" rx="10" fill="#0e1020" filter="url(#neu-in)"/>
+  <rect x="416" y="612" width="18" height="20" rx="3" fill="#0e1020" filter="url(#neu-sm)"/>
+  <text x="420" y="626" font-size="8" fill="#25D366" opacity="0.6">TXT</text>
+  <text x="444" y="626" font-size="12" fill="#e8eaf6" opacity="0.7">chat-work.txt</text>
+  <text x="444" y="640" font-size="10" fill="#e8eaf6" opacity="0.3">248 KB</text>
+  <text x="628" y="626" text-anchor="end" font-size="14" fill="#e8eaf6" opacity="0.2">✕</text>
+
+  <!-- Stats chip -->
+  <rect x="650" y="604" width="230" height="38" rx="10" fill="#0e1020" filter="url(#neu-in)"/>
+  <text x="668" y="620" font-size="10" fill="#e8eaf6" opacity="0.22">Messages</text>
+  <text x="668" y="636" font-size="13" font-weight="700" fill="url(#g-text)">247</text>
+  <text x="742" y="620" font-size="10" fill="#e8eaf6" opacity="0.22">People</text>
+  <text x="742" y="636" font-size="13" font-weight="700" fill="url(#g-text)">5</text>
+  <text x="808" y="620" font-size="10" fill="#e8eaf6" opacity="0.22">Duration</text>
+  <text x="808" y="636" font-size="13" font-weight="700" fill="url(#g-text)">3d</text>
+
+  <text x="40" y="880" font-size="10" fill="#e8eaf6" opacity="0.12" letter-spacing="1">01 — UPLOAD PAGE</text>
+</svg>
