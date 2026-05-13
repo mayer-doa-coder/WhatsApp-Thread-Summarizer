@@ -129,12 +129,13 @@ git push -u origin develop
   - *Acceptance Criteria:* Decision is documented with data supporting it
 
 ### Design Deliverables
-- [ ] Step 0.13: Write `docs/api-schema.md` defining all 7 REST endpoints with request/response schemas and error codes
+- [x] Step 0.13: Write `docs/api-schema.md` defining all 7 REST endpoints with request/response schemas and error codes
   - *Acceptance Criteria:* All endpoints from Section 5 of the source doc are covered
-- [ ] Step 0.14: Create Supabase project, define 3-table schema (`users`, `summaries`, `sessions`), save migration SQL to `backend/db/schema.sql`
+- [x] Step 0.14: Create Supabase project, define 3-table schema (`users`, `summaries`, `sessions`), save migration SQL to `backend/db/schema.sql`
   - *Acceptance Criteria:* Running the SQL in Supabase produces the target tables with correct foreign keys
-- [ ] Step 0.15: Create UI wireframes for all 6 screens and save as images to `docs/wireframes/`
+- [x] Step 0.15: Create UI wireframes for all 6 screens and save as images to `docs/wireframes/`
   - *Acceptance Criteria:* Wireframe file exists for each screen listed in Section 11.1 of the source doc
+  - *Files:* `screen-1-upload.svg`, `screen-2-summary.svg`, `screen-3-reply-drafter.svg`, `screen-4-daily-brief.svg`, `screen-5-history.svg`, `screen-6-auth.svg` — Dark Cosmic Neu theme (`#0e1020` base, uniform grid overlay, star field, neumorphic raised/inset shadows, `#25D366` green accents)
 - [ ] Step 0.16: Write `docs/prompt-templates.md` with v1 prompt templates for summarization, reply drafting, and daily brief
   - *Acceptance Criteria:* Each template has a system prompt and user prompt section with placeholder variables
 
@@ -423,7 +424,7 @@ git push -u origin develop
 
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
-| Phase 0 | Project Setup & Research | 1 | 16 | 12 | `complete` |
+| Phase 0 | Project Setup & Research | 1 | 16 | 15 | `in_progress` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 0 | `not_started` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
@@ -431,7 +432,7 @@ git push -u origin develop
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **12** | **12% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **15** | **15% complete** |
 
 ---
 
