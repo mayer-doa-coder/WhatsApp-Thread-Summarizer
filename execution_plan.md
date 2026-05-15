@@ -265,13 +265,13 @@ git push -u origin develop
   - *Acceptance Criteria:* Props changed from `onFileSelected(file)` to `{ files, setFiles, error?, setError? }`; adding files beyond 10 (at once or incrementally) slices excess and calls `setError("Maximum of 10 files allowed.")`; each file shown in scrollable list (`max-h-48 overflow-y-auto`) with truncated name, size, and a functional Remove (✕) button; drop zone disabled at limit (`cursor-not-allowed`, 55% opacity); type-rejection error shown inline for non-.txt drops; `UploadPage.tsx` updated to use new prop interface (`files[]` state, `files[0]` passed to `trigger`); `npx tsc --noEmit` → 0 errors
 
 ### Daily Brief Composer Backend
-- [ ] Step 4.3: Create `backend/src/summarizer/briefComposer.js` — `composeDailyBrief(summaries)` returns `{ overviewParagraph, chatCards, crossChatInsights, keyPeople }`
-  - *Acceptance Criteria:* 5-chat input produces a brief with 5 `chatCards`
-- [ ] Step 4.4: Add `POST /api/brief` — parses all files, summarizes each independently, calls `composeDailyBrief()`; 60-second timeout returning 504 on breach
+- [x] Step 4.3: Create `backend/src/summarizer/briefComposer.js` — `composeDailyBrief(summaries)` returns `{ overviewParagraph, chatCards, crossChatInsights, keyPeople }`
+  - *Acceptance Criteria:* 5-chat input produces a brief with 5 `chatCards`; `chatCards.length` always equals `enrichedSummaries.length` (positional merge); LLM response parsed with fallback; `keyPeople` objects flattened to display strings; non-array/empty input throws with descriptive error
+- [x] Step 4.4: Add `POST /api/brief` — parses all files, summarizes each independently, calls `composeDailyBrief()`; 60-second timeout returning 504 on breach
   - *Dependency:* Step 4.3
-  - *Acceptance Criteria:* 5 files → 200 response within 60s; timeout scenario → 504 with descriptive message
-- [ ] Step 4.5: Write unit tests in `backend/tests/briefComposer.test.js` — minimum 4 cases
-  - *Acceptance Criteria:* 0 test failures
+  - *Acceptance Criteria:* 5 files → 200 `{ brief, model, processingMs }` within 60s; binary/unparseable file in batch → 415/400; timeout (`Promise.race` vs 60s sentinel, timeout error identified via `err.status === 504`) → 504 `{ error, message, code }`; all files summarized concurrently via `Promise.all`; route mounted at `/api/brief` in `app.js`; `briefComposer.js` updated: index-based card lookup via `Map`, `actionRequired: boolean`, `keyPeople` flattened to `"Name: context"` strings, error message updated to `"Input must be a non-empty array of summaries."`
+- [x] Step 4.5: Write unit tests in `backend/tests/briefComposer.test.js` — minimum 4 cases
+  - *Acceptance Criteria:* 4 tests pass (0 failures); `callLLM` mocked via `jest.mock`; mocks cleared via `beforeEach(() => jest.clearAllMocks())`; covers ideal path (3-card mapping + overviewParagraph), positional merge resilience (LLM returns 2 cards for 3 inputs → output padded to 3), `keyPeople` object flattening to `"Name: context"` strings, and input validation (`undefined`/`null`/`[]` all throw without calling `callLLM`)
 
 ### Daily Brief UI
 - [ ] Step 4.6: Create `frontend/src/components/BriefChatCard.tsx` — compact 320px-wide card for horizontal scroll; "View Full" expands to full `SummaryCard` in a modal
@@ -428,11 +428,11 @@ git push -u origin develop
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
 | Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
-| Phase 4 | Daily Brief + Multi-File | 5 | 8 | 2 | `in_progress` |
+| Phase 4 | Daily Brief + Multi-File | 5 | 8 | 6 | `in_progress` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **47** | **48% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **51** | **53% complete** |
 
 ---
 
