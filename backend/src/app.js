@@ -9,6 +9,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const summarizeRoutes = require('./routes/summarizeRoutes');
 const replyRoutes = require('./routes/replyRoutes');
 const briefRoutes = require('./routes/briefRoutes');
+const authRoutes = require('./routes/authRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/summarize', summarizeRoutes);
 app.use('/api/reply', replyRoutes);
 app.use('/api/brief', briefRoutes);
+app.use('/api/auth', authRoutes);
 
 app.use(errorHandler);
 

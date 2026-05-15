@@ -287,22 +287,23 @@ git push -u origin develop
 
 **Week:** 6 (Days 36–42)
 **Dependency:** Phase 4 complete — all three core feature pipelines operational
-**Status:** `not_started`
+**Status:** `in_progress`
 **Branch:** `git checkout develop && git checkout -b feature/phase-5-auth-history && git push -u origin feature/phase-5-auth-history`
 **Merge when done:** PR `feature/phase-5-auth-history` → `develop`, then PR `develop` → `main`
 
 ### Auth Backend
-- [ ] Step 5.1: Install `bcrypt`, `jsonwebtoken`, `express-validator` in backend
-- [ ] Step 5.2: Create `backend/src/models/user.js` — `createUser`, `findUserByEmail`, `findUserById` via Supabase JS client
-  - *Acceptance Criteria:* Functions insert and query the `users` table correctly
-- [ ] Step 5.3: Add `POST /api/auth/register` — validates email format + password ≥ 8 chars; bcrypt hash (salt 12); returns `{ token, user }`
-  - *Acceptance Criteria:* Valid input → 201 + JWT; duplicate email → 409; weak password → 422
-- [ ] Step 5.4: Add `POST /api/auth/login` — bcrypt compare; JWT with 30-min expiry; returns `{ token, user }`
-  - *Acceptance Criteria:* Wrong password → 401
-- [ ] Step 5.5: Create `backend/src/middleware/authenticate.js` — validates `Authorization: Bearer <token>`; attaches `req.user`; returns 401 if missing/invalid, 403 if expired
-  - *Acceptance Criteria:* Expired JWT → 403; missing token → 401
-- [ ] Step 5.6: Write unit tests in `backend/tests/auth.test.js` — minimum 5 cases
-  - *Acceptance Criteria:* 0 test failures
+- [x] Step 5.1: Install `bcrypt`, `jsonwebtoken`, `express-validator` in backend
+  - *Acceptance Criteria:* `@supabase/supabase-js`, `bcrypt`, `jsonwebtoken`, `express-validator` present in `package.json` dependencies; `npm install` exits 0 with 0 vulnerabilities
+- [x] Step 5.2: Create `backend/src/models/user.js` — `createUser`, `findUserByEmail`, `findUserById` via Supabase JS client
+  - *Acceptance Criteria:* `createUser(email, passwordHash)` inserts into `users` table and returns `{ id, email, created_at }`; `findUserByEmail(email)` uses `.maybeSingle()` returning row or `null`; `findUserById(id)` uses `.maybeSingle()` returning row or `null`; DB errors thrown (not swallowed); Supabase client initialized in `backend/src/config/supabase.js` using `SUPABASE_URL` + `SUPABASE_SERVICE_KEY`
+- [x] Step 5.3: Add `POST /api/auth/register` — validates email format + password ≥ 8 chars; bcrypt hash (salt 12); returns `{ token, user }`
+  - *Acceptance Criteria:* Invalid email or password < 8 chars → 422 with `errors` array from `express-validator`; duplicate email → 409 `"Email already in use."`; valid input → `bcrypt.hash(password, 12)` → `createUser` → JWT signed with `JWT_SECRET` (7d expiry, `sub` + `email` claims) → 201 `{ token, user: { id, email } }`; router mounted at `/api/auth` in `app.js`; all DB/hash errors forwarded via `next(err)`
+- [x] Step 5.4: Add `POST /api/auth/login` — bcrypt compare; JWT with 30-min expiry; returns `{ token, user }`
+  - *Acceptance Criteria:* Missing email/password → 400; unknown email → 401 `"Invalid email or password."`; wrong password → 401 `"Invalid email or password."` (same message prevents user enumeration); valid credentials → JWT signed with `JWT_SECRET` (30m expiry, `sub` + `email` claims) → 200 `{ token, user: { id, email } }`; DB/bcrypt errors forwarded via `next(err)`
+- [x] Step 5.5: Create `backend/src/middleware/authenticate.js` — validates `Authorization: Bearer <token>`; attaches `req.user`; returns 401 if missing/invalid, 403 if expired
+  - *Acceptance Criteria:* Missing or non-`Bearer ` header → 401 `"Authorization header missing or malformed."`; expired JWT (`err.name === 'TokenExpiredError'`) → 403 `"Token has expired."`; malformed/invalid-signature token → 401 `"Invalid or malformed token."`; valid token → `req.user` set to decoded payload, `next()` called; no stack traces leaked in any error response
+- [x] Step 5.6: Write unit tests in `backend/tests/auth.test.js` — minimum 5 cases
+  - *Acceptance Criteria:* 5 tests pass (0 failures); `supertest` installed as devDependency; `../src/models/user.js`, `bcrypt`, `../src/config/supabase.js`, and `../src/config/llm.js` mocked via `jest.mock()`; mocks cleared per test via `beforeEach(() => jest.clearAllMocks())`; covers: valid register → 201 + token + bcrypt.hash called with rounds 12; duplicate email → 409 + createUser never called; invalid email/short password → 422 + errors array + no DB calls; wrong password (bcrypt.compare returns false) → 401 `"Invalid email or password."`; expired JWT on mini-app wrapped by `authenticate` → 403 `"Token has expired."`
 
 ### History Module
 - [ ] Step 5.7: Create `backend/src/models/summary.js` — `saveSummary`, `getUserSummaries`, `deleteSummary`
@@ -429,10 +430,10 @@ git push -u origin develop
 | Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
-| Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
+| Phase 5 | Authentication + History | 6 | 12 | 6 | `in_progress` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **54** | **56% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **60** | **62% complete** |
 
 ---
 
