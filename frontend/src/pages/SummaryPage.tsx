@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SummaryCard, { SummaryData } from '../components/SummaryCard';
+import ReplyDrafterPanel from '../components/ReplyDrafterPanel';
 
 const NEU_UP: React.CSSProperties = {
   boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)',
@@ -23,6 +24,7 @@ function isSummaryData(value: unknown): value is SummaryData {
 export default function SummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isDrafterOpen, setIsDrafterOpen] = useState(false);
 
   const summary = isSummaryData(location.state) ? location.state : null;
 
@@ -31,10 +33,6 @@ export default function SummaryPage() {
       navigate('/', { replace: true });
     }
   }, [summary, navigate]);
-
-  function handleDraftReply() {
-    console.log('Drafting reply...');
-  }
 
   if (!summary) {
     return (
@@ -48,6 +46,8 @@ export default function SummaryPage() {
       </div>
     );
   }
+
+  const contextText = [summary.topic, summary.summaryText].filter(Boolean).join(' — ');
 
   return (
     <div className="min-h-screen px-6 py-10" style={{ backgroundColor: '#0e1020' }}>
@@ -77,7 +77,7 @@ export default function SummaryPage() {
             </button>
 
             <button
-              onClick={handleDraftReply}
+              onClick={() => setIsDrafterOpen(true)}
               className="rounded-xl px-5 py-2 text-sm font-bold transition-opacity hover:opacity-90"
               style={{
                 background: 'linear-gradient(135deg, #2bcc60, #1a9946)',
@@ -93,6 +93,13 @@ export default function SummaryPage() {
         {/* Summary card */}
         <SummaryCard data={summary} />
       </div>
+
+      {/* Reply drafter panel — rendered outside the constrained max-w-3xl container */}
+      <ReplyDrafterPanel
+        isOpen={isDrafterOpen}
+        onClose={() => setIsDrafterOpen(false)}
+        contextText={contextText}
+      />
     </div>
   );
 }

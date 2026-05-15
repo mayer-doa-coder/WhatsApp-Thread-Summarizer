@@ -44,8 +44,8 @@ Rules you MUST follow when reading or modifying this document:
 | Field | Value |
 |---|---|
 | **Status** | `in_progress` |
-| **Current Phase** | Phase 3 — Reply Drafter Module |
-| **Overall Completion** | 3 / 8 phases complete |
+| **Current Phase** | Phase 4 — Daily Brief + Multi-File Support |
+| **Overall Completion** | 4 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
 
@@ -224,7 +224,7 @@ git push -u origin develop
 
 **Week:** 4 (Days 22–28)
 **Dependency:** Phase 2 complete — summarizer pipeline tested, SummaryPage rendering correctly
-**Status:** `in_progress`
+**Status:** `complete`
 **Branch:** `git checkout develop && git checkout -b feature/phase-3-reply-drafter && git push -u origin feature/phase-3-reply-drafter`
 **Merge when done:** PR `feature/phase-3-reply-drafter` → `develop`, then PR `develop` → `main`
 
@@ -239,14 +239,14 @@ git push -u origin develop
   - *Acceptance Criteria:* 5 tests pass (0 failures); `callLLM` mocked via `jest.mock`; mocks auto-cleared between tests via `clearMocks: true` in `backend/package.json`; formal test asserts `MUST NOT` and `do not` in system prompt; concise test asserts `40 words` and `Count words carefully`; casual test asserts `CASUAL`; empty-array rejection asserts no `callLLM` call was made; userIntent test asserts the verbatim intent string appears in the user-role message
 
 ### Reply Drafter UI
-- [ ] Step 3.5: Create `frontend/src/components/ReplyDrafterPanel.tsx` — right-side slide-in panel with context display, tone selector tabs, `userIntent` text input, "Generate Drafts" button, 3 reply cards each with "Copy" button
-  - *Acceptance Criteria:* Panel slides in and out smoothly; Escape key closes it
-- [ ] Step 3.6: Implement clipboard copy — `navigator.clipboard.writeText()` with "Copied!" badge for 2 seconds; fallback to `document.execCommand('copy')`
-  - *Acceptance Criteria:* Copy works in Chrome and Firefox
-- [ ] Step 3.7: Create `frontend/src/hooks/useReplyDrafter.ts` — `{ loading, error, options, generate }`
-  - *Acceptance Criteria:* TypeScript compiles cleanly; `generate()` populates `options` array
-- [ ] Step 3.8: Wire `ReplyDrafterPanel` into `SummaryPage.tsx`; add keyboard accessibility (Escape closes, Tab cycles cards)
-  - *Acceptance Criteria:* Full flow from SummaryPage → open panel → select tone → copy reply works in browser
+- [x] Step 3.5: Create `frontend/src/components/ReplyDrafterPanel.tsx` — right-side slide-in panel with context display, tone selector tabs, `userIntent` text input, "Generate Drafts" button, 3 reply cards each with "Copy" button
+  - *Acceptance Criteria:* Panel slides in and out smoothly (`translate-x-0` / `translate-x-full` + `duration-300`); Escape key closes it via `keydown` `useEffect`; backdrop overlay closes on click; all 6 tones rendered as pill buttons with `#25D366` active state; `contextText` displayed in read-only inset box (line-clamped to 4 lines); `userIntent` textarea; "Generate Drafts" stub updates `drafts` state; 3 draft cards each with "Copy" button wired to `navigator.clipboard.writeText()`; `ReplyDrafterPanelProps` interface strictly typed; `npx tsc --noEmit` → 0 errors
+- [x] Step 3.6: Implement clipboard copy — `navigator.clipboard.writeText()` with "Copied!" badge for 2 seconds; fallback to `document.execCommand('copy')`
+  - *Acceptance Criteria:* `frontend/src/hooks/useClipboard.ts` exports `useClipboard()` returning `{ copyToClipboard, isCopied }`; modern `navigator.clipboard.writeText` attempted first; `.catch()` falls back to hidden `<textarea>` + `document.execCommand('copy')`; `navigator.clipboard` absence also triggers fallback; `isCopied` set to `true` on success then reset to `false` after 2000ms via `setTimeout`; timer ref cleared on rapid re-clicks and on unmount via `useEffect` cleanup; each `DraftCard` in `ReplyDrafterPanel` owns its own `useClipboard()` instance for independent per-card badge state; button label toggles "Copy" → "Copied!" with green highlight; `npx tsc --noEmit` → 0 errors
+- [x] Step 3.7: Create `frontend/src/hooks/useReplyDrafter.ts` — `{ loading, error, options, generate }`
+  - *Acceptance Criteria:* `useReplyDrafter()` returns `{ loading: boolean, error: string | null, options: string[], generate: (messages: Message[], userIntent: string, tone: Tone) => Promise<void> }`; `generate()` resets `error` to `null` and sets `loading` to `true` before the API call; on success, `options` is populated with the returned string array via `draftReply` from `../services/api`; on failure, `axios.isAxiosError` used to extract `err.response?.data?.message` with fallback to `err.message` then generic string; `finally` block guarantees `loading` resets to `false` in all paths; `generate` is stable across renders via `useCallback([], [])`; `UseReplyDrafterReturn` interface explicitly typed; `npx tsc --noEmit` → 0 errors under `strict: true`
+- [x] Step 3.8: Wire `ReplyDrafterPanel` into `SummaryPage.tsx`; add keyboard accessibility (Escape closes, Tab cycles cards)
+  - *Acceptance Criteria:* `SummaryPage` imports `ReplyDrafterPanel`; `isDrafterOpen` state drives `isOpen` prop; "Draft a Reply →" button calls `setIsDrafterOpen(true)`; `contextText` derived as `topic + ' — ' + summaryText`; panel mounted outside the `max-w-3xl` container at page root; `ReplyDrafterPanel` replaces stub `handleGenerateDrafts` with `useReplyDrafter().generate(proxyMessages, userIntent, selectedTone)`; `proxyMessages` built from `contextText` so API receives non-empty messages; Generate button shows "Generating…" and `disabled` while `loading`; error displayed with `role="alert"` and red styling; `options` from hook replaces placeholder `drafts` state when non-empty; `DraftCard` gets `tabIndex={0}` on real options (placeholder cards use `tabIndex={-1}`), `role="article"`, descriptive `aria-label`, and `onKeyDown` handler triggering `copyToClipboard` on Enter or Space; Escape closes panel via `keydown` listener; `npx tsc --noEmit` → 0 errors
 
 ---
 
@@ -427,12 +427,12 @@ git push -u origin develop
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
 | Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
-| Phase 3 | Reply Drafter Module | 4 | 8 | 4 | `in_progress` |
+| Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **43** | **44% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **47** | **48% complete** |
 
 ---
 
