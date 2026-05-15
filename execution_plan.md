@@ -172,10 +172,10 @@ git push -u origin develop
 - [x] Step 1.9: Create `POST /api/summarize` — accepts `{ messages, summaryType }`, calls chunker + LLM via v1 prompt, returns structured summary JSON
   - *Dependency:* Steps 1.5, 0.16
   - *Acceptance Criteria:* A real 200-message export returns a 200 response with all 6 summary fields
-- [ ] Step 1.10: Create global error handler `backend/src/middleware/errorHandler.js` — returns `{ error, message, code }`, never exposes stack traces in production
+- [x] Step 1.10: Create global error handler `backend/src/middleware/errorHandler.js` — returns `{ error, message, code }`, never exposes stack traces in production
   - *Acceptance Criteria:* Throwing an uncaught error from a route returns 500 with no stack trace in the response body
-- [ ] Step 1.11: Create `backend/src/config/openai.js` — initializes OpenAI client, exports `callLLM(messages, model)`, falls back to Claude Haiku on 429/5xx
-  - *Acceptance Criteria:* Mocking the OpenAI client to throw 429 causes the function to retry once then switch to Claude Haiku
+- [x] Step 1.11: Create `backend/src/config/llm.js` — initializes OpenAI-compatible clients for all three providers, exports `callLLM(messages, model)`, falls back through Llama 3.1 8B then Gemini 2.5 Flash on 429/5xx
+  - *Acceptance Criteria:* Mocking the primary client to throw 429 causes the function to retry with Llama 3.1 8B (Cerebras), and if that also fails, successfully resolve using Gemini 2.5 Flash (Google AI Studio)
 
 ### React Frontend Foundation (`frontend/src/`)
 - [ ] Step 1.12: Create `frontend/src/components/UploadZone.tsx` — drag-and-drop for `.txt` only, shows file name/size after selection, exposes `onFileSelected(file)` callback
@@ -425,14 +425,14 @@ git push -u origin develop
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
-| Phase 1 | Core Parser + API Foundation | 2 | 14 | 8 | `in_progress` |
+| Phase 1 | Core Parser + API Foundation | 2 | 14 | 11 | `in_progress` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **24** | **25% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **27** | **28% complete** |
 
 ---
 

@@ -7,6 +7,7 @@ const morgan = require('morgan');
 
 const uploadRoutes = require('./routes/uploadRoutes');
 const summarizeRoutes = require('./routes/summarizeRoutes');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -20,5 +21,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/upload', uploadRoutes);
 app.use('/api/summarize', summarizeRoutes);
+
+app.use(errorHandler);
 
 module.exports = app;

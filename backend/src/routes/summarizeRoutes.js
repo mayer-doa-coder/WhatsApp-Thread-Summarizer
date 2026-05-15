@@ -2,7 +2,7 @@
 
 const express = require('express');
 const { chunkMessages } = require('../parser/chunkMessages');
-const { callLLM } = require('../services/llmService');
+const { callLLM } = require('../config/llm');
 
 const router = express.Router();
 
