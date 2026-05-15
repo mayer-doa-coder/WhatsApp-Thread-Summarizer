@@ -14,7 +14,8 @@ export default function UploadPage() {
   const navigate = useNavigate();
   const { loading, error, summary, trigger } = useSummarize();
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [zoneError, setZoneError] = useState<string | undefined>(undefined);
   const [summaryType, setSummaryType] = useState<SummaryType>('medium');
 
   useEffect(() => {
@@ -24,11 +25,11 @@ export default function UploadPage() {
   }, [summary, navigate]);
 
   function handleProcess() {
-    if (!selectedFile || loading) return;
-    trigger(selectedFile, summaryType);
+    if (files.length === 0 || loading) return;
+    trigger(files[0], summaryType);
   }
 
-  const isDisabled = !selectedFile || loading;
+  const isDisabled = files.length === 0 || loading;
 
   return (
     <div
@@ -50,7 +51,12 @@ export default function UploadPage() {
         Upload a WhatsApp export (.txt) and get an AI-generated summary.
       </p>
 
-      <UploadZone onFileSelected={setSelectedFile} />
+      <UploadZone
+        files={files}
+        setFiles={setFiles}
+        error={zoneError}
+        setError={setZoneError}
+      />
 
       <div style={{ marginTop: '28px', width: '100%', maxWidth: '400px' }}>
         <label

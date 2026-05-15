@@ -254,15 +254,15 @@ git push -u origin develop
 
 **Week:** 5 (Days 29–35)
 **Dependency:** Phase 3 complete — reply drafter endpoint tested, panel UI wired
-**Status:** `not_started`
+**Status:** `in_progress`
 **Branch:** `git checkout develop && git checkout -b feature/phase-4-daily-brief && git push -u origin feature/phase-4-daily-brief`
 **Merge when done:** PR `feature/phase-4-daily-brief` → `develop`, then PR `develop` → `main`
 
 ### Multi-File Upload
-- [ ] Step 4.1: Update `POST /api/upload` to accept up to 10 files via Multer `array('files', 10)`; validate each file individually
-  - *Acceptance Criteria:* 11 files returns 400; 10 valid files returns 200 with all parsed
-- [ ] Step 4.2: Update `UploadZone.tsx` for multi-file display — scrollable list, individual remove buttons, 10-file warning
-  - *Acceptance Criteria:* Adding 11 files shows a warning; each file is individually removable
+- [x] Step 4.1: Update `POST /api/upload` to accept up to 10 files via Multer `array('files', 10)`; validate each file individually
+  - *Acceptance Criteria:* 11+ files → 400 `"Maximum of 10 files allowed."`; any binary/non-WhatsApp file in the batch → 415/400 per-file error; 10 valid `.txt` files → 200 with `files` array of 10 parsed results; each file validated individually via magic-byte check + empty-parse check; all files processed concurrently via `Promise.all`; field name changed from `"file"` to `"files"` (callers must update accordingly)
+- [x] Step 4.2: Update `UploadZone.tsx` for multi-file display — scrollable list, individual remove buttons, 10-file warning
+  - *Acceptance Criteria:* Props changed from `onFileSelected(file)` to `{ files, setFiles, error?, setError? }`; adding files beyond 10 (at once or incrementally) slices excess and calls `setError("Maximum of 10 files allowed.")`; each file shown in scrollable list (`max-h-48 overflow-y-auto`) with truncated name, size, and a functional Remove (✕) button; drop zone disabled at limit (`cursor-not-allowed`, 55% opacity); type-rejection error shown inline for non-.txt drops; `UploadPage.tsx` updated to use new prop interface (`files[]` state, `files[0]` passed to `trigger`); `npx tsc --noEmit` → 0 errors
 
 ### Daily Brief Composer Backend
 - [ ] Step 4.3: Create `backend/src/summarizer/briefComposer.js` — `composeDailyBrief(summaries)` returns `{ overviewParagraph, chatCards, crossChatInsights, keyPeople }`
@@ -428,7 +428,7 @@ git push -u origin develop
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
 | Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
-| Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
+| Phase 4 | Daily Brief + Multi-File | 5 | 8 | 2 | `in_progress` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |

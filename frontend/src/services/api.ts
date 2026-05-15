@@ -197,7 +197,7 @@ export async function uploadAndSummarize(
   summaryType: SummaryType = 'medium',
 ): Promise<SummarizeResponse> {
   const form = new FormData();
-  form.append('file', file);
+  form.append('files', file);
 
   const { data: uploadData } = await client.post<UploadResponse>('/upload', form);
   const messages: Message[] = uploadData.files[0]?.messages ?? [];
