@@ -2,6 +2,7 @@
 
 const express = require('express');
 const multer = require('multer');
+const { parseWhatsAppExport } = require('../parser/whatsappParser');
 
 const router = express.Router();
 
@@ -71,10 +72,42 @@ router.post('/', (req, res, next) => {
       });
     }
 
+    const rawText = req.file.buffer.toString('utf8');
+    const messages = parseWhatsAppExport(rawText);
+
+    if (messages.length === 0) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'File parsed successfully but contained no recognisable WhatsApp messages.',
+        code: 400,
+      });
+    }
+
+    const participants = [...new Set(messages.map((m) => m.sender).filter(Boolean))];
+    const timestamps = messages.map((m) => m.timestamp).filter(Boolean).sort();
+    const typeCounts = messages.reduce(
+      (acc, m) => { acc[m.type] = (acc[m.type] || 0) + 1; return acc; },
+      { text: 0, media: 0, system: 0, deleted: 0 },
+    );
+
     return res.status(200).json({
-      status: 'ok',
-      message: 'File received and validated.',
-      size: req.file.buffer.length,
+      files: [
+        {
+          filename: req.file.originalname,
+          sizeBytes: req.file.buffer.length,
+          encoding: 'utf-8',
+          messageCount: messages.length,
+          truncated: false,
+          parseWarnings: [],
+          participants,
+          dateRange: {
+            from: timestamps[0] ?? null,
+            to: timestamps[timestamps.length - 1] ?? null,
+          },
+          typeCounts,
+          messages,
+        },
+      ],
     });
   });
 });

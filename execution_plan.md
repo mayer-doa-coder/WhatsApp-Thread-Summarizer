@@ -44,8 +44,8 @@ Rules you MUST follow when reading or modifying this document:
 | Field | Value |
 |---|---|
 | **Status** | `in_progress` |
-| **Current Phase** | Phase 1 — Core Parser + API Foundation |
-| **Overall Completion** | 1 / 8 phases complete |
+| **Current Phase** | Phase 2 — Summarization Engine |
+| **Overall Completion** | 2 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
 
@@ -178,12 +178,12 @@ git push -u origin develop
   - *Acceptance Criteria:* Mocking the primary client to throw 429 causes the function to retry with Llama 3.1 8B (Cerebras), and if that also fails, successfully resolve using Gemini 2.5 Flash (Google AI Studio)
 
 ### React Frontend Foundation (`frontend/src/`)
-- [ ] Step 1.12: Create `frontend/src/components/UploadZone.tsx` — drag-and-drop for `.txt` only, shows file name/size after selection, exposes `onFileSelected(file)` callback
+- [x] Step 1.12: Create `frontend/src/components/UploadZone.tsx` — drag-and-drop for `.txt` only, shows file name/size after selection, exposes `onFileSelected(file)` callback
   - *Acceptance Criteria:* Dropping a `.txt` file highlights the zone and displays the filename; dropping a `.pdf` is rejected
-- [ ] Step 1.13: Create `frontend/src/services/api.ts` — Axios client with typed functions: `uploadAndSummarize`, `draftReply`, `generateBrief`, `getHistory`, `deleteHistoryItem`
-  - *Acceptance Criteria:* TypeScript compilation succeeds with no type errors
-- [ ] Step 1.14: Create `frontend/src/pages/UploadPage.tsx` with `UploadZone`, summary type selector, and Process button wired to `api.uploadAndSummarize()`
-  - *Acceptance Criteria:* Full round-trip — drag file → click Process → see summary JSON in browser console — works without errors
+- [x] Step 1.13: Create `frontend/src/services/api.ts` — Axios client with typed functions: `uploadAndSummarize`, `draftReply`, `generateBrief`, `getHistory`, `deleteHistoryItem`
+  - *Acceptance Criteria:* `npx tsc --noEmit` passes with 0 errors under `strict: true`; no `any` types used; all request/response shapes match `docs/api-schema.md`
+- [x] Step 1.14: Create `frontend/src/pages/UploadPage.tsx` with `UploadZone`, summary type selector, and Process button wired to `api.uploadAndSummarize()`
+  - *Acceptance Criteria:* Full round-trip — drag file → click Process → see summary JSON in browser console — works without errors; `npx tsc --noEmit` passes 0 errors
 
 ---
 
@@ -425,14 +425,14 @@ git push -u origin develop
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
-| Phase 1 | Core Parser + API Foundation | 2 | 14 | 11 | `in_progress` |
+| Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **27** | **28% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **30** | **31% complete** |
 
 ---
 

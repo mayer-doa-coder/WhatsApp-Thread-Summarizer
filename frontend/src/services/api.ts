@@ -1,0 +1,238 @@
+import axios from 'axios';
+
+const BASE_URL = process.env.REACT_APP_API_URL ?? 'http://localhost:4000';
+
+const client = axios.create({ baseURL: `${BASE_URL}/api` });
+
+/** Call once after login/logout to attach or clear the JWT on all requests. */
+export function setAuthToken(token: string | null): void {
+  if (token) {
+    client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete client.defaults.headers.common['Authorization'];
+  }
+}
+
+// ── Shared primitives ─────────────────────────────────────────────────────────
+
+export type SummaryType = 'short' | 'medium' | 'detailed' | 'bullets';
+export type MessageType = 'text' | 'media' | 'system' | 'deleted';
+export type Tone =
+  | 'formal'
+  | 'casual'
+  | 'concise'
+  | 'empathetic'
+  | 'apologetic'
+  | 'assertive';
+export type FocusOn = 'tasks' | 'decisions' | 'sentiment' | 'topics' | 'all';
+export type Sentiment = 'positive' | 'neutral' | 'negative' | 'mixed';
+
+export interface Message {
+  timestamp: string;
+  sender: string | null;
+  content: string;
+  type: MessageType;
+  date?: string;
+  time?: string;
+}
+
+export interface DateRange {
+  from: string;
+  to: string;
+}
+
+// ── /api/upload ───────────────────────────────────────────────────────────────
+
+export interface TypeCounts {
+  text: number;
+  media: number;
+  system: number;
+  deleted: number;
+}
+
+export interface ParsedFile {
+  filename: string;
+  sizeBytes: number;
+  encoding: string;
+  messageCount: number;
+  truncated: boolean;
+  parseWarnings: string[];
+  participants: string[];
+  dateRange: DateRange;
+  typeCounts: TypeCounts;
+  messages: Message[];
+}
+
+export interface UploadResponse {
+  files: ParsedFile[];
+}
+
+// ── /api/summarize ────────────────────────────────────────────────────────────
+
+export interface SummaryResult {
+  topic: string;
+  participants: string[];
+  dateRange: DateRange;
+  messageCount: number;
+  keyDecisions: string[];
+  actionItems: string[];
+  notableFacts: string[];
+  summaryText: string;
+  sentiment?: Sentiment;
+  dominantTopics?: string[];
+}
+
+export interface SummarizeRequest {
+  messages: Message[];
+  summaryType?: SummaryType;
+  filename?: string;
+  focusOn?: FocusOn;
+  language?: string;
+  participants?: string[];
+  maxMessages?: number;
+  includeQuotes?: boolean;
+}
+
+export interface SummarizeResponse {
+  summary: SummaryResult;
+  model: string;
+  processingMs: number;
+  inputMessages: number;
+  truncated: boolean;
+}
+
+// ── /api/reply ────────────────────────────────────────────────────────────────
+
+export interface DraftOption {
+  tone: string;
+  text: string;
+  wordCount: number;
+}
+
+export interface DraftRequest {
+  messages: Message[];
+  tone?: Tone;
+  tones?: Tone[];
+  userIntent?: string;
+  count?: number;
+  maxWordsPerReply?: number;
+  language?: string;
+  includeEmoji?: boolean;
+}
+
+export interface DraftResponse {
+  options: DraftOption[];
+  model: string;
+  processingMs: number;
+}
+
+// ── /api/brief ────────────────────────────────────────────────────────────────
+
+export interface BriefRequest {
+  files: File[];
+  summaryType?: SummaryType;
+  prioritize?: string;
+  focusOn?: Omit<FocusOn, 'sentiment'>;
+  language?: string;
+  maxMessagesPerFile?: number;
+  crossChatInsights?: boolean;
+}
+
+export interface BriefChatCard {
+  filename: string;
+  topic: string;
+  participants: string[];
+  messageCount: number;
+  dateRange: DateRange;
+  actionItems: string[];
+  keyDecisions: string[];
+  sentiment?: string;
+  summaryText: string;
+}
+
+export interface BriefResult {
+  generatedAt: string;
+  overviewParagraph: string;
+  chatCards: BriefChatCard[];
+  crossChatInsights: string[];
+  keyPeople: string[];
+  totalActionItems: string[];
+  filesProcessed: number;
+  filesExcluded: number;
+}
+
+export interface BriefResponse {
+  brief: BriefResult;
+  model: string;
+  processingMs: number;
+}
+
+// ── /api/history ──────────────────────────────────────────────────────────────
+
+export interface HistoryResponse {
+  id: string;
+  filename: string;
+  type: 'thread' | 'brief';
+  summaryText: string;
+  messageCount: number;
+  createdAt: string;
+}
+
+interface HistoryListEnvelope {
+  summaries: HistoryResponse[];
+  total: number;
+  limit: number;
+  offset: number;
+  hasMore: boolean;
+}
+
+// ── API functions ─────────────────────────────────────────────────────────────
+
+/**
+ * Upload a .txt WhatsApp export, parse it on the backend, then summarize.
+ * Uses FormData for the upload step as required by /api/upload.
+ */
+export async function uploadAndSummarize(
+  file: File,
+  summaryType: SummaryType = 'medium',
+): Promise<SummarizeResponse> {
+  const form = new FormData();
+  form.append('file', file);
+
+  const { data: uploadData } = await client.post<UploadResponse>('/upload', form);
+  const messages: Message[] = uploadData.files[0]?.messages ?? [];
+
+  const body: SummarizeRequest = { messages, summaryType, filename: file.name };
+  const { data } = await client.post<SummarizeResponse>('/summarize', body);
+  return data;
+}
+
+export async function draftReply(payload: DraftRequest): Promise<DraftResponse> {
+  const { data } = await client.post<DraftResponse>('/reply', payload);
+  return data;
+}
+
+export async function generateBrief(payload: BriefRequest): Promise<BriefResponse> {
+  const form = new FormData();
+  payload.files.forEach((f) => form.append('files[]', f));
+  if (payload.summaryType !== undefined) form.append('summaryType', payload.summaryType);
+  if (payload.prioritize !== undefined) form.append('prioritize', payload.prioritize);
+  if (payload.focusOn !== undefined) form.append('focusOn', String(payload.focusOn));
+  if (payload.language !== undefined) form.append('language', payload.language);
+  if (payload.maxMessagesPerFile !== undefined)
+    form.append('maxMessagesPerFile', String(payload.maxMessagesPerFile));
+  if (payload.crossChatInsights !== undefined)
+    form.append('crossChatInsights', String(payload.crossChatInsights));
+
+  const { data } = await client.post<BriefResponse>('/brief', form);
+  return data;
+}
+
+export async function getHistory(): Promise<HistoryResponse[]> {
+  const { data } = await client.get<HistoryListEnvelope>('/history');
+  return data.summaries;
+}
+
+export async function deleteHistoryItem(id: string): Promise<void> {
+  await client.delete(`/history/${id}`);
+}
