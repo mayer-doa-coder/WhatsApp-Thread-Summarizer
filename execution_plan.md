@@ -44,8 +44,8 @@ Rules you MUST follow when reading or modifying this document:
 | Field | Value |
 |---|---|
 | **Status** | `in_progress` |
-| **Current Phase** | Phase 4 — Daily Brief + Multi-File Support |
-| **Overall Completion** | 4 / 8 phases complete |
+| **Current Phase** | Phase 5 — Authentication + History |
+| **Overall Completion** | 5 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
 
@@ -254,7 +254,7 @@ git push -u origin develop
 
 **Week:** 5 (Days 29–35)
 **Dependency:** Phase 3 complete — reply drafter endpoint tested, panel UI wired
-**Status:** `in_progress`
+**Status:** `complete`
 **Branch:** `git checkout develop && git checkout -b feature/phase-4-daily-brief && git push -u origin feature/phase-4-daily-brief`
 **Merge when done:** PR `feature/phase-4-daily-brief` → `develop`, then PR `develop` → `main`
 
@@ -274,12 +274,12 @@ git push -u origin develop
   - *Acceptance Criteria:* 4 tests pass (0 failures); `callLLM` mocked via `jest.mock`; mocks cleared via `beforeEach(() => jest.clearAllMocks())`; covers ideal path (3-card mapping + overviewParagraph), positional merge resilience (LLM returns 2 cards for 3 inputs → output padded to 3), `keyPeople` object flattening to `"Name: context"` strings, and input validation (`undefined`/`null`/`[]` all throw without calling `callLLM`)
 
 ### Daily Brief UI
-- [ ] Step 4.6: Create `frontend/src/components/BriefChatCard.tsx` — compact 320px-wide card for horizontal scroll; "View Full" expands to full `SummaryCard` in a modal
-  - *Acceptance Criteria:* Component renders with fixed width; modal opens and closes correctly
-- [ ] Step 4.7: Create `frontend/src/pages/DailyBriefPage.tsx` — date header, overview paragraph, horizontal scroll row of `BriefChatCard`s, cross-chat insights, key people tag cloud, "Download PDF" placeholder, "Copy as HTML" button
-  - *Acceptance Criteria:* All sections render for a 5-chat brief
-- [ ] Step 4.8: Implement "Copy as HTML" — serializes `#brief-container` innerHTML, wraps in inline-styled HTML doc, copies to clipboard
-  - *Acceptance Criteria:* Pasting the copied HTML into a new tab renders the brief correctly
+- [x] Step 4.6: Create `frontend/src/components/BriefChatCard.tsx` — compact 320px-wide card for horizontal scroll; "View Full" expands to full `SummaryCard` in a modal
+  - *Acceptance Criteria:* `w-[320px] shrink-0` enforces fixed card width; `actionRequired` renders green dot + `border-l-[#25D366]`; `oneLiner` line-clamped to 3 lines; "View Full" button opens a `fixed inset-0 z-50` modal overlay with `<SummaryCard data={fullSummary} />`; modal closes via button click, backdrop click, or Escape key; `document.body.style.overflow` toggled hidden/'' while modal is open; `npx tsc --noEmit` → 0 errors under `strict: true`
+- [x] Step 4.7: Create `frontend/src/pages/DailyBriefPage.tsx` — date header, overview paragraph, horizontal scroll row of `BriefChatCard`s, cross-chat insights, key people tag cloud, "Download PDF" placeholder, "Copy as HTML" button
+  - *Acceptance Criteria:* All 5 sections render for a 5-chat mock brief; `BriefChatCardWidget` renders in a `flex overflow-x-auto flex-nowrap` row preserving each card's `w-[320px] shrink-0`; "Copy as HTML" serializes `#brief-container` innerHTML into a standalone HTML doc via `navigator.clipboard.writeText` with `execCommand` fallback; "Download PDF" shows a placeholder `alert`; key people rendered as pill badges; `npx tsc --noEmit` → 0 errors under `strict: true`
+- [x] Step 4.8: Implement "Copy as HTML" — serializes `#brief-container` innerHTML, wraps in inline-styled HTML doc, copies to clipboard
+  - *Acceptance Criteria:* `id="brief-container"` scoped to content below header (overview + cards + insights + people); `handleCopyHtml` builds a full `<!DOCTYPE html>` document injecting `<script src="https://cdn.tailwindcss.com">` in `<head>` and `<body class="bg-slate-950 text-slate-200 p-8 antialiased">`; `navigator.clipboard.writeText` with `execCommand` textarea fallback; `isCopiedHtml` state toggles button label "Copy as HTML" → "Copied!" for 2000ms; timeout ref cleared on re-click and unmount; pasting saved HTML into a browser renders the dark layout correctly; `npx tsc --noEmit` → 0 errors
 
 ---
 
@@ -428,11 +428,11 @@ git push -u origin develop
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
 | Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
-| Phase 4 | Daily Brief + Multi-File | 5 | 8 | 6 | `in_progress` |
+| Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **51** | **53% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **54** | **56% complete** |
 
 ---
 
