@@ -45,7 +45,7 @@ Rules you MUST follow when reading or modifying this document:
 |---|---|
 | **Status** | `in_progress` |
 | **Current Phase** | Phase 2 — Summarization Engine |
-| **Overall Completion** | 2 / 8 phases complete |
+| **Overall Completion** | 3 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
 
@@ -191,7 +191,7 @@ git push -u origin develop
 
 **Week:** 3 (Days 15–21)
 **Dependency:** Phase 1 complete — parser tested, `/api/summarize` operational, React upload flow connected
-**Status:** `in_progress`
+**Status:** `complete`
 **Branch:** `git checkout develop && git checkout -b feature/phase-2-summarizer && git push -u origin feature/phase-2-summarizer`
 **Merge when done:** PR `feature/phase-2-summarizer` → `develop`, then PR `develop` → `main`
 
@@ -206,17 +206,17 @@ git push -u origin develop
 - [x] Step 2.4: Add retry logic to `callLLM()` — on 429, wait 2s and retry once on same tier; on second 429 switch to next tier; log all failures
   - *Acceptance Criteria:* SambaNova 429 x2 → 2s delay between attempts → cascades to Cerebras (elapsed ~2s); SambaNova + Cerebras both fail (4 attempts total) → cascades to Google; intra-tier success on retry 2 does not cascade; non-retryable (401/403) throws immediately without retry; all failures logged with tier name, attempt number, and status code
 - [x] Step 2.5: Write unit tests in `backend/tests/summarizer.test.js` with mocked LLM — minimum 6 cases covering prompt format, response parsing (valid JSON), response parsing (malformed), and 3-chunk pipeline
-  - *Acceptance Criteria:* 7 tests pass (0 failures); `callLLM` mocked via `jest.mock`; mock cleared between tests with `beforeEach(jest.clearAllMocks)`; 3-chunk map-reduce asserts exactly 4 `callLLM` calls; `summaryLength` passthrough verified via `callLLM.mock.calls` system prompt inspection
+  - *Acceptance Criteria:* 7 tests pass (0 failures); `callLLM` mocked via `jest.mock`; mocks auto-cleared between tests via `clearMocks: true` in `backend/package.json` (global Jest config — no per-file `beforeEach` needed); 3-chunk map-reduce asserts exactly 4 `callLLM` calls; `summaryLength` passthrough verified via `callLLM.mock.calls` system prompt inspection
 
 ### Summary Display UI (`frontend/src/`)
-- [ ] Step 2.6: Create `frontend/src/components/SummaryCard.tsx` — renders all 6 summary fields; action items in green-highlighted bullets; Tailwind green left border (`border-l-4 border-[#25D366]`)
-  - *Acceptance Criteria:* Component renders all 6 fields with no TypeScript errors
-- [ ] Step 2.7: Create `frontend/src/pages/SummaryPage.tsx` — receives summary from router state; renders `SummaryCard`; "Generate Reply Draft" button (stub); "Start Over" button navigating back to Upload
-  - *Acceptance Criteria:* Navigating to `/summary` with state renders the full card
-- [ ] Step 2.8: Create `frontend/src/hooks/useSummarize.ts` — manages API call lifecycle: `{ loading, error, summary, trigger }`
-  - *Acceptance Criteria:* `trigger()` sets loading to true, resolves to a summary object, sets loading to false
-- [ ] Step 2.9: Wire `useSummarize` into `UploadPage.tsx` — navigate to `SummaryPage` on success, show `ErrorToast` on failure
-  - *Acceptance Criteria:* Full upload-to-summary UI flow works end-to-end in the browser
+- [x] Step 2.6: Create `frontend/src/components/SummaryCard.tsx` — renders all 6 summary fields; action items in green-highlighted bullets; Tailwind green left border (`border-l-4 border-[#25D366]`)
+  - *Acceptance Criteria:* Component renders all 6 fields; `border-l-4 border-[#25D366]` on outer container; action items use `rgba(37,211,102,…)` row tint + left bar + green text on first item; `SummaryData` interface is strictly typed (no `any`); graceful empty-array handling on all array fields; `npx tsc --noEmit` → 0 errors under `strict: true`
+- [x] Step 2.7: Create `frontend/src/pages/SummaryPage.tsx` — receives summary from router state; renders `SummaryCard`; "Generate Reply Draft" button (stub); "Start Over" button navigating back to Upload
+  - *Acceptance Criteria:* Navigating to `/summary` with a populated `SummaryData` state object renders the full `SummaryCard` and both buttons; direct navigation to `/summary` with no state auto-redirects to `/` via `useEffect`; `isSummaryData` type-guard validates the shape of `location.state` without casting to `any`; `react-router-dom` installed and `App.tsx` wired with `BrowserRouter` + `Routes` for `/` and `/summary`; `npx tsc --noEmit` → 0 errors
+- [x] Step 2.8: Create `frontend/src/hooks/useSummarize.ts` — manages API call lifecycle: `{ loading, error, summary, trigger }`
+  - *Acceptance Criteria:* `trigger(file, summaryType)` sets `loading` to `true`, awaits `uploadAndSummarize`, populates `summary: SummaryResult | null` on success; on failure, extracts message via `axios.isAxiosError` (uses server `data.message` when present, falls back to `err.message`) and sets `error: string | null`; `finally` block guarantees `loading` resets to `false` in all paths; `trigger` is stable across renders via `useCallback([], [])`; `npx tsc --noEmit` → 0 errors
+- [x] Step 2.9: Wire `useSummarize` into `UploadPage.tsx` — navigate to `SummaryPage` on success, show `ErrorToast` on failure
+  - *Acceptance Criteria:* `useSummarize()` replaces all manual `isProcessing`/`result`/`error` state; `useEffect` on `summary` calls `navigate('/summary', { state: summary })` the moment it becomes truthy; Process button disabled and shows "Processing…" while `loading` is true or `selectedFile` is null; `error` renders an inline toast (`border-red-500 bg-red-900/35 text-[#fca5a5]`, `role="alert"`); inline result display removed (now handled by `SummaryPage`); `npx tsc --noEmit` → 0 errors
 
 ---
 
@@ -426,13 +426,13 @@ git push -u origin develop
 |---|---|---|---|---|---|
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
-| Phase 2 | Summarization Engine | 3 | 9 | 5 | `in_progress` |
+| Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **35** | **36% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **39** | **40% complete** |
 
 ---
 

@@ -1,43 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UploadZone from '../components/UploadZone';
-import { uploadAndSummarize, SummaryType, SummarizeResponse } from '../services/api';
+import { SummaryType } from '../services/api';
+import { useSummarize } from '../hooks/useSummarize';
 
 const SUMMARY_TYPES: { value: SummaryType; label: string }[] = [
-  { value: 'short', label: 'Short (2–3 sentences)' },
-  { value: 'medium', label: 'Medium (~100 words)' },
-  { value: 'detailed', label: 'Detailed (~300 words)' },
+  { value: 'short',    label: 'Short (2–3 sentences)' },
+  { value: 'medium',   label: 'Medium (~100 words)'   },
+  { value: 'detailed', label: 'Detailed (~300 words)'  },
 ];
 
 export default function UploadPage() {
+  const navigate = useNavigate();
+  const { loading, error, summary, trigger } = useSummarize();
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [summaryType, setSummaryType] = useState<SummaryType>('medium');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [result, setResult] = useState<SummarizeResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
-  async function handleProcess() {
-    if (!selectedFile || isProcessing) return;
-    setIsProcessing(true);
-    setError(null);
-    setResult(null);
-    try {
-      const summary = await uploadAndSummarize(selectedFile, summaryType);
-      console.log('Summary result:', summary);
-      setResult(summary);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unexpected error.';
-      setError(message);
-    } finally {
-      setIsProcessing(false);
+  useEffect(() => {
+    if (summary) {
+      navigate('/summary', { state: summary });
     }
+  }, [summary, navigate]);
+
+  function handleProcess() {
+    if (!selectedFile || loading) return;
+    trigger(selectedFile, summaryType);
   }
+
+  const isDisabled = !selectedFile || loading;
 
   return (
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#0f172a',
-        color: '#e2e8f0',
+        backgroundColor: '#0e1020',
+        color: '#e8eaf6',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -48,7 +46,7 @@ export default function UploadPage() {
       <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px', color: '#25D366' }}>
         WhatsApp Thread Summarizer
       </h1>
-      <p style={{ color: '#64748b', marginBottom: '40px', fontSize: '0.9rem' }}>
+      <p style={{ color: 'rgba(232,234,246,0.35)', marginBottom: '40px', fontSize: '0.9rem' }}>
         Upload a WhatsApp export (.txt) and get an AI-generated summary.
       </p>
 
@@ -57,7 +55,7 @@ export default function UploadPage() {
       <div style={{ marginTop: '28px', width: '100%', maxWidth: '400px' }}>
         <label
           htmlFor="summary-type"
-          style={{ display: 'block', color: '#94a3b8', fontSize: '0.85rem', marginBottom: '8px' }}
+          style={{ display: 'block', color: 'rgba(232,234,246,0.45)', fontSize: '0.85rem', marginBottom: '8px' }}
         >
           Summary length
         </label>
@@ -68,13 +66,14 @@ export default function UploadPage() {
           style={{
             width: '100%',
             padding: '10px 12px',
-            backgroundColor: '#1e293b',
-            color: '#e2e8f0',
-            border: '1px solid #334155',
+            backgroundColor: '#0e1020',
+            color: '#e8eaf6',
+            border: '1px solid rgba(232,234,246,0.12)',
             borderRadius: '8px',
             fontSize: '0.9rem',
             cursor: 'pointer',
             outline: 'none',
+            boxShadow: '-4px -4px 10px rgba(29,33,56,0.6), 4px 4px 10px rgba(6,7,15,0.9)',
           }}
         >
           {SUMMARY_TYPES.map(({ value, label }) => (
@@ -87,69 +86,33 @@ export default function UploadPage() {
 
       <button
         onClick={handleProcess}
-        disabled={!selectedFile || isProcessing}
+        disabled={isDisabled}
         style={{
           marginTop: '24px',
           padding: '12px 40px',
-          backgroundColor: !selectedFile || isProcessing ? '#1e293b' : '#25D366',
-          color: !selectedFile || isProcessing ? '#475569' : '#0f172a',
+          background: isDisabled
+            ? 'rgba(232,234,246,0.06)'
+            : 'linear-gradient(135deg, #2bcc60, #1a9946)',
+          color: isDisabled ? 'rgba(232,234,246,0.25)' : '#ffffff',
           border: 'none',
           borderRadius: '8px',
           fontSize: '1rem',
           fontWeight: 600,
-          cursor: !selectedFile || isProcessing ? 'not-allowed' : 'pointer',
-          transition: 'background-color 0.15s, color 0.15s',
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
+          transition: 'opacity 0.15s',
+          boxShadow: isDisabled ? 'none' : '0 0 14px rgba(37,211,102,0.25)',
         }}
       >
-        {isProcessing ? 'Processing…' : 'Process'}
+        {loading ? 'Processing…' : 'Process'}
       </button>
 
       {error && (
         <div
-          style={{
-            marginTop: '24px',
-            padding: '14px 18px',
-            backgroundColor: '#1e293b',
-            border: '1px solid #ef4444',
-            borderRadius: '8px',
-            color: '#ef4444',
-            fontSize: '0.875rem',
-            maxWidth: '480px',
-            width: '100%',
-          }}
+          role="alert"
+          className="border border-red-500 rounded-xl px-5 py-3 mt-6 w-full max-w-md text-sm"
+          style={{ backgroundColor: 'rgba(127,29,29,0.35)', color: '#fca5a5' }}
         >
-          {error}
-        </div>
-      )}
-
-      {result && (
-        <div
-          style={{
-            marginTop: '24px',
-            padding: '20px',
-            backgroundColor: '#1e293b',
-            border: '1px solid #25D366',
-            borderRadius: '8px',
-            maxWidth: '640px',
-            width: '100%',
-          }}
-        >
-          <h2 style={{ margin: '0 0 12px', fontSize: '1rem', color: '#25D366' }}>
-            {result.summary.topic}
-          </h2>
-          <p style={{ margin: '0 0 16px', color: '#cbd5e1', fontSize: '0.9rem', lineHeight: 1.6 }}>
-            {result.summary.summaryText}
-          </p>
-          {result.summary.actionItems.length > 0 && (
-            <div>
-              <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0 0 6px' }}>Action items</p>
-              <ul style={{ margin: 0, paddingLeft: '18px', color: '#cbd5e1', fontSize: '0.875rem' }}>
-                {result.summary.actionItems.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <span className="font-semibold">Error: </span>{error}
         </div>
       )}
     </div>
