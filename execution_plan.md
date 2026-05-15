@@ -44,7 +44,7 @@ Rules you MUST follow when reading or modifying this document:
 | Field | Value |
 |---|---|
 | **Status** | `in_progress` |
-| **Current Phase** | Phase 2 — Summarization Engine |
+| **Current Phase** | Phase 3 — Reply Drafter Module |
 | **Overall Completion** | 3 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
@@ -224,19 +224,19 @@ git push -u origin develop
 
 **Week:** 4 (Days 22–28)
 **Dependency:** Phase 2 complete — summarizer pipeline tested, SummaryPage rendering correctly
-**Status:** `not_started`
+**Status:** `in_progress`
 **Branch:** `git checkout develop && git checkout -b feature/phase-3-reply-drafter && git push -u origin feature/phase-3-reply-drafter`
 **Merge when done:** PR `feature/phase-3-reply-drafter` → `develop`, then PR `develop` → `main`
 
 ### Reply Drafter Backend
-- [ ] Step 3.1: Create `backend/src/summarizer/replyDrafter.js` — `draftReplies(messages, userIntent, tone)` returns exactly 3 reply options; validates non-empty strings
-  - *Acceptance Criteria:* All 3 options are non-empty; Formal has no contractions; Concise is under 40 words
-- [ ] Step 3.2: Add `POST /api/reply` — validates `messages` non-empty and < 50 items; returns `{ options: [string, string, string] }`
-  - *Acceptance Criteria:* Empty `messages` array returns 400; valid input returns 200 with 3 options
-- [ ] Step 3.3: Refine reply prompt templates in `docs/prompt-templates.md` with few-shot examples for tone consistency
+- [x] Step 3.1: Create `backend/src/summarizer/replyDrafter.js` — `draftReplies(messages, userIntent, tone)` returns exactly 3 reply options; validates non-empty strings
+  - *Acceptance Criteria:* Returns exactly 3 non-empty strings (pad with duplicates / static fallback if LLM returns fewer); `messages` empty or non-array throws with descriptive error; `TONE_CONFIG` covers all 6 tones (`formal`, `casual`, `concise`, `empathetic`, `apologetic`, `assertive`) with distinct system-prompt constraint blocks; `formal` block explicitly lists common contractions and uses "MUST NOT"; `concise` block instructs "strictly under 40 words" and "count words carefully"; unknown tone defaults to `casual`; unparseable LLM response returns 3 static fallback strings instead of throwing; `messagesToTranscript` reused from `promptBuilder.js`; uses last 20 messages as context window
+- [x] Step 3.2: Add `POST /api/reply` — validates `messages` non-empty and < 50 items; returns `{ options: [string, string, string] }`
+  - *Acceptance Criteria:* Missing or empty `messages` → 400 `"messages must be a non-empty array."`; `messages.length >= 50` → 400 `"messages must contain fewer than 50 items."`; valid input → `draftReplies` called → 200 `{ options: [...] }`; caught errors forwarded via `next(err)` to global error handler; router mounted at `/api/reply` in `app.js`
+- [x] Step 3.3: Refine reply prompt templates in `docs/prompt-templates.md` with few-shot examples for tone consistency
   - *Acceptance Criteria:* Prompt templates updated with at least 1 example per tone
-- [ ] Step 3.4: Write unit tests in `backend/tests/replyDrafter.test.js` — minimum 5 cases covering all 3 tones, empty messages 400, and `userIntent` shaping the output
-  - *Acceptance Criteria:* 0 test failures
+- [x] Step 3.4: Write unit tests in `backend/tests/replyDrafter.test.js` — minimum 5 cases covering all 3 tones, empty messages 400, and `userIntent` shaping the output
+  - *Acceptance Criteria:* 5 tests pass (0 failures); `callLLM` mocked via `jest.mock`; mocks auto-cleared between tests via `clearMocks: true` in `backend/package.json`; formal test asserts `MUST NOT` and `do not` in system prompt; concise test asserts `40 words` and `Count words carefully`; casual test asserts `CASUAL`; empty-array rejection asserts no `callLLM` call was made; userIntent test asserts the verbatim intent string appears in the user-role message
 
 ### Reply Drafter UI
 - [ ] Step 3.5: Create `frontend/src/components/ReplyDrafterPanel.tsx` — right-side slide-in panel with context display, tone selector tabs, `userIntent` text input, "Generate Drafts" button, 3 reply cards each with "Copy" button
@@ -427,12 +427,12 @@ git push -u origin develop
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
 | Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
-| Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
+| Phase 3 | Reply Drafter Module | 4 | 8 | 4 | `in_progress` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **39** | **40% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **43** | **44% complete** |
 
 ---
 
