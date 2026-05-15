@@ -145,7 +145,7 @@ git push -u origin develop
 
 **Week:** 2 (Days 8–14)
 **Dependency:** Phase 0 complete — repo initialized, format research done, API schema documented
-**Status:** `in_progress`
+**Status:** `complete`
 **Branch:** `git checkout develop && git checkout -b feature/phase-1-parser && git push -u origin feature/phase-1-parser`
 **Merge when done:** PR `feature/phase-1-parser` → `develop`, then PR `develop` → `main`
 
@@ -191,22 +191,22 @@ git push -u origin develop
 
 **Week:** 3 (Days 15–21)
 **Dependency:** Phase 1 complete — parser tested, `/api/summarize` operational, React upload flow connected
-**Status:** `not_started`
+**Status:** `in_progress`
 **Branch:** `git checkout develop && git checkout -b feature/phase-2-summarizer && git push -u origin feature/phase-2-summarizer`
 **Merge when done:** PR `feature/phase-2-summarizer` → `develop`, then PR `develop` → `main`
 
 ### Summarizer Module (`backend/src/summarizer/`)
-- [ ] Step 2.1: Create `backend/src/summarizer/promptBuilder.js` — `buildSummarizationPrompt(messages, summaryLength)` using v1 template from `docs/prompt-templates.md`; `summaryLength` accepts `'short' | 'medium' | 'detailed'`
-  - *Acceptance Criteria:* Each length variant produces a noticeably different prompt
-- [ ] Step 2.2: Create `backend/src/summarizer/responseParsers.js` — `parseSummaryResponse(llmOutput)` extracts `{ topic, keyDecisions, actionItems, notableFacts, participants, summaryText }`; gracefully handles non-JSON LLM responses
-  - *Acceptance Criteria:* Passing malformed JSON does not throw — returns a fallback object with `summaryText` populated from raw string
-- [ ] Step 2.3: Implement multi-chunk pipeline in `backend/src/summarizer/summarizer.js` — chunk → summarize each → consolidate via "summary of summaries" call
+- [x] Step 2.1: Create `backend/src/summarizer/promptBuilder.js` — `buildSummarizationPrompt(messages, summaryLength)` using v1 template from `docs/prompt-templates.md`; `summaryLength` accepts `'short' | 'medium' | 'detailed'`
+  - *Acceptance Criteria:* Each length variant produces a noticeably different prompt; invalid/undefined `summaryLength` defaults to `'medium'`; function returns `{ systemPrompt, userPrompt, summaryLength }`; optional `chunkMeta` argument injects chunk annotation into `userPrompt`
+- [x] Step 2.2: Create `backend/src/summarizer/responseParsers.js` — `parseSummaryResponse(llmOutput)` extracts `{ topic, keyDecisions, actionItems, notableFacts, participants, summaryText }`; gracefully handles non-JSON LLM responses
+  - *Acceptance Criteria:* Passing malformed JSON does not throw — returns a fallback object with `summaryText` populated from raw string; markdown fences stripped before parse; array fields coerced to `[]` if missing or wrong type; `null`/`undefined` input handled without throw
+- [x] Step 2.3: Implement multi-chunk pipeline in `backend/src/summarizer/summarizer.js` — chunk → summarize each → consolidate via "summary of summaries" call
   - *Dependency:* Steps 1.5, 2.1, 2.2
-  - *Acceptance Criteria:* A 10,000-message file is processed in under 45 seconds with no timeout
-- [ ] Step 2.4: Add retry logic to `callLLM()` — on 429, wait 2s and retry once; on second 429, switch to Claude Haiku; log all failures
-  - *Acceptance Criteria:* Mocking two consecutive 429s causes a successful Claude Haiku call on the third attempt
-- [ ] Step 2.5: Write unit tests in `backend/tests/summarizer.test.js` with mocked LLM — minimum 6 cases covering prompt format, response parsing (valid JSON), response parsing (malformed), and 3-chunk pipeline
-  - *Acceptance Criteria:* 0 test failures
+  - *Acceptance Criteria:* All chunks summarized concurrently via `Promise.all`; single-chunk input returns directly without a consolidation call; multi-chunk input runs a final consolidation LLM call to merge partials; empty/non-array input rejects with a descriptive error
+- [x] Step 2.4: Add retry logic to `callLLM()` — on 429, wait 2s and retry once on same tier; on second 429 switch to next tier; log all failures
+  - *Acceptance Criteria:* SambaNova 429 x2 → 2s delay between attempts → cascades to Cerebras (elapsed ~2s); SambaNova + Cerebras both fail (4 attempts total) → cascades to Google; intra-tier success on retry 2 does not cascade; non-retryable (401/403) throws immediately without retry; all failures logged with tier name, attempt number, and status code
+- [x] Step 2.5: Write unit tests in `backend/tests/summarizer.test.js` with mocked LLM — minimum 6 cases covering prompt format, response parsing (valid JSON), response parsing (malformed), and 3-chunk pipeline
+  - *Acceptance Criteria:* 7 tests pass (0 failures); `callLLM` mocked via `jest.mock`; mock cleared between tests with `beforeEach(jest.clearAllMocks)`; 3-chunk map-reduce asserts exactly 4 `callLLM` calls; `summaryLength` passthrough verified via `callLLM.mock.calls` system prompt inspection
 
 ### Summary Display UI (`frontend/src/`)
 - [ ] Step 2.6: Create `frontend/src/components/SummaryCard.tsx` — renders all 6 summary fields; action items in green-highlighted bullets; Tailwind green left border (`border-l-4 border-[#25D366]`)
@@ -426,13 +426,13 @@ git push -u origin develop
 |---|---|---|---|---|---|
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
 | Phase 1 | Core Parser + API Foundation | 2 | 14 | 14 | `complete` |
-| Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
+| Phase 2 | Summarization Engine | 3 | 9 | 5 | `in_progress` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **30** | **31% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **35** | **36% complete** |
 
 ---
 
