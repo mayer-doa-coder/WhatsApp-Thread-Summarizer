@@ -165,11 +165,11 @@ git push -u origin develop
   - *Acceptance Criteria:* `npm test` shows 0 failures, all 8+ tests pass
 
 ### Express API Scaffolding (`backend/src/`)
-- [ ] Step 1.7: Create `backend/src/app.js` with CORS, JSON parsing, Morgan; `backend/server.js` listening on `PORT || 4000`
+- [x] Step 1.7: Create `backend/src/app.js` with CORS, JSON parsing, Morgan; `backend/server.js` listening on `PORT || 4000`
   - *Acceptance Criteria:* Server starts and `GET /api/health` returns `{ status: 'ok' }`
-- [ ] Step 1.8: Create `POST /api/upload` — Multer memory storage, validates MIME type `text/plain`, rejects files > 5 MB with 413
+- [x] Step 1.8: Create `POST /api/upload` — Multer memory storage, validates MIME type `text/plain`, rejects files > 5 MB with 413
   - *Acceptance Criteria:* A PNG renamed to `.txt` is rejected with 415; a 6 MB file with 413
-- [ ] Step 1.9: Create `POST /api/summarize` — accepts `{ messages, summaryType }`, calls chunker + LLM via v1 prompt, returns structured summary JSON
+- [x] Step 1.9: Create `POST /api/summarize` — accepts `{ messages, summaryType }`, calls chunker + LLM via v1 prompt, returns structured summary JSON
   - *Dependency:* Steps 1.5, 0.16
   - *Acceptance Criteria:* A real 200-message export returns a 200 response with all 6 summary fields
 - [ ] Step 1.10: Create global error handler `backend/src/middleware/errorHandler.js` — returns `{ error, message, code }`, never exposes stack traces in production
@@ -425,14 +425,14 @@ git push -u origin develop
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
-| Phase 1 | Core Parser + API Foundation | 2 | 14 | 6 | `in_progress` |
+| Phase 1 | Core Parser + API Foundation | 2 | 14 | 8 | `in_progress` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **22** | **23% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **24** | **25% complete** |
 
 ---
 
