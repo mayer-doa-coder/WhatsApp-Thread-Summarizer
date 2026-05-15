@@ -145,23 +145,23 @@ git push -u origin develop
 
 **Week:** 2 (Days 8–14)
 **Dependency:** Phase 0 complete — repo initialized, format research done, API schema documented
-**Status:** `not_started`
+**Status:** `in_progress`
 **Branch:** `git checkout develop && git checkout -b feature/phase-1-parser && git push -u origin feature/phase-1-parser`
 **Merge when done:** PR `feature/phase-1-parser` → `develop`, then PR `develop` → `main`
 
 ### Chat Parser Module (`backend/src/parser/`)
-- [ ] Step 1.1: Create `backend/src/parser/whatsappParser.js` — `parseWhatsAppExport(rawText)` returns `[{ date, time, timestamp, sender, content, type }]`
+- [x] Step 1.1: Create `backend/src/parser/whatsappParser.js` — `parseWhatsAppExport(rawText)` returns `[{ date, time, timestamp, sender, content, type }]`
   - *Acceptance Criteria:* All 3 fixture files from Step 0.8 parse without errors
-- [ ] Step 1.2: Handle multi-line message continuation (non-timestamp lines appended to previous message's `content`)
+- [x] Step 1.2: Handle multi-line message continuation (non-timestamp lines appended to previous message's `content`)
   - *Acceptance Criteria:* A 3-line message is stored as a single object with newlines in `content`
-- [ ] Step 1.3: Detect and tag `type` as `text`, `media`, `system`, or `deleted` using strings from `docs/format-research.md`
+- [x] Step 1.3: Detect and tag `type` as `text`, `media`, `system`, or `deleted` using strings from `docs/format-research.md`
   - *Dependency:* Step 0.9
   - *Acceptance Criteria:* `<Media omitted>` messages are tagged `media`, not `text`
-- [ ] Step 1.4: Normalize all timestamps to ISO 8601 regardless of source locale variant
+- [x] Step 1.4: Normalize all timestamps to ISO 8601 regardless of source locale variant
   - *Acceptance Criteria:* iOS 12-hour and Android 24-hour timestamps both produce valid ISO strings
-- [ ] Step 1.5: Create `backend/src/parser/chunkMessages.js` — `chunkMessages(messages, maxTokens)` splits with 200-token overlap; default `maxTokens` = 7500
+- [x] Step 1.5: Create `backend/src/parser/chunkMessages.js` — `chunkMessages(messages, maxTokens)` splits with 200-token overlap; default `maxTokens` = 7500
   - *Acceptance Criteria:* A 15,000-token mock input produces 3 chunks each ≤ 7500 tokens with 200-token overlap
-- [ ] Step 1.6: Write unit tests in `backend/tests/parser.test.js` — minimum 8 cases covering all formats, edge cases, and the chunker
+- [x] Step 1.6: Write unit tests in `backend/tests/parser.test.js` — minimum 8 cases covering all formats, edge cases, and the chunker
   - *Acceptance Criteria:* `npm test` shows 0 failures, all 8+ tests pass
 
 ### Express API Scaffolding (`backend/src/`)
@@ -425,14 +425,14 @@ git push -u origin develop
 | Phase | Name | Week | Tasks | Done | Status |
 |---|---|---|---|---|---|
 | Phase 0 | Project Setup & Research | 1 | 16 | 16 | `complete` |
-| Phase 1 | Core Parser + API Foundation | 2 | 14 | 0 | `not_started` |
+| Phase 1 | Core Parser + API Foundation | 2 | 14 | 6 | `in_progress` |
 | Phase 2 | Summarization Engine | 3 | 9 | 0 | `not_started` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 0 | `not_started` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 0 | `not_started` |
 | Phase 5 | Authentication + History | 6 | 12 | 0 | `not_started` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **16** | **16% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **22** | **23% complete** |
 
 ---
 
