@@ -40,7 +40,7 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
     <>
       {/* Card */}
       <div
-        className={`w-[320px] shrink-0 rounded-xl p-4 flex flex-col gap-3 border ${
+        className={`w-full md:w-[320px] md:shrink-0 rounded-xl p-4 flex flex-col gap-3 border ${
           chatCard.actionRequired
             ? 'border-l-4 border-l-[#25D366] border-slate-700'
             : 'border-slate-700'

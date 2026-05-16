@@ -232,7 +232,7 @@ export default function DailyBriefPage() {
   const { overviewParagraph, chatCards, crossChatInsights, keyPeople } = MOCK_BRIEF;
 
   return (
-    <div className="min-h-screen px-6 py-10" style={{ backgroundColor: '#0e1020' }}>
+    <div className="min-h-screen px-4 py-8 sm:px-6 sm:py-10" style={{ backgroundColor: '#0e1020' }}>
       <div className="mx-auto max-w-5xl space-y-8">
 
         {/* ── Header ── */}
@@ -301,7 +301,8 @@ export default function DailyBriefPage() {
         {/* ── Chat Cards (horizontal scroll) ── */}
         <section>
           <SectionLabel>Chats ({chatCards.length})</SectionLabel>
-          <div className="flex overflow-x-auto flex-nowrap gap-4 pb-4"
+          <div
+            className="flex flex-col gap-4 w-full md:flex-row md:overflow-x-auto md:flex-nowrap md:pb-4"
             style={{ scrollbarWidth: 'none' }}
           >
             {chatCards.map((card) => {

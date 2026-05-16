@@ -82,7 +82,7 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-8">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 sm:p-8">
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
@@ -213,7 +213,7 @@ export default function HistoryPage() {
           onClick={() => setPreviewItem(null)}
         >
           <div
-            className="w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
+            className="w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between mb-4 gap-4">

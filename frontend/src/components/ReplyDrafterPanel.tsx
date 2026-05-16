@@ -168,22 +168,30 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
         style={{ backgroundColor: 'rgba(6,7,15,0.72)' }}
       />
 
-      {/* Slide-in panel */}
+      {/* Panel — bottom sheet on mobile, side drawer on md+ */}
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Reply Drafter"
-        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={[
+          'fixed inset-x-0 bottom-0 z-50 flex flex-col w-full max-h-[85vh] overflow-hidden rounded-t-2xl',
+          'md:left-auto md:right-0 md:top-0 md:bottom-0 md:w-96 md:max-h-none md:rounded-none',
+          'transform transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-full',
+        ].join(' ')}
         style={{
           backgroundColor: '#0e1020',
           boxShadow: '-12px 0 48px rgba(6,7,15,0.9)',
         }}
       >
+        {/* Drag handle — visible only on mobile */}
+        <div className="block md:hidden shrink-0 pt-3 pb-1">
+          <div className="w-12 h-1.5 bg-slate-700 rounded-full mx-auto" />
+        </div>
+
         {/* ── Header ────────────────────────────────────────────────────────── */}
         <div
-          className="flex shrink-0 items-center justify-between px-6 py-4"
+          className="flex shrink-0 items-center justify-between px-4 py-3 md:px-6 md:py-4"
           style={{ borderBottom: '1px solid rgba(232,234,246,0.06)' }}
         >
           <div>
@@ -221,7 +229,7 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
         </div>
 
         {/* ── Scrollable body ────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+        <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-5 space-y-6">
 
           {/* Conversation context */}
           <div>

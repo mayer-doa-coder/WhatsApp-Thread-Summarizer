@@ -96,7 +96,7 @@ export default function SummaryCard({ data }: SummaryCardProps) {
 
   return (
     <div
-      className="rounded-2xl border-l-4 border-[#25D366] p-6 space-y-6"
+      className="rounded-2xl border-l-4 border-[#25D366] p-4 sm:p-6 space-y-6"
       style={NEU_UP}
     >
       {/* Topic */}

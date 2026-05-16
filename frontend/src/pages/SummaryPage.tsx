@@ -82,7 +82,7 @@ export default function SummaryPage() {
   const contextText = [summary.topic, summary.summaryText].filter(Boolean).join(' — ');
 
   return (
-    <div className="min-h-screen px-6 py-10" style={{ backgroundColor: '#0e1020' }}>
+    <div className="min-h-screen px-4 py-8 sm:px-6 sm:py-10" style={{ backgroundColor: '#0e1020' }}>
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Header row */}
         <div className="flex items-center justify-between">
