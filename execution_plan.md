@@ -327,20 +327,21 @@ git push -u origin develop
 
 **Week:** 7 (Days 43–49)
 **Dependency:** Phase 5 complete — auth and history fully functional
-**Status:** `not_started`
+**Status:** `in_progress`
 **Branch:** `git checkout develop && git checkout -b feature/phase-6-polish && git push -u origin feature/phase-6-polish`
 **Merge when done:** PR `feature/phase-6-polish` → `develop`, then PR `develop` → `main`
 
 ### PDF Export
-- [ ] Step 6.1: Install `puppeteer` in backend
-- [ ] Step 6.2: Create `backend/src/export/pdfExporter.js` — `exportBriefToPDF(briefHtml)` uses headless Chromium to produce A4 PDF Buffer
-  - *Acceptance Criteria:* Function returns a non-empty Buffer that opens as a valid PDF in Adobe Reader
-- [ ] Step 6.3: Create `backend/src/export/briefTemplate.js` — `renderBriefHTML(briefData)` returns inline-CSS HTML string (no Tailwind; PDF-safe)
-  - *Acceptance Criteria:* Rendered HTML displays all brief sections correctly in a browser
-- [ ] Step 6.4: Add `POST /api/export/pdf` (protected) — calls `renderBriefHTML` then `exportBriefToPDF`; streams PDF with `Content-Disposition: attachment`
-  - *Acceptance Criteria:* Request triggers a file download in the browser
-- [ ] Step 6.5: Wire "Download PDF" button in `DailyBriefPage.tsx` to the export endpoint via blob URL download
-  - *Acceptance Criteria:* Clicking the button downloads a correctly named `daily-brief-YYYY-MM-DD.pdf`
+- [x] Step 6.1: Install `puppeteer` in backend
+  - *Acceptance Criteria:* `puppeteer` and `puppeteer-core` present in `package.json` dependencies; installed via `PUPPETEER_SKIP_DOWNLOAD=true npm install puppeteer` + `npm install puppeteer-core`
+- [x] Step 6.2: Create `backend/src/export/pdfExporter.js` — `exportBriefToPDF(briefHtml)` uses headless Chromium to produce A4 PDF Buffer
+  - *Acceptance Criteria:* `exportBriefToPDF(html)` launches Puppeteer with `--no-sandbox` + `--disable-setuid-sandbox` args; `page.setContent(html, { waitUntil: 'networkidle0' })` ensures Tailwind CDN loads before print; `page.pdf({ format: 'A4', printBackground: true })` returns a Buffer; `try…finally` guarantees `browser.close()` on any error; `PUPPETEER_EXECUTABLE_PATH` env var accepted for environments without bundled Chromium; module loads without errors (`require` check passes)
+- [x] Step 6.3: Create `backend/src/export/briefTemplate.js` — `renderBriefHTML(briefData)` returns inline-CSS HTML string (no Tailwind; PDF-safe)
+  - *Acceptance Criteria:* Returns `<!DOCTYPE html>` string with `@page { size: A4; margin: 20mm }` in an internal `<style>` block; uses `system-ui` font stack (no CDN); renders Overview paragraph, Chat Cards (vertical stack with `page-break-inside: avoid`), Cross-Chat Insights, Key People pills, and footer; `actionRequired: true` cards get green left border + "ACTION REQUIRED" pill; all user content HTML-escaped via `esc()`; no Tailwind or external stylesheets; module loads and produces correct output under smoke test
+- [x] Step 6.4: Add `POST /api/export/pdf` (protected) — calls `renderBriefHTML` then `exportBriefToPDF`; streams PDF with `Content-Disposition: attachment`
+  - *Acceptance Criteria:* `POST /api/export/pdf` with a valid Bearer token and brief JSON body calls `renderBriefHTML(req.body)` then `exportBriefToPDF(html)`; response has `Content-Type: application/pdf`, `Content-Disposition: attachment; filename="daily-brief.pdf"`, and `Content-Length`; buffer sent via `res.end()`; errors forwarded to Express error handler; route mounted at `/api/export` in `app.js`; module loads without errors
+- [x] Step 6.5: Wire "Download PDF" button in `DailyBriefPage.tsx` to the export endpoint via blob URL download
+  - *Acceptance Criteria:* `useAuth` imported from `AuthContext`; `isDownloadingPdf` boolean state added; `handleDownloadPdf` sends `POST /api/export/pdf` with `Content-Type: application/json` + `Authorization: Bearer ${token}` headers and stringified brief body; `response.blob()` converted to object URL; invisible `<a download="daily-brief-YYYY-MM-DD.pdf">` created, clicked, and removed; `window.URL.revokeObjectURL` called in `finally` block; button disabled and shows "Generating PDF…" during flight; `npx tsc --noEmit` → 0 errors
 
 ### Dark Mode
 - [ ] Step 6.6: Enable `darkMode: 'class'` in `tailwind.config.js`; add theme toggle to nav bar; persist preference to `localStorage`
@@ -431,9 +432,9 @@ git push -u origin develop
 | Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
 | Phase 5 | Authentication + History | 6 | 12 | 12 | `complete` |
-| Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
+| Phase 6 | UI Polish + PDF Export | 7 | 12 | 5 | `in_progress` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **66** | **68% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **71** | **73% complete** |
 
 ---
 

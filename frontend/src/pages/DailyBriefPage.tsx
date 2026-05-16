@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import BriefChatCardWidget from '../components/BriefChatCard';
 import { type ChatCardMeta } from '../components/BriefChatCard';
 import { type SummaryData } from '../components/SummaryCard';
+import { useAuth } from '../context/AuthContext';
 
 // ── Local types ───────────────────────────────────────────────────────────────
 
@@ -144,9 +145,11 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DailyBriefPage() {
+  const { token } = useAuth();
   const briefContainerRef = useRef<HTMLDivElement>(null);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isCopiedHtml, setIsCopiedHtml] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -195,8 +198,35 @@ export default function DailyBriefPage() {
     copyTimeoutRef.current = setTimeout(() => setIsCopiedHtml(false), 2000);
   }
 
-  function handleDownloadPdf() {
-    alert('PDF generation pending — coming in Phase 6.');
+  async function handleDownloadPdf() {
+    setIsDownloadingPdf(true);
+    let blobUrl: string | null = null;
+    try {
+      const apiBase = process.env.REACT_APP_API_URL ?? 'http://localhost:4000';
+      const response = await fetch(`${apiBase}/api/export/pdf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(MOCK_BRIEF),
+      });
+      if (!response.ok) throw new Error(`Export failed: ${response.status}`);
+      const blob = await response.blob();
+      const filename = `daily-brief-${new Date().toISOString().split('T')[0]}.pdf`;
+      blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('PDF download error:', err);
+    } finally {
+      if (blobUrl) window.URL.revokeObjectURL(blobUrl);
+      setIsDownloadingPdf(false);
+    }
   }
 
   const { overviewParagraph, chatCards, crossChatInsights, keyPeople } = MOCK_BRIEF;
@@ -236,14 +266,15 @@ export default function DailyBriefPage() {
             </button>
             <button
               onClick={handleDownloadPdf}
-              className="rounded-md px-4 py-2 text-xs font-semibold tracking-wide transition-colors"
+              disabled={isDownloadingPdf}
+              className="rounded-md px-4 py-2 text-xs font-semibold tracking-wide transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 backgroundColor: 'rgba(232,234,246,0.05)',
                 color: 'rgba(232,234,246,0.5)',
                 border: '1px solid rgba(232,234,246,0.12)',
               }}
             >
-              Download PDF
+              {isDownloadingPdf ? 'Generating PDF…' : 'Download PDF'}
             </button>
           </div>
         </div>

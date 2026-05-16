@@ -11,6 +11,7 @@ const replyRoutes = require('./routes/replyRoutes');
 const briefRoutes = require('./routes/briefRoutes');
 const authRoutes = require('./routes/authRoutes');
 const historyRoutes = require('./routes/historyRoutes');
+const exportRoutes = require('./routes/exportRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/reply', replyRoutes);
 app.use('/api/brief', briefRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/history', historyRoutes);
+app.use('/api/export', exportRoutes);
 
 app.use(errorHandler);
 
