@@ -14,6 +14,9 @@ npm-debug.log*
 build/
 dist/
 
+# Jest coverage report — regenerate with: npm run test:coverage
+coverage/
+
 # OS
 .DS_Store
 Thumbs.db

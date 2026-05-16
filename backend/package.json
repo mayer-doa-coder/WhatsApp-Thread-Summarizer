@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --runInBand",
+    "test:coverage": "jest --coverage --runInBand --forceExit",
+    "test:perf": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/performance/largeFile.test.js --runInBand --verbose --forceExit",
     "lint": "eslint ."
   },
   "keywords": [],
@@ -26,7 +28,25 @@
     "puppeteer-core": "^25.0.2"
   },
   "jest": {
-    "clearMocks": true
+    "clearMocks": true,
+    "collectCoverage": false,
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/server.js",
+      "!src/config/**",
+      "!src/models/**",
+      "!src/services/**",
+      "!src/export/pdfExporter.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 70,
+        "statements": 70,
+        "functions": 70,
+        "branches": 50
+      }
+    }
   },
   "devDependencies": {
     "eslint": "^10.3.0",

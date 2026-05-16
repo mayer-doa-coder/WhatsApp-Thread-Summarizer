@@ -20,6 +20,10 @@ jest.mock('bcrypt', () => ({
   compare: jest.fn(),
 }));
 
+jest.mock('../src/export/pdfExporter.js', () => ({
+  exportBriefToPDF: jest.fn().mockResolvedValue(Buffer.from('mock-pdf')),
+}));
+
 // ── Imports ───────────────────────────────────────────────────────────────────
 
 const request = require('supertest');

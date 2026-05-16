@@ -17,6 +17,15 @@ export default function HistoryPage() {
   const cancelledRef = useRef(false);
 
   useEffect(() => {
+    if (!previewItem) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setPreviewItem(null);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [previewItem]);
+
+  useEffect(() => {
     if (!token) {
       navigate('/login', { replace: true });
       return;
@@ -233,6 +242,7 @@ export default function HistoryPage() {
               <button
                 onClick={() => setPreviewItem(null)}
                 aria-label="Close preview"
+                autoFocus
                 className="flex-shrink-0 text-slate-500 hover:text-slate-200 text-2xl leading-none transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900"
               >
                 &times;
