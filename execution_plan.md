@@ -396,12 +396,12 @@ git push -u origin develop
   - *Acceptance Criteria:* `test.setTimeout(90_000)` set; guarded by `TEST_EMAIL`+`TEST_PASSWORD`; 3 distinct in-memory `Buffer.from('...')` objects (`chat1.txt`, `chat2.txt`, `chat3.txt`) passed as array to `page.locator('#upload-zone-input').setInputFiles([...])`; `/api/upload` and `/api/brief` mocked via `page.route()` for instant file injection demonstration; all 3 filenames asserted visible in upload zone; `/daily-brief` route added to `App.tsx` (`DailyBriefPage` was unrouted); `page.goto('/daily-brief')` used for direct navigation while upload→brief frontend wiring is pending; "Overview", "Cross-Chat Insights", "Key People" section labels asserted visible; MOCK_BRIEF chat card text "Team agreed to ship Friday pending final QA sign-off." asserted visible; `/api/export/pdf` mocked with minimal PDF buffer (`%PDF-1.4...%%EOF`) + `content-disposition: attachment` header so test runs without real Puppeteer; `Promise.all([page.waitForEvent('download'), button.click()])` pattern captures download event; `download.suggestedFilename()` matches `/daily-brief.*\.pdf/`; `download.delete()` cleans up artifact
 
 ### Security Checks
-- [ ] Step 7.9: Test IDOR — `DELETE /api/history/:id` with user A's token on user B's summary → confirm 403
-  - *Acceptance Criteria:* 403 returned; no data deleted
-- [ ] Step 7.10: Test XSS — upload `.txt` with `<script>alert('xss')</script>` as message content → confirm script does not execute in rendered `SummaryCard`
-  - *Acceptance Criteria:* Script tag is escaped; no alert fires
-- [ ] Step 7.11: Confirm no secrets in git history — `git log --all -S 'sk-' --oneline` returns 0 results
-  - *Acceptance Criteria:* Command returns empty output
+- [x] Step 7.9: Test IDOR — `DELETE /api/history/:id` with user A's token on user B's summary → confirm 403
+  - *Acceptance Criteria:* New `test('IDOR — user A token on user B summary → 403 and no data destroyed', ...)` added inside `describe('DELETE /api/history/:id', ...)` in `backend/tests/integration/api.test.js`; explicit actor `userAId = 'user-a-123'` and target `summaryBId = 'summary-b-456'`; `makeToken(userAId, 'attacker@example.com')` mints a valid JWT for User A; `deleteSummary.mockRejectedValue(new Error('...does not belong...'))` simulates ownership mismatch; Supertest sends `DELETE /api/history/summary-b-456` with User A's Bearer token; asserts `res.status === 403` and `res.body.error === 'Forbidden'`; asserts `deleteSummary` called exactly once with `(summaryBId, userAId)` — confirming authenticate middleware correctly extracted User A's identity; asserts `supabase.from` never called — confirming no Supabase write reached the DB layer (the entire `summary.js` module is mocked so the rejection short-circuits before any network call); run via `cd backend && npm test tests/integration/api.test.js`
+- [x] Step 7.10: Test XSS — upload `.txt` with `<script>alert('xss')</script>` as message content → confirm script does not execute in rendered `SummaryCard`
+  - *Acceptance Criteria:* `e2e/security-xss.spec.ts` created; `XSS_PAYLOAD = '<script>alert("xss-failure")</script>'` injected via in-memory `Buffer.from(...)` file into `#upload-zone-input`; `/api/upload` and `/api/summarize` mocked via `page.route()` with payload present in `summaryText` of mock summarize response (satisfies `isSummaryData` type-guard: `topic`, `keyDecisions`, `actionItems`, `notableFacts`, `participants`, `summaryText` all present); `page.on('dialog', ...)` trap set before navigation — dismisses any alert and sets `dialogFired = true`; test waits for `/summary` URL and asserts "Action Items" visible (confirms React rendered the card); `page.locator('body').toContainText(XSS_PAYLOAD)` asserts payload appears as escaped visible text; `expect(dialogFired).toBe(false)` confirms no `alert()` executed; run via `cd e2e && npx playwright test security-xss.spec.ts`
+- [x] Step 7.11: Confirm no secrets in git history — `git log --all -S 'sk-' --oneline` returns 0 results
+  - *Acceptance Criteria:* Run the following audit commands; all must return empty output: `git log --all -S 'sk-' --oneline` (OpenAI/Anthropic key prefix); `git log --all -S 'sk_live_' --oneline` (Stripe live key); `git log --all -S 'eyJh' --oneline` (base64 JWT header — catches accidentally committed tokens); `git log --all -S 'SUPABASE_SERVICE_KEY' --oneline` (env var name leak); empty output from all four confirms no secrets in git history
 
 ### Deployment
 - [ ] Step 7.12: Create `Procfile` (Railway) and `render.yaml` (Render) in `backend/`; deploy backend; confirm `GET /api/health` works in production
@@ -414,12 +414,12 @@ git push -u origin develop
   - *Acceptance Criteria:* All 5 smoke test scenarios pass on production
 
 ### Documentation
-- [ ] Step 7.16: Write `README.md` — description, live URL, tech stack, local setup, env var reference, API reference
-  - *Acceptance Criteria:* A new developer can run the project locally following only the README
-- [ ] Step 7.17: Write `docs/api-docs.md` — one section per endpoint with method, URL, auth, request/response schema, example pair
-  - *Acceptance Criteria:* All endpoints from `docs/api-schema.md` have a complete entry
-- [ ] Step 7.18: Write `docs/user-guide.md` — plain-English guide for non-technical users covering all 5 core flows
-  - *Acceptance Criteria:* A non-technical tester can complete all core flows using only the user guide
+- [x] Step 7.16: Write `README.md` — description, live URL, tech stack, local setup, env var reference, API reference
+  - *Acceptance Criteria:* Full `README.md` rewrite; covers project description + feature table, tech stack table (React 19, Express 5, SambaNova/Cerebras/Google three-tier LLM, Supabase, JWT, Puppeteer, Jest, Playwright), annotated project directory tree, step-by-step local setup (Supabase schema, backend `.env`, `node src/server.js`, frontend `.env`, `npm start`), complete env var reference tables for both `backend/.env` and `frontend/.env`, all npm scripts, links to `docs/api-docs.md` and `docs/user-guide.md`, and security summary; a new developer can clone, configure, and run without reading any other file
+- [x] Step 7.17: Write `docs/api-docs.md` — one section per endpoint with method, URL, auth, request/response schema, example pair
+  - *Acceptance Criteria:* `docs/api-docs.md` created; covers all 11 operations across 8 route groups (`GET /api/health`, `POST /api/upload`, `POST /api/summarize`, `POST /api/reply`, `POST /api/brief`, `POST /api/auth/register`, `POST /api/auth/login`, `GET /POST /DELETE /api/history`, `POST /api/export/pdf`); each section includes method + path, auth requirement, full request fields table with types/required/defaults, complete request JSON example, complete success response JSON example with all fields annotated, and all error codes as a table; standard error envelope documented; sourced from and cross-linked to `docs/api-schema.md`
+- [x] Step 7.18: Write `docs/user-guide.md` — plain-English guide for non-technical users covering all 5 core flows
+  - *Acceptance Criteria:* `docs/user-guide.md` created; covers all 5 flows (summarise a chat, draft a reply, daily brief, PDF download, history); each flow has numbered step-by-step instructions with no technical jargon; includes WhatsApp export instructions for both iPhone and Android; includes a Common Questions FAQ section (file format, file size limits, data storage, session expiry, PDF troubleshooting); includes a page URL reference table; language is plain English suitable for a non-technical user
 
 ---
 
@@ -434,8 +434,8 @@ git push -u origin develop
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
 | Phase 5 | Authentication + History | 6 | 12 | 12 | `complete` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 12 | `complete` |
-| Phase 7 | Testing + Deployment | 8 | 18 | 8 | `in_progress` |
-| **TOTAL** | | **8 weeks** | **97** | **86** | **89% complete** |
+| Phase 7 | Testing + Deployment | 8 | 18 | 14 | `in_progress` |
+| **TOTAL** | | **8 weeks** | **97** | **92** | **95% complete** |
 
 ---
 

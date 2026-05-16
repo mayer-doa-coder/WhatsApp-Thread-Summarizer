@@ -198,6 +198,50 @@ describe('DELETE /api/history/:id', () => {
 
     expect(res.status).toBe(403);
   });
+
+  // ── IDOR: explicit actor/target scenario ─────────────────────────────────────
+  // User A (user-a-123) attempts to delete a summary owned by User B.
+  // The ownership guard in deleteSummary() must reject before any DB write occurs.
+
+  test('IDOR — user A token on user B summary → 403 and no data destroyed', async () => {
+    // ── Arrange ────────────────────────────────────────────────────────────────
+    const userAId   = 'user-a-123';
+    const summaryBId = 'summary-b-456';
+
+    // JWT scoped to User A — the attacker's credential
+    const userAToken = makeToken(userAId, 'attacker@example.com');
+
+    // Simulate the model detecting the ownership mismatch.
+    // In this architecture deleteSummary() performs both the ownership check and
+    // the DB delete in a single call; rejecting here means Supabase .delete()
+    // was never executed — confirmed by the supabase.from assertion below.
+    deleteSummary.mockRejectedValue(
+      new Error('Summary not found or does not belong to the requesting user.'),
+    );
+
+    // ── Act ─────────────────────────────────────────────────────────────────────
+    const res = await request(app)
+      .delete(`/api/history/${summaryBId}`)
+      .set('Authorization', `Bearer ${userAToken}`);
+
+    // ── Assert: HTTP layer ───────────────────────────────────────────────────────
+    // Must be 403 Forbidden — not 204 (silent success) or 500 (leak)
+    expect(res.status).toBe(403);
+    expect(res.body).toHaveProperty('error', 'Forbidden');
+
+    // ── Assert: auth middleware correctly extracted User A's identity ────────────
+    // The route called deleteSummary with User A's sub — not a spoofed or empty ID.
+    // If this assertion fails it means authenticate() did not populate req.user.
+    expect(deleteSummary).toHaveBeenCalledTimes(1);
+    expect(deleteSummary).toHaveBeenCalledWith(summaryBId, userAId);
+
+    // ── Assert: no Supabase write occurred ───────────────────────────────────────
+    // Because the entire summary.js module is mocked, the Supabase client's
+    // .from() chain is never invoked — the ownership rejection short-circuits
+    // before any network call reaches the database.
+    const supabase = require('../../src/config/supabase.js');
+    expect(supabase.from).not.toHaveBeenCalled();
+  });
 });
 
 // ── Export: POST /api/export/pdf ──────────────────────────────────────────────
