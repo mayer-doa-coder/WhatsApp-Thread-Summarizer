@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import SummaryCard, { SummaryData } from '../components/SummaryCard';
 import ReplyDrafterPanel from '../components/ReplyDrafterPanel';
+import { useAuth } from '../context/AuthContext';
 
 const NEU_UP: React.CSSProperties = {
   boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)',
@@ -24,7 +26,11 @@ function isSummaryData(value: unknown): value is SummaryData {
 export default function SummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, token } = useAuth();
   const [isDrafterOpen, setIsDrafterOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const summary = isSummaryData(location.state) ? location.state : null;
 
@@ -47,6 +53,32 @@ export default function SummaryPage() {
     );
   }
 
+  async function handleSaveToHistory() {
+    if (!token || !summary) return;
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL ?? 'http://localhost:4000'}/api/history`,
+        {
+          filename: summary.topic || 'Untitled Thread',
+          type: 'thread',
+          summaryText: summary.summaryText,
+          participants: summary.participants,
+        },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setIsSaved(true);
+    } catch (err) {
+      const msg = axios.isAxiosError(err)
+        ? (err.response?.data?.message ?? err.message)
+        : 'Failed to save. Please try again.';
+      setSaveError(msg);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   const contextText = [summary.topic, summary.summaryText].filter(Boolean).join(' — ');
 
   return (
@@ -67,7 +99,7 @@ export default function SummaryPage() {
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3 items-center">
             <button
               onClick={() => navigate('/')}
               className="rounded-xl px-5 py-2 text-sm font-medium transition-opacity hover:opacity-70"
@@ -75,6 +107,21 @@ export default function SummaryPage() {
             >
               Start Over
             </button>
+
+            {user && (
+              <button
+                onClick={handleSaveToHistory}
+                disabled={isSaving || isSaved}
+                className={[
+                  'rounded-xl px-5 py-2 text-sm font-medium transition-opacity',
+                  isSaved
+                    ? 'bg-slate-700 text-[#25D366] cursor-default'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-60 disabled:cursor-not-allowed',
+                ].join(' ')}
+              >
+                {isSaving ? 'Saving…' : isSaved ? 'Saved ✓' : 'Save to History'}
+              </button>
+            )}
 
             <button
               onClick={() => setIsDrafterOpen(true)}
@@ -89,6 +136,16 @@ export default function SummaryPage() {
             </button>
           </div>
         </div>
+
+        {/* Save error */}
+        {saveError && (
+          <div
+            role="alert"
+            className="rounded-lg border border-red-500/40 bg-red-900/25 px-4 py-2 text-sm text-red-400"
+          >
+            {saveError}
+          </div>
+        )}
 
         {/* Summary card */}
         <SummaryCard data={summary} />

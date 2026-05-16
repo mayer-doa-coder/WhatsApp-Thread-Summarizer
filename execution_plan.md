@@ -44,7 +44,7 @@ Rules you MUST follow when reading or modifying this document:
 | Field | Value |
 |---|---|
 | **Status** | `in_progress` |
-| **Current Phase** | Phase 5 — Authentication + History |
+| **Current Phase** | Phase 6 — UI Polish + PDF Export |
 | **Overall Completion** | 5 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
@@ -287,7 +287,7 @@ git push -u origin develop
 
 **Week:** 6 (Days 36–42)
 **Dependency:** Phase 4 complete — all three core feature pipelines operational
-**Status:** `in_progress`
+**Status:** `complete`
 **Branch:** `git checkout develop && git checkout -b feature/phase-5-auth-history && git push -u origin feature/phase-5-auth-history`
 **Merge when done:** PR `feature/phase-5-auth-history` → `develop`, then PR `develop` → `main`
 
@@ -306,20 +306,20 @@ git push -u origin develop
   - *Acceptance Criteria:* 5 tests pass (0 failures); `supertest` installed as devDependency; `../src/models/user.js`, `bcrypt`, `../src/config/supabase.js`, and `../src/config/llm.js` mocked via `jest.mock()`; mocks cleared per test via `beforeEach(() => jest.clearAllMocks())`; covers: valid register → 201 + token + bcrypt.hash called with rounds 12; duplicate email → 409 + createUser never called; invalid email/short password → 422 + errors array + no DB calls; wrong password (bcrypt.compare returns false) → 401 `"Invalid email or password."`; expired JWT on mini-app wrapped by `authenticate` → 403 `"Token has expired."`
 
 ### History Module
-- [ ] Step 5.7: Create `backend/src/models/summary.js` — `saveSummary`, `getUserSummaries`, `deleteSummary`
-  - *Acceptance Criteria:* CRUD operations work against the `summaries` table
-- [ ] Step 5.8: Add `POST /api/history` (protected), `GET /api/history` (protected), `DELETE /api/history/:id` (protected with IDOR check)
-  - *Acceptance Criteria:* `GET /api/history` without JWT → 401; `DELETE` with another user's ID → 403
+- [x] Step 5.7: Create `backend/src/models/summary.js` — `saveSummary`, `getUserSummaries`, `deleteSummary`
+  - *Acceptance Criteria:* `saveSummary(userId, summaryData)` inserts into `summaries` (columns: `user_id`, `filename`, `type`, `summary_text`, `message_count`, `participants`, `date_from`, `date_to`) and returns the created row; `getUserSummaries(userId)` returns all rows for that user ordered by `created_at DESC`; `deleteSummary(summaryId, userId)` filters on both `id = summaryId` AND `user_id = userId` — returns `true` on success, throws if row missing or owned by another user (prevents IDOR); all Supabase errors thrown with descriptive context, never swallowed
+- [x] Step 5.8: Add `POST /api/history` (protected), `GET /api/history` (protected), `DELETE /api/history/:id` (protected with IDOR check)
+  - *Acceptance Criteria:* `authenticate` middleware applied via `router.use()` — all three routes require valid `Bearer` JWT or respond 401; `POST /` validates `filename`/`type`/`summaryText` present → 400 if missing, else calls `saveSummary(req.user.sub, body)` → 201 `{ summary }`; `GET /` calls `getUserSummaries(req.user.sub)` → 200 `{ summaries }`; `DELETE /:id` calls `deleteSummary(summaryId, req.user.sub)` → 204 on success; if `deleteSummary` throws with "not found" or "does not belong" → 403 `"You do not have permission to delete this summary."` (IDOR guard); all other DB errors forwarded via `next(err)`; router mounted at `/api/history` in `app.js`
 
 ### Auth + History UI
-- [ ] Step 5.9: Create `LoginPage.tsx` and `RegisterPage.tsx` — form validation, loading states, server error display
-  - *Acceptance Criteria:* Both pages render; invalid inputs show inline error messages
-- [ ] Step 5.10: Create `frontend/src/context/AuthContext.tsx` — provides `{ user, token, login, logout, register }`; persists token to `localStorage`
+- [x] Step 5.9: Create `LoginPage.tsx` and `RegisterPage.tsx` — form validation, loading states, server error display
+  - *Acceptance Criteria:* `LoginPage` validates email regex + non-empty password on submit without hitting the network; server errors rendered in `role="alert"` block above form; inputs + button disabled with "Logging in…" label during flight; navigates to `/` on success. `RegisterPage` validates email, password ≥ 8 chars, and confirm-password match with per-field inline errors; server 409 (duplicate email) surfaced in alert block; button shows "Creating account…" during flight; navigates to `/` on success. Both pages: dark cosmic theme (`#0e1020` bg, slate-900 card, `#25D366` submit button); `Link` to sibling route; `useAuth` hook (`frontend/src/hooks/useAuth.ts`) wraps `loginUser`/`registerUser` from `api.ts`, persists token + user to `localStorage` under `wts_token`/`wts_user` keys; `/login` and `/register` routes wired in `App.tsx`; `npx tsc --noEmit` → 0 errors under `strict: true`
+- [x] Step 5.10: Create `frontend/src/context/AuthContext.tsx` — provides `{ user, token, login, logout, register }`; persists token to `localStorage`
   - *Acceptance Criteria:* Refreshing the page keeps the user logged in
-- [ ] Step 5.11: Create `HistoryPage.tsx` — table with Filename, Type, Date, Actions; client-side search; confirmation dialog on delete
-  - *Acceptance Criteria:* Full save → view → delete round-trip works
-- [ ] Step 5.12: Add "Save to History" button to `SummaryPage.tsx` (visible only when logged in); protect `/history` route with `PrivateRoute`
-  - *Acceptance Criteria:* Unauthenticated access to `/history` redirects to `/login`
+- [x] Step 5.11: Create `HistoryPage.tsx` — table with Filename, Type, Date, Actions; client-side search; confirmation dialog on delete
+  - *Acceptance Criteria:* Table renders history from `GET /api/history` with JWT; client-side search filters by filename, type, date, and summaryText without network requests; View button opens an inline preview modal with full summaryText; Delete button opens a confirmation modal; confirmed delete calls `DELETE /api/history/:id` and optimistically removes the row; unauthenticated access (no token) auto-redirects to `/login`; `/history` route wired in `App.tsx`; `npx tsc --noEmit` → 0 errors
+- [x] Step 5.12: Add "Save to History" button to `SummaryPage.tsx` (visible only when logged in); protect `/history` route with `PrivateRoute`
+  - *Acceptance Criteria:* `PrivateRoute` component reads `user` from `AuthContext`; null user → `<Navigate to="/login" replace />`; `/history` nested inside `<Route element={<PrivateRoute />}>` in `App.tsx`; "Save to History" button rendered only when `user` is truthy; button calls `POST /api/history` with `Authorization: Bearer ${token}` header and `{ filename, type: 'thread', summaryText, participants }` body; `isSaving` shows "Saving…", `isSaved` shows "Saved ✓" and disables button permanently for that session; save errors surfaced in `role="alert"` block; `npx tsc --noEmit` → 0 errors
 
 ---
 
@@ -430,10 +430,10 @@ git push -u origin develop
 | Phase 2 | Summarization Engine | 3 | 9 | 9 | `complete` |
 | Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
-| Phase 5 | Authentication + History | 6 | 12 | 6 | `in_progress` |
+| Phase 5 | Authentication + History | 6 | 12 | 12 | `complete` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 0 | `not_started` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **60** | **62% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **66** | **68% complete** |
 
 ---
 

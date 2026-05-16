@@ -236,3 +236,25 @@ export async function getHistory(): Promise<HistoryResponse[]> {
 export async function deleteHistoryItem(id: string): Promise<void> {
   await client.delete(`/history/${id}`);
 }
+
+// ── /api/auth ─────────────────────────────────────────────────────────────────
+
+export interface AuthUser {
+  id: string;
+  email: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
+export async function loginUser(email: string, password: string): Promise<AuthResponse> {
+  const { data } = await client.post<AuthResponse>('/auth/login', { email, password });
+  return data;
+}
+
+export async function registerUser(email: string, password: string): Promise<AuthResponse> {
+  const { data } = await client.post<AuthResponse>('/auth/register', { email, password });
+  return data;
+}
