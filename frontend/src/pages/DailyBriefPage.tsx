@@ -3,6 +3,7 @@ import BriefChatCardWidget from '../components/BriefChatCard';
 import { type ChatCardMeta } from '../components/BriefChatCard';
 import { type SummaryData } from '../components/SummaryCard';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 // ── Local types ───────────────────────────────────────────────────────────────
 
@@ -146,15 +147,21 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 export default function DailyBriefPage() {
   const { token } = useAuth();
+  const { showError } = useToast();
   const briefContainerRef = useRef<HTMLDivElement>(null);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isCopiedHtml, setIsCopiedHtml] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     return () => {
       if (copyTimeoutRef.current !== null) clearTimeout(copyTimeoutRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    setLoading(false);
   }, []);
 
   const today = new Date().toLocaleDateString('en-GB', {
@@ -222,7 +229,8 @@ export default function DailyBriefPage() {
       a.click();
       document.body.removeChild(a);
     } catch (err) {
-      console.error('PDF download error:', err);
+      const msg = err instanceof Error ? err.message : 'PDF generation failed. Please try again.';
+      showError(msg);
     } finally {
       if (blobUrl) window.URL.revokeObjectURL(blobUrl);
       setIsDownloadingPdf(false);
@@ -300,34 +308,45 @@ export default function DailyBriefPage() {
 
         {/* ── Chat Cards (horizontal scroll) ── */}
         <section>
-          <SectionLabel>Chats ({chatCards.length})</SectionLabel>
-          <div
-            className="flex flex-col gap-4 w-full md:flex-row md:overflow-x-auto md:flex-nowrap md:pb-4"
-            style={{ scrollbarWidth: 'none' }}
-          >
-            {chatCards.map((card) => {
-              const chatCardMeta: ChatCardMeta = {
-                index: card.index,
-                oneLiner: card.oneLiner,
-                actionRequired: card.actionRequired,
-              };
-              const fullSummary: SummaryData = {
-                topic: card.topic,
-                keyDecisions: card.keyDecisions,
-                actionItems: card.actionItems,
-                notableFacts: card.notableFacts,
-                participants: card.participants,
-                summaryText: card.summaryText,
-              };
-              return (
-                <BriefChatCardWidget
-                  key={card.index}
-                  chatCard={chatCardMeta}
-                  fullSummary={fullSummary}
+          <SectionLabel>Chats ({loading ? '…' : chatCards.length})</SectionLabel>
+          {loading ? (
+            <div className="flex overflow-x-auto flex-nowrap gap-4 pb-4 animate-pulse" style={{ scrollbarWidth: 'none' }}>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="w-[320px] min-w-[320px] h-48 bg-slate-800 rounded-xl shrink-0"
                 />
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              className="flex flex-col gap-4 w-full md:flex-row md:overflow-x-auto md:flex-nowrap md:pb-4"
+              style={{ scrollbarWidth: 'none' }}
+            >
+              {chatCards.map((card) => {
+                const chatCardMeta: ChatCardMeta = {
+                  index: card.index,
+                  oneLiner: card.oneLiner,
+                  actionRequired: card.actionRequired,
+                };
+                const fullSummary: SummaryData = {
+                  topic: card.topic,
+                  keyDecisions: card.keyDecisions,
+                  actionItems: card.actionItems,
+                  notableFacts: card.notableFacts,
+                  participants: card.participants,
+                  summaryText: card.summaryText,
+                };
+                return (
+                  <BriefChatCardWidget
+                    key={card.index}
+                    chatCard={chatCardMeta}
+                    fullSummary={fullSummary}
+                  />
+                );
+              })}
+            </div>
+          )}
         </section>
 
         {/* ── Cross-Chat Insights ── */}

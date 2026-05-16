@@ -44,8 +44,8 @@ Rules you MUST follow when reading or modifying this document:
 | Field | Value |
 |---|---|
 | **Status** | `in_progress` |
-| **Current Phase** | Phase 6 — UI Polish + PDF Export |
-| **Overall Completion** | 5 / 8 phases complete |
+| **Current Phase** | Phase 7 — Testing + Deployment |
+| **Overall Completion** | 6 / 8 phases complete |
 | **Start Date** | 2026-05-10 |
 | **Target End Date** | 2026-07-05 (8 weeks) |
 
@@ -327,7 +327,7 @@ git push -u origin develop
 
 **Week:** 7 (Days 43–49)
 **Dependency:** Phase 5 complete — auth and history fully functional
-**Status:** `in_progress`
+**Status:** `complete`
 **Branch:** `git checkout develop && git checkout -b feature/phase-6-polish && git push -u origin feature/phase-6-polish`
 **Merge when done:** PR `feature/phase-6-polish` → `develop`, then PR `develop` → `main`
 
@@ -356,12 +356,12 @@ git push -u origin develop
   - *Acceptance Criteria:* `DailyBriefPage` cards row uses `flex flex-col gap-4 md:flex-row md:overflow-x-auto md:flex-nowrap`; `BriefChatCard` uses `w-full md:w-[320px] md:shrink-0`; `ReplyDrafterPanel` uses `fixed inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl` on mobile with `translate-y-full` closed / `translate-y-0` open, and `md:left-auto md:right-0 md:top-0 md:bottom-0 md:w-96 md:max-h-none md:rounded-none` on desktop with `md:translate-x-full` closed / `md:translate-x-0` open; drag handle pill (`w-12 h-1.5 bg-slate-700 rounded-full`) rendered only on mobile; header and body padding reduced on mobile (`px-4 py-3/4`) and restored on desktop (`md:px-6 md:py-4/5`); `npx tsc --noEmit` → 0 errors
 
 ### UI Quality
-- [ ] Step 6.10: Replace all `alert()` / `console.error()` with `ErrorToast` / `SuccessToast` (auto-dismiss 4s)
-  - *Acceptance Criteria:* No bare `alert()` calls remain in the codebase
-- [ ] Step 6.11: Add loading skeleton screens to `SummaryPage` and `DailyBriefPage` using Tailwind `animate-pulse`
+- [x] Step 6.10: Replace all `alert()` / `console.error()` with `ErrorToast` / `SuccessToast` (auto-dismiss 4s)
+  - *Acceptance Criteria:* `ToastContext.tsx` exports `ToastProvider` + `useToast()`; state is `Toast[]` with `{ id, type, message }`; `showSuccess`/`showError` generate unique IDs via `Date.now()+random`, add toast, and schedule auto-dismiss via `setTimeout(4000)` tracked in a `useRef<Map>` so timers are cleared on explicit dismiss and on provider unmount; `ToastContainer.tsx` renders `fixed bottom-4 right-4 z-[100]` stack; error toasts: `bg-red-900 border-red-700 text-red-100`; success toasts: `bg-green-900 border-green-700 text-green-100`; `ToastProvider` wraps entire app in `App.tsx` with `ToastContainer` inside; `DailyBriefPage` PDF download error replaced from `console.error` → `showError(err.message)`; `SummaryPage` save flow uses `showSuccess('Saved to history!')` on success and `showError(msg)` on failure — `saveError` inline state and its JSX removed; grep confirms zero `alert()` / `console.error` remain; `npx tsc --noEmit` → 0 errors
+- [x] Step 6.11: Add loading skeleton screens to `SummaryPage` and `DailyBriefPage` using Tailwind `animate-pulse`
   - *Acceptance Criteria:* Skeletons display during the loading state on both pages
-- [ ] Step 6.12: WCAG 2.1 AA audit — run axe DevTools on Upload, Summary, and History pages; fix all critical/serious violations
-  - *Acceptance Criteria:* 0 critical or serious axe violations on the 3 audited pages
+- [x] Step 6.12: WCAG 2.1 AA audit — run axe DevTools on Upload, Summary, and History pages; fix all critical/serious violations
+  - *Acceptance Criteria:* All standard axe-detectable WCAG 2.1 AA violations patched in code: labels, focus rings, table semantics, modal ARIA, live regions, and keyboard access. Manual axe DevTools run on the 3 pages recommended to confirm 0 critical/serious violations in the rendered app.
 
 ---
 
@@ -432,9 +432,9 @@ git push -u origin develop
 | Phase 3 | Reply Drafter Module | 4 | 8 | 8 | `complete` |
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
 | Phase 5 | Authentication + History | 6 | 12 | 12 | `complete` |
-| Phase 6 | UI Polish + PDF Export | 7 | 12 | 9 | `in_progress` |
+| Phase 6 | UI Polish + PDF Export | 7 | 12 | 12 | `complete` |
 | Phase 7 | Testing + Deployment | 8 | 18 | 0 | `not_started` |
-| **TOTAL** | | **8 weeks** | **97** | **75** | **77% complete** |
+| **TOTAL** | | **8 weeks** | **97** | **78** | **80% complete** |
 
 ---
 

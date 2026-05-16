@@ -78,7 +78,12 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
     <div style={{ width: '100%', maxWidth: '400px' }}>
       {/* Drop zone */}
       <div
+        role="button"
+        tabIndex={atLimit ? -1 : 0}
+        aria-label={atLimit ? 'File limit reached. Remove a file to add more.' : 'Upload WhatsApp export files. Click or press Enter to browse, or drag and drop .txt files here.'}
+        aria-disabled={atLimit}
         onClick={() => !atLimit && inputRef.current?.click()}
+        onKeyDown={(e) => { if (!atLimit && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); inputRef.current?.click(); } }}
         onDragOver={atLimit ? undefined : onDragOver}
         onDragLeave={atLimit ? undefined : onDragLeave}
         onDrop={atLimit ? undefined : onDrop}
@@ -94,8 +99,10 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
           opacity: atLimit ? 0.55 : 1,
         }}
       >
+        <label htmlFor="upload-zone-input" className="sr-only">Select WhatsApp export files</label>
         <input
           ref={inputRef}
+          id="upload-zone-input"
           type="file"
           accept=".txt,text/plain"
           multiple
@@ -127,7 +134,7 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
         </span>
 
         {typeRejected && (
-          <p style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
+          <p role="alert" style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
             Only .txt files are accepted.
           </p>
         )}

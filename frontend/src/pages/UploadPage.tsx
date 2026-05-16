@@ -69,6 +69,7 @@ export default function UploadPage() {
           id="summary-type"
           value={summaryType}
           onChange={(e) => setSummaryType(e.target.value as SummaryType)}
+          className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-[#0e1020]"
           style={{
             width: '100%',
             padding: '10px 12px',
@@ -78,7 +79,6 @@ export default function UploadPage() {
             borderRadius: '8px',
             fontSize: '0.9rem',
             cursor: 'pointer',
-            outline: 'none',
             boxShadow: '-4px -4px 10px rgba(29,33,56,0.6), 4px 4px 10px rgba(6,7,15,0.9)',
           }}
         >
@@ -93,6 +93,8 @@ export default function UploadPage() {
       <button
         onClick={handleProcess}
         disabled={isDisabled}
+        aria-busy={loading}
+        className="focus:outline-none focus:ring-2 focus:ring-[#25D366]/70 focus:ring-offset-2 focus:ring-offset-[#0e1020]"
         style={{
           marginTop: '24px',
           padding: '12px 40px',
@@ -111,6 +113,10 @@ export default function UploadPage() {
       >
         {loading ? 'Processing…' : 'Process'}
       </button>
+
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {loading ? 'Processing your file, please wait.' : ''}
+      </div>
 
       {error && (
         <div

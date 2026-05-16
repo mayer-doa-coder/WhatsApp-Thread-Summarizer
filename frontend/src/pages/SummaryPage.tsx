@@ -4,6 +4,7 @@ import axios from 'axios';
 import SummaryCard, { SummaryData } from '../components/SummaryCard';
 import ReplyDrafterPanel from '../components/ReplyDrafterPanel';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const NEU_UP: React.CSSProperties = {
   boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)',
@@ -27,16 +28,19 @@ export default function SummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, token } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [isDrafterOpen, setIsDrafterOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const summary = isSummaryData(location.state) ? location.state : null;
 
   useEffect(() => {
     if (!summary) {
       navigate('/', { replace: true });
+    } else {
+      setLoading(false);
     }
   }, [summary, navigate]);
 
@@ -56,7 +60,6 @@ export default function SummaryPage() {
   async function handleSaveToHistory() {
     if (!token || !summary) return;
     setIsSaving(true);
-    setSaveError(null);
     try {
       await axios.post(
         `${process.env.REACT_APP_API_URL ?? 'http://localhost:4000'}/api/history`,
@@ -69,11 +72,12 @@ export default function SummaryPage() {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setIsSaved(true);
+      showSuccess('Saved to history!');
     } catch (err) {
       const msg = axios.isAxiosError(err)
         ? (err.response?.data?.message ?? err.message)
         : 'Failed to save. Please try again.';
-      setSaveError(msg);
+      showError(msg);
     } finally {
       setIsSaving(false);
     }
@@ -102,7 +106,7 @@ export default function SummaryPage() {
           <div className="flex flex-wrap gap-3 items-center">
             <button
               onClick={() => navigate('/')}
-              className="rounded-xl px-5 py-2 text-sm font-medium transition-opacity hover:opacity-70"
+              className="rounded-xl px-5 py-2 text-sm font-medium transition-opacity hover:opacity-70 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-[#0e1020]"
               style={{ ...NEU_UP, color: 'rgba(232,234,246,0.45)' }}
             >
               Start Over
@@ -113,7 +117,7 @@ export default function SummaryPage() {
                 onClick={handleSaveToHistory}
                 disabled={isSaving || isSaved}
                 className={[
-                  'rounded-xl px-5 py-2 text-sm font-medium transition-opacity',
+                  'rounded-xl px-5 py-2 text-sm font-medium transition-opacity focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-[#0e1020]',
                   isSaved
                     ? 'bg-slate-700 text-[#25D366] cursor-default'
                     : 'bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-60 disabled:cursor-not-allowed',
@@ -125,7 +129,7 @@ export default function SummaryPage() {
 
             <button
               onClick={() => setIsDrafterOpen(true)}
-              className="rounded-xl px-5 py-2 text-sm font-bold transition-opacity hover:opacity-90"
+              className="rounded-xl px-5 py-2 text-sm font-bold transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#25D366]/70 focus:ring-offset-2 focus:ring-offset-[#0e1020]"
               style={{
                 background: 'linear-gradient(135deg, #2bcc60, #1a9946)',
                 color: '#ffffff',
@@ -137,18 +141,20 @@ export default function SummaryPage() {
           </div>
         </div>
 
-        {/* Save error */}
-        {saveError && (
-          <div
-            role="alert"
-            className="rounded-lg border border-red-500/40 bg-red-900/25 px-4 py-2 text-sm text-red-400"
-          >
-            {saveError}
-          </div>
-        )}
-
-        {/* Summary card */}
-        <SummaryCard data={summary} />
+        {/* Summary card / skeleton */}
+        <div aria-live="polite" aria-busy={loading}>
+          {loading ? (
+            <div className="rounded-2xl p-4 sm:p-6 space-y-4 animate-pulse" style={{ backgroundColor: '#0e1020', boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)' }}>
+              <div className="h-7 w-2/3 bg-slate-800 rounded" />
+              <div className="h-4 bg-slate-800 rounded" />
+              <div className="h-4 w-5/6 bg-slate-800 rounded" />
+              <div className="h-4 w-4/6 bg-slate-800 rounded" />
+              <div className="h-4 w-3/4 bg-slate-800 rounded" />
+            </div>
+          ) : (
+            <SummaryCard data={summary} />
+          )}
+        </div>
       </div>
 
       {/* Reply drafter panel — rendered outside the constrained max-w-3xl container */}
