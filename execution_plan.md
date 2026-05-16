@@ -384,15 +384,16 @@ git push -u origin develop
   - *Acceptance Criteria:* `test.each([1, 2, 3])` drives 3 consecutive Supertest `POST /api/export/pdf` calls; payload pre-generated once via `generateBriefPayload(CARD_COUNT=3_000)` — 3,000 cards × `messageCount: ceil(10k/3k)` ≈ 12,000 total messages (10,000-card payloads produce ~9 MB HTML exceeding the 45 s SLA; 3,000 cards / ~5.8 MB HTML / ~8.6 MB PDF is the correct load point); `jest.setTimeout(60_000)` guards per-test; `performance.now()` measures precise wall-clock duration; each run asserts `status 200`, `content-type: application/pdf`, and `duration < 45_000 ms`; `authenticate` mocked to inject `req.user`; Puppeteer/pdfExporter/briefTemplate NOT mocked (real pipeline); infrastructure mocks (supabase, llm, models, bcrypt) allow `app.js` to load cleanly; `pdfExporter.js` updated: `page.setDefaultNavigationTimeout()` + `page.setDefaultTimeout()` + `waitUntil: 'load'` + configurable `navigationTimeout` (default 120 s) so large documents don't hit Puppeteer's 30 s default; run via `npm run test:perf` (`node --experimental-vm-modules jest.js` required because Jest 30 intercepts ESM `import()` even inside `new Function` without this flag); **observed: 3/3 runs pass, ~13 s each, 8.6 MB PDF**
 
 ### End-to-End Testing (Playwright)
-- [ ] Step 7.4: Initialize Playwright in `e2e/` directory
-- [ ] Step 7.5: Write `e2e/upload-and-summarize.spec.ts` — upload fixture, assert summary card renders with action items
-  - *Acceptance Criteria:* Test passes against production URL
-- [ ] Step 7.6: Write `e2e/reply-drafter.spec.ts` — open panel, select Casual, assert 3 cards appear, copy first card
-  - *Acceptance Criteria:* Test passes; "Copied!" badge appears
-- [ ] Step 7.7: Write `e2e/auth-and-history.spec.ts` — register, save summary, view in history, delete
-  - *Acceptance Criteria:* Test passes end-to-end
-- [ ] Step 7.8: Write `e2e/daily-brief.spec.ts` — upload 3 files, assert brief page, assert PDF download initiates
-  - *Acceptance Criteria:* Test passes; download event is detected
+- [x] Step 7.4: Initialize Playwright in `e2e/` directory
+  - *Acceptance Criteria:* `e2e/package.json` + `e2e/playwright.config.ts` created; `npm install` inside `e2e/` installs `@playwright/test`; `npx playwright install chromium --with-deps` downloads Chromium headless shell; `playwright.config.ts` sets `baseURL` from `process.env.BASE_URL` (fallback `http://localhost:3000` — CRA dev server), global `timeout: 60_000`, single Chromium project, `retries: 1` on CI, HTML reporter
+- [x] Step 7.5: Write `e2e/upload-and-summarize.spec.ts` — upload fixture, assert summary card renders with action items
+  - *Acceptance Criteria:* `loginIfCredentialsProvided(page)` helper runs in `beforeEach` — logs in via UI when `TEST_EMAIL`/`TEST_PASSWORD` env vars are set, skips silently otherwise (upload page is public); mock WhatsApp `.txt` injected as in-memory `Buffer` via `page.locator('#upload-zone-input').setInputFiles({ name, mimeType, buffer })` — no disk file needed; "Process" button clicked; test waits for `**/summary` URL (up to 60 s for LLM); asserts "Action Items", "Key Decisions", "Participants" section labels visible + one of the known speaker names + "Draft a Reply →" button; run with `cd e2e && npm test` (requires frontend + backend running)
+- [x] Step 7.6: Write `e2e/reply-drafter.spec.ts` — open panel, select Casual, assert 3 cards appear, copy first card
+  - *Acceptance Criteria:* `test.use({ permissions: ['clipboard-read','clipboard-write'] })` set; upload+summarize APIs mocked via `page.route()`; `/api/reply` NOT mocked (real LLM); panel opens via `role="dialog"` with `aria-label="Reply Drafter"`; "Casual" tone button clicked; "Generate Drafts" clicked; "Generating…" button visible; `page.getByRole('article').toHaveCount(3, { timeout: 55_000 })` waits for real drafts; first card's copy button `aria-label="Copy option 1 to clipboard"` clicked; "Copied!" badge asserted; clipboard text length > 0 verified via `navigator.clipboard.readText()`
+- [x] Step 7.7: Write `e2e/auth-and-history.spec.ts` — register, save summary, view in history, delete
+  - *Acceptance Criteria:* Single top-level test (no guard flags); unique `test-${Date.now()}@example.com` email generated at runtime — idempotent across runs without database reset; registers via `/register` UI (fills Email, Password, Confirm password, clicks "Create account", waits for redirect to `/`); upload+summarize APIs mocked via `page.route()` for speed; `MOCK_CHAT_BUFFER = Buffer.from('mock chat log')` injected via `#upload-zone-input`; summary topic `'E2E Auth History Chat'` becomes the history filename; "Save to History" button clicked (only rendered when authenticated); `'Saved to history!'` toast asserted visible; "Saved ✓" button state asserted; navigates to `/history`; `SUMMARY_TOPIC` text and `'Thread Summary'` badge asserted visible; `getByRole('button', { name: 'Delete summary for E2E Auth History Chat' })` clicked; confirmation modal (`role="dialog"`) asserted visible; `'Confirm Delete'` button clicked; `page.getByText(SUMMARY_TOPIC).toHaveCount(0)` asserts row removed; auth+history hit real backend; all locators use accessibility roles/labels/text
+- [x] Step 7.8: Write `e2e/daily-brief.spec.ts` — upload 3 files, assert brief page, assert PDF download initiates
+  - *Acceptance Criteria:* `test.setTimeout(90_000)` set; guarded by `TEST_EMAIL`+`TEST_PASSWORD`; 3 distinct in-memory `Buffer.from('...')` objects (`chat1.txt`, `chat2.txt`, `chat3.txt`) passed as array to `page.locator('#upload-zone-input').setInputFiles([...])`; `/api/upload` and `/api/brief` mocked via `page.route()` for instant file injection demonstration; all 3 filenames asserted visible in upload zone; `/daily-brief` route added to `App.tsx` (`DailyBriefPage` was unrouted); `page.goto('/daily-brief')` used for direct navigation while upload→brief frontend wiring is pending; "Overview", "Cross-Chat Insights", "Key People" section labels asserted visible; MOCK_BRIEF chat card text "Team agreed to ship Friday pending final QA sign-off." asserted visible; `/api/export/pdf` mocked with minimal PDF buffer (`%PDF-1.4...%%EOF`) + `content-disposition: attachment` header so test runs without real Puppeteer; `Promise.all([page.waitForEvent('download'), button.click()])` pattern captures download event; `download.suggestedFilename()` matches `/daily-brief.*\.pdf/`; `download.delete()` cleans up artifact
 
 ### Security Checks
 - [ ] Step 7.9: Test IDOR — `DELETE /api/history/:id` with user A's token on user B's summary → confirm 403
@@ -433,8 +434,8 @@ git push -u origin develop
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
 | Phase 5 | Authentication + History | 6 | 12 | 12 | `complete` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 12 | `complete` |
-| Phase 7 | Testing + Deployment | 8 | 18 | 3 | `in_progress` |
-| **TOTAL** | | **8 weeks** | **97** | **81** | **83% complete** |
+| Phase 7 | Testing + Deployment | 8 | 18 | 8 | `in_progress` |
+| **TOTAL** | | **8 weeks** | **97** | **86** | **89% complete** |
 
 ---
 

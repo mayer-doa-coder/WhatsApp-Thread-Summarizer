@@ -9,6 +9,7 @@ import SummaryPage from './pages/SummaryPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HistoryPage from './pages/HistoryPage';
+import DailyBriefPage from './pages/DailyBriefPage';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<UploadPage />} />
             <Route path="/summary" element={<SummaryPage />} />
+            <Route path="/daily-brief" element={<DailyBriefPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route element={<PrivateRoute />}>
