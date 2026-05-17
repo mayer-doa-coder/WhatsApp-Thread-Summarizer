@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import ToastContainer from './components/ToastContainer';
+import NavBar from './components/NavBar';
 import PrivateRoute from './components/PrivateRoute';
 import UploadPage from './pages/UploadPage';
 import SummaryPage from './pages/SummaryPage';
@@ -16,6 +17,7 @@ export default function App() {
     <ToastProvider>
       <AuthProvider>
         <BrowserRouter>
+          <NavBar />
           <Routes>
             <Route path="/" element={<UploadPage />} />
             <Route path="/summary" element={<SummaryPage />} />

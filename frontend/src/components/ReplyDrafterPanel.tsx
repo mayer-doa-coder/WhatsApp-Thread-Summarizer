@@ -9,149 +9,71 @@ export interface ReplyDrafterPanelProps {
   contextText: string;
 }
 
-const NEU_UP: React.CSSProperties = {
-  boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)',
-  backgroundColor: '#0e1020',
-};
-
-const NEU_IN: React.CSSProperties = {
-  boxShadow: 'inset -4px -4px 10px rgba(29,33,56,0.6), inset 4px 4px 10px rgba(6,7,15,0.9)',
-  backgroundColor: '#0e1020',
-};
-
-const NEU_IN_SM: React.CSSProperties = {
-  boxShadow: 'inset -2px -2px 5px rgba(29,33,56,0.6), inset 2px 2px 5px rgba(6,7,15,0.8)',
-  backgroundColor: '#0e1020',
-};
-
 const TONES: { value: Tone; label: string }[] = [
-  { value: 'formal', label: 'Formal' },
-  { value: 'casual', label: 'Casual' },
-  { value: 'concise', label: 'Concise' },
+  { value: 'formal',     label: 'Formal'     },
+  { value: 'casual',     label: 'Casual'     },
+  { value: 'concise',    label: 'Concise'    },
   { value: 'empathetic', label: 'Empathetic' },
   { value: 'apologetic', label: 'Apologetic' },
-  { value: 'assertive', label: 'Assertive' },
+  { value: 'assertive',  label: 'Assertive'  },
 ];
 
-const PLACEHOLDER_DRAFTS: string[] = [
-  'Your first reply option will appear here after you generate drafts.',
-  'Your second reply option will appear here after you generate drafts.',
-  'Your third reply option will appear here after you generate drafts.',
+const PLACEHOLDER_DRAFTS = [
+  'Your first reply option will appear here.',
+  'Your second reply option will appear here.',
+  'Your third reply option will appear here.',
 ];
 
-// ── DraftCard ─────────────────────────────────────────────────────────────────
-
-interface DraftCardProps {
-  text: string;
-  index: number;
-  isPlaceholder: boolean;
-}
-
-function DraftCard({ text, index, isPlaceholder }: DraftCardProps) {
+function DraftCard({ text, index, isPlaceholder }: { text: string; index: number; isPlaceholder: boolean }) {
   const { copyToClipboard, isCopied } = useClipboard();
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (isPlaceholder) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      copyToClipboard(text);
-    }
-  }
-
   return (
-    <div
-      className="rounded-xl p-4 outline-none focus-visible:ring-1 focus-visible:ring-[#25D366]/40"
-      style={NEU_UP}
-      tabIndex={isPlaceholder ? -1 : 0}
-      role={isPlaceholder ? undefined : 'article'}
-      aria-label={
-        isPlaceholder ? undefined : `Reply option ${index + 1}. Press Enter or Space to copy.`
-      }
-      onKeyDown={handleKeyDown}
-    >
-      <div className="flex items-center justify-between mb-3">
-        <span
-          className="text-[10px] font-semibold tracking-[0.12em] uppercase"
-          style={{ color: isPlaceholder ? 'rgba(232,234,246,0.2)' : 'rgba(37,211,102,0.55)' }}
-        >
+    <div className={`rounded-xl border p-4 transition-colors ${isPlaceholder ? 'border-white/[0.04] opacity-40' : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.14]'}`}>
+      <div className="flex items-center justify-between mb-2.5">
+        <span className={`text-xs font-medium ${isPlaceholder ? 'text-slate-600' : 'text-slate-500'}`}>
           Option {index + 1}
         </span>
         {!isPlaceholder && (
           <button
             onClick={() => copyToClipboard(text)}
-            aria-label={isCopied ? 'Copied to clipboard' : `Copy option ${index + 1} to clipboard`}
-            className="rounded-md px-2.5 py-1 text-[11px] font-medium transition-all duration-150"
-            style={
+            aria-label={isCopied ? 'Copied' : `Copy option ${index + 1}`}
+            className={[
+              'rounded-md px-2.5 py-1 text-xs font-medium transition-all',
               isCopied
-                ? {
-                    backgroundColor: 'rgba(37,211,102,0.15)',
-                    color: '#25D366',
-                    boxShadow: '0 0 0 1px rgba(37,211,102,0.35)',
-                  }
-                : { ...NEU_IN_SM, color: 'rgba(232,234,246,0.45)' }
-            }
+                ? 'bg-[#25D366]/10 text-[#25D366]'
+                : 'bg-white/[0.06] text-slate-400 hover:bg-white/[0.1] hover:text-slate-200',
+            ].join(' ')}
           >
-            {isCopied ? 'Copied!' : 'Copy'}
+            {isCopied ? '✓ Copied' : 'Copy'}
           </button>
         )}
       </div>
-      <p
-        className="text-sm leading-relaxed"
-        style={{ color: isPlaceholder ? 'rgba(232,234,246,0.28)' : 'rgba(232,234,246,0.72)' }}
-      >
+      <p className={`text-sm leading-relaxed ${isPlaceholder ? 'text-slate-600 italic' : 'text-slate-300'}`}>
         {text}
       </p>
     </div>
   );
 }
 
-// ── SectionLabel ──────────────────────────────────────────────────────────────
-
-function SectionLabel({ children, htmlFor }: { children: React.ReactNode; htmlFor?: string }) {
-  const cls = 'block text-[10px] font-semibold tracking-[0.15em] uppercase mb-2';
-  const style = { color: 'rgba(232,234,246,0.22)' };
-  return htmlFor ? (
-    <label htmlFor={htmlFor} className={cls} style={style}>
-      {children}
-    </label>
-  ) : (
-    <p className={cls} style={style}>
-      {children}
-    </p>
-  );
-}
-
-// ── ReplyDrafterPanel ─────────────────────────────────────────────────────────
-
 export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: ReplyDrafterPanelProps) {
-  const [selectedTone, setSelectedTone] = useState<Tone>('formal');
+  const [selectedTone, setSelectedTone] = useState<Tone>('casual');
   const [userIntent, setUserIntent] = useState('');
-
   const { loading, error, options, generate } = useReplyDrafter();
 
-  // Build a single-message proxy from contextText so the API gets non-empty messages.
-  const proxyMessages: Message[] = [
-    {
-      timestamp: new Date().toISOString(),
-      sender: null,
-      content: contextText || 'Please respond to this conversation.',
-      type: 'text',
-    },
-  ];
+  const proxyMessages: Message[] = [{
+    timestamp: new Date().toISOString(),
+    sender: null,
+    content: contextText || 'Please respond to this conversation.',
+    type: 'text',
+  }];
 
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape' && isOpen) onClose();
     }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [isOpen, onClose]);
-
-  function handleGenerate() {
-    generate(proxyMessages, userIntent, selectedTone);
-  }
 
   const displayDrafts = options.length > 0 ? options : PLACEHOLDER_DRAFTS;
   const isPlaceholder = options.length === 0;
@@ -162,168 +84,124 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
       <div
         aria-hidden="true"
         onClick={onClose}
-        className={`fixed inset-0 z-40 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-        style={{ backgroundColor: 'rgba(6,7,15,0.72)' }}
+        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       />
 
-      {/* Panel — bottom sheet on mobile, side drawer on md+ */}
+      {/* Panel */}
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Reply Drafter"
         className={[
-          'fixed inset-x-0 bottom-0 z-50 flex flex-col w-full max-h-[85vh] overflow-hidden rounded-t-2xl',
-          'md:left-auto md:right-0 md:top-0 md:bottom-0 md:w-96 md:max-h-none md:rounded-none',
-          'transform transition-transform duration-300 ease-in-out',
+          'fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl',
+          'md:left-auto md:right-0 md:top-0 md:bottom-0 md:w-96 md:rounded-none',
+          'border-t border-white/[0.07] md:border-t-0 md:border-l',
+          'bg-[#111827] transition-transform duration-300 ease-out',
+          'max-h-[88vh] md:max-h-none overflow-hidden',
           isOpen ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-full',
         ].join(' ')}
-        style={{
-          backgroundColor: '#0e1020',
-          boxShadow: '-12px 0 48px rgba(6,7,15,0.9)',
-        }}
       >
-        {/* Drag handle — visible only on mobile */}
-        <div className="block md:hidden shrink-0 pt-3 pb-1">
-          <div className="w-12 h-1.5 bg-slate-700 rounded-full mx-auto" />
+        {/* Mobile drag handle */}
+        <div className="md:hidden flex justify-center pt-2.5 pb-1 shrink-0">
+          <div className="h-1 w-10 rounded-full bg-white/20" />
         </div>
 
-        {/* ── Header ────────────────────────────────────────────────────────── */}
-        <div
-          className="flex shrink-0 items-center justify-between px-4 py-3 md:px-6 md:py-4"
-          style={{ borderBottom: '1px solid rgba(232,234,246,0.06)' }}
-        >
+        {/* Header */}
+        <div className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-5 py-4">
           <div>
-            <p
-              className="text-[10px] font-semibold tracking-[0.15em] uppercase mb-1"
-              style={{ color: 'rgba(232,234,246,0.22)' }}
-            >
-              Reply Drafter
-            </p>
-            <h2 className="text-base font-bold" style={{ color: '#e8eaf6' }}>
-              Draft a Reply
-            </h2>
+            <h2 className="text-sm font-semibold text-slate-100">Reply Drafter</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Generate 3 ready-to-send options</p>
           </div>
-
           <button
             onClick={onClose}
-            aria-label="Close reply drafter"
-            className="rounded-lg p-2 transition-opacity hover:opacity-60"
-            style={{ color: 'rgba(232,234,246,0.4)' }}
+            aria-label="Close"
+            className="rounded-lg p-1.5 text-slate-500 hover:text-slate-200 hover:bg-white/[0.06] transition-colors"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* ── Scrollable body ────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-5 space-y-6">
-
-          {/* Conversation context */}
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+          {/* Context */}
           <div>
-            <SectionLabel>Conversation Context</SectionLabel>
-            <div className="rounded-lg p-3" style={NEU_IN}>
-              <p
-                className="text-xs leading-relaxed line-clamp-4"
-                style={{ color: 'rgba(232,234,246,0.45)' }}
-              >
+            <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Context</p>
+            <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5">
+              <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
                 {contextText || 'No context provided.'}
               </p>
             </div>
           </div>
 
-          {/* Tone selector */}
+          {/* Tone */}
           <div>
-            <SectionLabel>Tone</SectionLabel>
-            <div className="flex flex-wrap gap-2">
-              {TONES.map(({ value, label }) => {
-                const active = selectedTone === value;
-                return (
-                  <button
-                    key={value}
-                    onClick={() => setSelectedTone(value)}
-                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
-                    style={
-                      active
-                        ? {
-                            backgroundColor: 'rgba(37,211,102,0.12)',
-                            color: '#25D366',
-                            boxShadow: '0 0 0 1px rgba(37,211,102,0.35)',
-                          }
-                        : {
-                            ...NEU_UP,
-                            color: 'rgba(232,234,246,0.4)',
-                          }
-                    }
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+            <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Tone</p>
+            <div className="flex flex-wrap gap-1.5">
+              {TONES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setSelectedTone(value)}
+                  className={[
+                    'rounded-full px-3 py-1 text-xs font-medium border transition-colors',
+                    selectedTone === value
+                      ? 'border-[#25D366]/40 bg-[#25D366]/[0.1] text-[#25D366]'
+                      : 'border-white/[0.07] text-slate-500 hover:border-white/[0.15] hover:text-slate-300',
+                  ].join(' ')}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* User intent */}
+          {/* Intent */}
           <div>
-            <SectionLabel htmlFor="reply-intent">Your Intent</SectionLabel>
+            <label htmlFor="reply-intent" className="block text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">
+              Your intent <span className="normal-case text-slate-600">(optional)</span>
+            </label>
             <textarea
               id="reply-intent"
-              rows={3}
+              rows={2}
               value={userIntent}
               onChange={(e) => setUserIntent(e.target.value)}
-              placeholder="What do you want to communicate? e.g. agree to the meeting, apologise for the delay…"
-              className="w-full resize-none rounded-lg p-3 text-sm outline-none placeholder:opacity-30 focus:ring-1 focus:ring-[#25D366]/30"
-              style={{
-                ...NEU_IN,
-                color: 'rgba(232,234,246,0.8)',
-              }}
+              placeholder="e.g. agree to the meeting but mention I'm 5 min late…"
+              className="w-full resize-none rounded-lg border border-white/[0.07] bg-white/[0.02] px-3 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none transition focus:border-[#25D366]/40 focus:ring-1 focus:ring-[#25D366]/20"
             />
           </div>
 
-          {/* Generate button */}
+          {/* Generate */}
           <button
-            onClick={handleGenerate}
+            onClick={() => generate(proxyMessages, userIntent, selectedTone)}
             disabled={loading}
-            className="w-full rounded-xl py-2.5 text-sm font-bold transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              background: 'linear-gradient(135deg, #2bcc60, #1a9946)',
-              color: '#ffffff',
-              boxShadow: loading ? 'none' : '0 0 14px rgba(37,211,102,0.25)',
-            }}
+            className={[
+              'w-full rounded-xl py-2.5 text-sm font-semibold transition-all',
+              loading
+                ? 'bg-white/[0.05] text-slate-500 cursor-not-allowed'
+                : 'bg-[#25D366] text-slate-950 hover:bg-[#20bc59]',
+            ].join(' ')}
           >
-            {loading ? 'Generating…' : 'Generate Drafts'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Generating…
+              </span>
+            ) : 'Generate Drafts'}
           </button>
 
-          {/* Error message */}
           {error && (
-            <div
-              role="alert"
-              className="rounded-lg px-4 py-3 text-sm"
-              style={{
-                border: '1px solid rgba(239,68,68,0.35)',
-                backgroundColor: 'rgba(127,29,29,0.25)',
-                color: '#fca5a5',
-              }}
-            >
+            <div role="alert" className="rounded-lg border border-red-500/30 bg-red-900/20 px-3 py-2.5 text-xs text-red-400">
               {error}
             </div>
           )}
 
-          {/* Draft cards — Tab-navigable when options are real */}
-          <div className="space-y-3 pb-2">
-            <SectionLabel>Draft Options</SectionLabel>
+          {/* Drafts */}
+          <div className="space-y-2.5 pb-2">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Drafts</p>
             {displayDrafts.map((text, idx) => (
               <DraftCard key={idx} text={text} index={idx} isPlaceholder={isPlaceholder} />
             ))}

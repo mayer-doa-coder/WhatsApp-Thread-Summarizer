@@ -32,32 +32,31 @@ export default function LoginPage() {
     if (result) navigate('/');
   }
 
+  const inputCls = (hasError: boolean) => [
+    'w-full rounded-lg border bg-white/[0.03] px-4 py-2.5 text-sm text-slate-100',
+    'placeholder-slate-600 outline-none transition',
+    'focus:ring-1 focus:ring-[#25D366]/40 focus:border-[#25D366]/40',
+    hasError ? 'border-red-500/50' : 'border-white/[0.08]',
+  ].join(' ');
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4"
-         style={{ backgroundColor: '#0e1020' }}>
-      <div className="w-full max-w-md">
-        {/* Header */}
+    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-[#0e1020]">
+      <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-100 tracking-tight">Welcome back</h1>
-          <p className="mt-2 text-slate-400 text-sm">Sign in to your account to continue</p>
+          <h1 className="text-2xl font-bold text-slate-100">Welcome back</h1>
+          <p className="mt-1.5 text-sm text-slate-500">Sign in to access your history</p>
         </div>
 
-        {/* Server error alert */}
         {error && (
-          <div
-            role="alert"
-            className="mb-6 rounded-lg border border-red-500/40 bg-red-900/25 px-4 py-3 text-sm text-red-400"
-          >
+          <div role="alert" className="mb-5 rounded-lg border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         )}
 
-        {/* Card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-xl">
-          <form onSubmit={handleSubmit} noValidate>
-            {/* Email */}
-            <div className="mb-5">
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">
+        <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-xs font-medium text-slate-500 mb-1.5">
                 Email address
               </label>
               <input
@@ -67,24 +66,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
-                className={[
-                  'w-full rounded-lg border px-4 py-2.5 text-sm text-slate-100',
-                  'bg-slate-800/70 placeholder-slate-500 outline-none transition',
-                  'focus:ring-2 focus:ring-[#25D366]/60 disabled:opacity-50',
-                  fieldErrors.email
-                    ? 'border-red-500/70'
-                    : 'border-slate-700 focus:border-[#25D366]/50',
-                ].join(' ')}
+                className={inputCls(!!fieldErrors.email)}
                 placeholder="you@example.com"
               />
-              {fieldErrors.email && (
-                <p className="text-red-400 text-sm mt-1">{fieldErrors.email}</p>
-              )}
+              {fieldErrors.email && <p className="mt-1.5 text-xs text-red-400">{fieldErrors.email}</p>}
             </div>
 
-            {/* Password */}
-            <div className="mb-7">
-              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-1">
+            <div>
+              <label htmlFor="password" className="block text-xs font-medium text-slate-500 mb-1.5">
                 Password
               </label>
               <input
@@ -94,38 +83,26 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className={[
-                  'w-full rounded-lg border px-4 py-2.5 text-sm text-slate-100',
-                  'bg-slate-800/70 placeholder-slate-500 outline-none transition',
-                  'focus:ring-2 focus:ring-[#25D366]/60 disabled:opacity-50',
-                  fieldErrors.password
-                    ? 'border-red-500/70'
-                    : 'border-slate-700 focus:border-[#25D366]/50',
-                ].join(' ')}
+                className={inputCls(!!fieldErrors.password)}
                 placeholder="••••••••"
               />
-              {fieldErrors.password && (
-                <p className="text-red-400 text-sm mt-1">{fieldErrors.password}</p>
-              )}
+              {fieldErrors.password && <p className="mt-1.5 text-xs text-red-400">{fieldErrors.password}</p>}
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950
-                         transition hover:bg-[#20bc59] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {loading ? 'Logging in…' : 'Log in'}
             </button>
           </form>
         </div>
 
-        {/* Footer link */}
-        <p className="mt-6 text-center text-sm text-slate-500">
-          Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-[#25D366] hover:underline">
-            Create one
+        <p className="mt-5 text-center text-sm text-slate-600">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-[#25D366] hover:underline font-medium">
+            Sign up
           </Link>
         </p>
       </div>

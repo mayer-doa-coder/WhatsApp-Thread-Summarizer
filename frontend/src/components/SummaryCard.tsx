@@ -13,81 +13,35 @@ interface SummaryCardProps {
   data: SummaryData;
 }
 
-const NEU_UP: React.CSSProperties = {
-  boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)',
-  backgroundColor: '#0e1020',
-};
-
-const NEU_IN: React.CSSProperties = {
-  boxShadow: 'inset -4px -4px 10px rgba(29,33,56,0.6), inset 4px 4px 10px rgba(6,7,15,0.9)',
-  backgroundColor: '#0e1020',
-};
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionHeader({ label }: { label: string }) {
   return (
-    <p
-      className="text-[10px] font-semibold tracking-[0.15em] uppercase mb-2"
-      style={{ color: 'rgba(232,234,246,0.22)' }}
-    >
-      {children}
-    </p>
+    <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+      {label}
+    </h3>
   );
 }
 
-function InsetBox({ children }: { children: React.ReactNode }) {
+function EmptyNote({ text }: { text: string }) {
+  return <p className="text-sm text-slate-600 italic">{text}</p>;
+}
+
+function BulletItem({ text }: { text: string }) {
   return (
-    <div className="rounded-lg p-4" style={NEU_IN}>
-      {children}
-    </div>
+    <li className="flex items-start gap-3">
+      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-slate-600" />
+      <span className="text-sm leading-relaxed text-slate-300">{text}</span>
+    </li>
   );
 }
 
-function BulletList({ items, emptyLabel }: { items: string[]; emptyLabel: string }) {
-  if (items.length === 0) {
-    return (
-      <p className="text-sm" style={{ color: 'rgba(232,234,246,0.28)' }}>
-        {emptyLabel}
-      </p>
-    );
-  }
+function ActionItem({ text, index }: { text: string; index: number }) {
   return (
-    <ul className="space-y-2">
-      {items.map((item, idx) => (
-        <li key={idx} className="flex items-start gap-3 text-sm">
-          <span
-            className="mt-[5px] h-[6px] w-[6px] shrink-0 rounded-full"
-            style={{ backgroundColor: '#25D366', opacity: 0.6 }}
-          />
-          <span style={{ color: 'rgba(232,234,246,0.65)' }}>{item}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function ActionItemRow({ item, index }: { item: string; index: number }) {
-  const intensity = Math.max(0.04, 0.08 - index * 0.015);
-  const barOpacity = Math.max(0.25, 0.6 - index * 0.12);
-  const isFirst = index === 0;
-
-  return (
-    <div
-      className="relative flex items-center rounded-md overflow-hidden"
-      style={{ backgroundColor: `rgba(37,211,102,${intensity})` }}
-    >
-      <span
-        className="absolute left-0 top-0 h-full w-1 rounded-sm"
-        style={{ backgroundColor: '#25D366', opacity: barOpacity }}
-      />
-      <p
-        className="pl-4 pr-3 py-2 text-sm leading-snug"
-        style={{
-          color: isFirst ? `rgba(37,211,102,0.9)` : 'rgba(232,234,246,0.65)',
-        }}
-      >
-        {item}
-      </p>
-    </div>
+    <li className={`flex items-start gap-3 rounded-lg px-3 py-2.5 ${index === 0 ? 'bg-[#25D366]/[0.08] border border-[#25D366]/20' : 'bg-white/[0.03]'}`}>
+      <svg className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${index === 0 ? 'text-[#25D366]' : 'text-slate-600'}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      </svg>
+      <span className={`text-sm leading-relaxed ${index === 0 ? 'text-[#25D366]/90' : 'text-slate-400'}`}>{text}</span>
+    </li>
   );
 }
 
@@ -95,76 +49,71 @@ export default function SummaryCard({ data }: SummaryCardProps) {
   const { topic, keyDecisions, actionItems, notableFacts, participants, summaryText } = data;
 
   return (
-    <div
-      className="rounded-2xl border-l-4 border-[#25D366] p-4 sm:p-6 space-y-6"
-      style={NEU_UP}
-    >
-      {/* Topic */}
-      <div>
-        <SectionLabel>Topic</SectionLabel>
-        <InsetBox>
-          <p className="text-sm font-semibold" style={{ color: 'rgba(232,234,246,0.8)' }}>
-            {topic || <span style={{ color: 'rgba(232,234,246,0.28)' }}>No topic identified</span>}
+    <div className="rounded-2xl border border-white/[0.07] bg-[#111827] overflow-hidden">
+      {/* Topic bar */}
+      <div className="border-b border-white/[0.06] px-6 py-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Topic</p>
+        <p className="text-base font-semibold text-slate-100 leading-snug">
+          {topic || <span className="text-slate-600 font-normal italic">No topic identified</span>}
+        </p>
+      </div>
+
+      <div className="p-6 space-y-7">
+        {/* Participants */}
+        {participants.length > 0 && (
+          <div>
+            <SectionHeader label="Participants" />
+            <div className="flex flex-wrap gap-2">
+              {participants.map((p, i) => (
+                <span key={i} className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-slate-400">
+                  {p}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Summary */}
+        <div>
+          <SectionHeader label="Summary" />
+          <p className="text-sm leading-relaxed text-slate-400">
+            {summaryText || <EmptyNote text="No summary available" />}
           </p>
-        </InsetBox>
-      </div>
+        </div>
 
-      {/* Summary text */}
-      <div>
-        <SectionLabel>Summary</SectionLabel>
-        <InsetBox>
-          <p className="text-sm leading-relaxed" style={{ color: 'rgba(232,234,246,0.65)' }}>
-            {summaryText || <span style={{ color: 'rgba(232,234,246,0.28)' }}>No summary available</span>}
-          </p>
-        </InsetBox>
-      </div>
-
-      {/* Key Decisions */}
-      <div>
-        <SectionLabel>Key Decisions</SectionLabel>
-        <InsetBox>
-          <BulletList items={keyDecisions} emptyLabel="No key decisions recorded" />
-        </InsetBox>
-      </div>
-
-      {/* Action Items */}
-      <div>
-        <SectionLabel>Action Items</SectionLabel>
-        <div className="rounded-lg p-4 space-y-2" style={NEU_IN}>
-          {actionItems.length === 0 ? (
-            <p className="text-sm" style={{ color: 'rgba(232,234,246,0.28)' }}>
-              No action items recorded
-            </p>
+        {/* Key Decisions */}
+        <div>
+          <SectionHeader label="Key Decisions" />
+          {keyDecisions.length === 0 ? (
+            <EmptyNote text="No key decisions recorded" />
           ) : (
-            actionItems.map((item, idx) => (
-              <ActionItemRow key={idx} item={item} index={idx} />
-            ))
+            <ul className="space-y-2">
+              {keyDecisions.map((item, i) => <BulletItem key={i} text={item} />)}
+            </ul>
           )}
         </div>
-      </div>
 
-      {/* Notable Facts */}
-      <div>
-        <SectionLabel>Notable Facts</SectionLabel>
-        <InsetBox>
-          <BulletList items={notableFacts} emptyLabel="No notable facts recorded" />
-        </InsetBox>
-      </div>
-
-      {/* Participants */}
-      <div>
-        <SectionLabel>Participants</SectionLabel>
-        <InsetBox>
-          {participants.length === 0 ? (
-            <p className="text-sm" style={{ color: 'rgba(232,234,246,0.28)' }}>
-              No participants identified
-            </p>
+        {/* Action Items */}
+        <div>
+          <SectionHeader label="Action Items" />
+          {actionItems.length === 0 ? (
+            <EmptyNote text="No action items recorded" />
           ) : (
-            <p className="text-sm" style={{ color: 'rgba(232,234,246,0.55)' }}>
-              {participants.join(' · ')}
-            </p>
+            <ul className="space-y-2">
+              {actionItems.map((item, i) => <ActionItem key={i} text={item} index={i} />)}
+            </ul>
           )}
-        </InsetBox>
+        </div>
+
+        {/* Notable Facts */}
+        {notableFacts.length > 0 && (
+          <div>
+            <SectionHeader label="Notable Facts" />
+            <ul className="space-y-2">
+              {notableFacts.map((item, i) => <BulletItem key={i} text={item} />)}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

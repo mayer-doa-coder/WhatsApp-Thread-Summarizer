@@ -26,19 +26,15 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
 
   function addFiles(incoming: File[]) {
     const textOnly = incoming.filter(isTextFile);
-    const hasRejected = textOnly.length < incoming.length;
-    setTypeRejected(hasRejected);
-
+    setTypeRejected(textOnly.length < incoming.length);
     if (textOnly.length === 0) return;
-
     const newTotal = files.length + textOnly.length;
     if (newTotal > MAX_FILES) {
-      const allowed = textOnly.slice(0, MAX_FILES - files.length);
-      setFiles([...files, ...allowed]);
+      setFiles([...files, ...textOnly.slice(0, MAX_FILES - files.length)]);
       setError?.('Maximum of 10 files allowed.');
     } else {
       setFiles([...files, ...textOnly]);
-      if (newTotal <= MAX_FILES) setError?.('');
+      setError?.('');
     }
   }
 
@@ -48,144 +44,99 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
     if (next.length < MAX_FILES) setError?.('');
   }
 
-  function onDragOver(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-    setDragOver(true);
-    setTypeRejected(false);
-  }
-
-  function onDragLeave(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-    setDragOver(false);
-  }
-
-  function onDrop(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-    setDragOver(false);
-    addFiles(Array.from(e.dataTransfer.files));
-  }
-
-  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!e.target.files) return;
-    addFiles(Array.from(e.target.files));
-    e.target.value = '';
-  }
-
   const atLimit = files.length >= MAX_FILES;
-  const borderColor = dragOver ? '#25D366' : typeRejected || error ? '#ef4444' : files.length > 0 ? '#25D366' : '#334155';
 
   return (
-    <div style={{ width: '100%', maxWidth: '400px' }}>
+    <div className="w-full">
       {/* Drop zone */}
       <div
         role="button"
         tabIndex={atLimit ? -1 : 0}
-        aria-label={atLimit ? 'File limit reached. Remove a file to add more.' : 'Upload WhatsApp export files. Click or press Enter to browse, or drag and drop .txt files here.'}
+        aria-label={
+          atLimit
+            ? 'File limit reached. Remove a file to add more.'
+            : 'Upload WhatsApp export files. Click or press Enter to browse, or drag and drop .txt files here.'
+        }
         aria-disabled={atLimit}
         onClick={() => !atLimit && inputRef.current?.click()}
-        onKeyDown={(e) => { if (!atLimit && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); inputRef.current?.click(); } }}
-        onDragOver={atLimit ? undefined : onDragOver}
-        onDragLeave={atLimit ? undefined : onDragLeave}
-        onDrop={atLimit ? undefined : onDrop}
-        style={{
-          border: `2px dashed ${borderColor}`,
-          borderRadius: '12px',
-          backgroundColor: dragOver ? '#0d2a1f' : '#0f172a',
-          padding: '40px 32px',
-          textAlign: 'center',
-          cursor: atLimit ? 'not-allowed' : 'pointer',
-          transition: 'border-color 0.15s, background-color 0.15s',
-          userSelect: 'none',
-          opacity: atLimit ? 0.55 : 1,
+        onKeyDown={(e) => {
+          if (!atLimit && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
         }}
+        onDragOver={(e) => { e.preventDefault(); if (!atLimit) { setDragOver(true); setTypeRejected(false); } }}
+        onDragLeave={(e) => { e.preventDefault(); setDragOver(false); }}
+        onDrop={(e) => { e.preventDefault(); setDragOver(false); if (!atLimit) addFiles(Array.from(e.dataTransfer.files)); }}
+        className={[
+          'relative flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center cursor-pointer transition-all duration-200 select-none',
+          atLimit
+            ? 'border-white/[0.06] opacity-50 cursor-not-allowed'
+            : dragOver
+            ? 'border-[#25D366] bg-[#25D366]/[0.04]'
+            : files.length > 0
+            ? 'border-[#25D366]/40 bg-[#25D366]/[0.02]'
+            : 'border-white/[0.1] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.03]',
+        ].join(' ')}
       >
-        <label htmlFor="upload-zone-input" className="sr-only">Select WhatsApp export files</label>
         <input
           ref={inputRef}
           id="upload-zone-input"
           type="file"
           accept=".txt,text/plain"
           multiple
-          style={{ display: 'none' }}
-          onChange={onChange}
+          className="sr-only"
+          onChange={(e) => { if (e.target.files) { addFiles(Array.from(e.target.files)); e.target.value = ''; } }}
         />
 
-        <div style={{ fontSize: '2rem', marginBottom: '10px', color: dragOver ? '#25D366' : '#334155' }}>
-          ↑
+        {/* Icon */}
+        <div className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${dragOver ? 'bg-[#25D366]/20' : 'bg-white/[0.04]'}`}>
+          <svg className={`h-5 w-5 transition-colors ${dragOver ? 'text-[#25D366]' : 'text-slate-500'}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
         </div>
-        <p style={{ color: '#e2e8f0', fontWeight: 600, margin: '0 0 6px', fontSize: '1rem' }}>
-          {dragOver ? 'Drop to upload' : atLimit ? 'File limit reached' : 'Drop your WhatsApp exports here'}
-        </p>
-        <p style={{ color: '#64748b', fontSize: '0.875rem', margin: '0 0 14px' }}>
-          {atLimit ? '10 / 10 files added' : `or click to browse · up to ${MAX_FILES} files`}
-        </p>
-        <span
-          style={{
-            display: 'inline-block',
-            padding: '2px 10px',
-            border: '1px solid #1e293b',
-            borderRadius: '4px',
-            color: '#475569',
-            fontSize: '0.75rem',
-            letterSpacing: '0.05em',
-          }}
-        >
-          .txt only
-        </span>
+
+        <div>
+          <p className="text-sm font-medium text-slate-200">
+            {dragOver ? 'Drop files to upload' : atLimit ? 'File limit reached' : 'Drop your WhatsApp exports here'}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            {atLimit ? '10 / 10 files added' : `or click to browse · .txt only · up to ${MAX_FILES} files`}
+          </p>
+        </div>
 
         {typeRejected && (
-          <p role="alert" style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
-            Only .txt files are accepted.
-          </p>
+          <p role="alert" className="text-xs text-red-400">Only .txt files are accepted.</p>
         )}
       </div>
 
-      {/* 10-file limit warning */}
-      {error && (
-        <p className="text-red-400 text-xs mt-2 px-1">{error}</p>
-      )}
+      {error && <p className="mt-2 text-xs text-red-400 px-1">{error}</p>}
 
-      {/* Selected file list */}
+      {/* File list */}
       {files.length > 0 && (
-        <ul
-          className="mt-4 space-y-2 max-h-48 overflow-y-auto pr-1"
-          aria-label="Selected files"
-        >
+        <ul className="mt-3 space-y-1.5" aria-label="Selected files">
           {files.map((file, idx) => (
             <li
-              key={`${file.name}-${file.size}-${idx}`}
-              className="flex items-center justify-between gap-3 rounded-lg px-3 py-2"
-              style={{
-                backgroundColor: '#0f172a',
-                border: '1px solid rgba(37,211,102,0.15)',
-              }}
+              key={`${file.name}-${idx}`}
+              className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2"
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <span
-                  style={{ color: '#25D366', fontSize: '0.7rem', flexShrink: 0 }}
-                >
-                  ✓
-                </span>
-                <span
-                  className="truncate text-xs font-medium"
-                  style={{ color: '#e2e8f0' }}
-                  title={file.name}
-                >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#25D366]" />
+                <span className="truncate text-sm text-slate-300" title={file.name}>
                   {file.name}
                 </span>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span style={{ color: '#64748b', fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
-                  {formatBytes(file.size)}
-                </span>
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="text-xs text-slate-600">{formatBytes(file.size)}</span>
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
                   aria-label={`Remove ${file.name}`}
-                  className="rounded p-0.5 transition-opacity hover:opacity-60"
-                  style={{ color: '#64748b', lineHeight: 1 }}
+                  className="text-slate-600 hover:text-slate-300 transition-colors"
                 >
-                  ✕
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
             </li>

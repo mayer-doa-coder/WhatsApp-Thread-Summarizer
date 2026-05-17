@@ -105,6 +105,8 @@ router.post('/', async (req, res) => {
   const totalChunks = chunks.length;
   const isChunk = totalChunks > 1;
   const summaries = [];
+  const startMs = Date.now();
+  let modelUsed = null;
 
   try {
     for (let i = 0; i < chunks.length; i++) {
@@ -124,6 +126,7 @@ router.post('/', async (req, res) => {
       ];
 
       const responseText = await callLLM(llmMessages);
+      if (!modelUsed) modelUsed = responseText._model ?? null;
       summaries.push(parseJsonResponse(responseText));
     }
   } catch (err) {
@@ -134,7 +137,13 @@ router.post('/', async (req, res) => {
     });
   }
 
-  return res.status(200).json(mergeSummaries(summaries));
+  return res.status(200).json({
+    summary: mergeSummaries(summaries),
+    model: modelUsed ?? 'unknown',
+    processingMs: Date.now() - startMs,
+    inputMessages: messages.length,
+    truncated: false,
+  });
 });
 
 module.exports = router;

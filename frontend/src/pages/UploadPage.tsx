@@ -4,10 +4,10 @@ import UploadZone from '../components/UploadZone';
 import { SummaryType } from '../services/api';
 import { useSummarize } from '../hooks/useSummarize';
 
-const SUMMARY_TYPES: { value: SummaryType; label: string }[] = [
-  { value: 'short',    label: 'Short (2–3 sentences)' },
-  { value: 'medium',   label: 'Medium (~100 words)'   },
-  { value: 'detailed', label: 'Detailed (~300 words)'  },
+const SUMMARY_TYPES: { value: SummaryType; label: string; desc: string }[] = [
+  { value: 'short',    label: 'Short',    desc: '2–3 sentences'  },
+  { value: 'medium',   label: 'Medium',   desc: '~100 words'     },
+  { value: 'detailed', label: 'Detailed', desc: '~300 words'     },
 ];
 
 export default function UploadPage() {
@@ -19,9 +19,7 @@ export default function UploadPage() {
   const [summaryType, setSummaryType] = useState<SummaryType>('medium');
 
   useEffect(() => {
-    if (summary) {
-      navigate('/summary', { state: summary });
-    }
+    if (summary) navigate('/summary', { state: summary });
   }, [summary, navigate]);
 
   function handleProcess() {
@@ -29,104 +27,85 @@ export default function UploadPage() {
     trigger(files[0], summaryType);
   }
 
-  const isDisabled = files.length === 0 || loading;
+  const canProcess = files.length > 0 && !loading;
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: '#0e1020',
-        color: '#e8eaf6',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '48px 24px',
-        fontFamily: 'system-ui, sans-serif',
-      }}
-    >
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px', color: '#25D366' }}>
-        WhatsApp Thread Summarizer
-      </h1>
-      <p style={{ color: 'rgba(232,234,246,0.35)', marginBottom: '40px', fontSize: '0.9rem' }}>
-        Upload a WhatsApp export (.txt) and get an AI-generated summary.
-      </p>
-
-      <UploadZone
-        files={files}
-        setFiles={setFiles}
-        error={zoneError}
-        setError={setZoneError}
-      />
-
-      <div style={{ marginTop: '28px', width: '100%', maxWidth: '400px' }}>
-        <label
-          htmlFor="summary-type"
-          style={{ display: 'block', color: 'rgba(232,234,246,0.45)', fontSize: '0.85rem', marginBottom: '8px' }}
-        >
-          Summary length
-        </label>
-        <select
-          id="summary-type"
-          value={summaryType}
-          onChange={(e) => setSummaryType(e.target.value as SummaryType)}
-          className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-[#0e1020]"
-          style={{
-            width: '100%',
-            padding: '10px 12px',
-            backgroundColor: '#0e1020',
-            color: '#e8eaf6',
-            border: '1px solid rgba(232,234,246,0.12)',
-            borderRadius: '8px',
-            fontSize: '0.9rem',
-            cursor: 'pointer',
-            boxShadow: '-4px -4px 10px rgba(29,33,56,0.6), 4px 4px 10px rgba(6,7,15,0.9)',
-          }}
-        >
-          {SUMMARY_TYPES.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <button
-        onClick={handleProcess}
-        disabled={isDisabled}
-        aria-busy={loading}
-        className="focus:outline-none focus:ring-2 focus:ring-[#25D366]/70 focus:ring-offset-2 focus:ring-offset-[#0e1020]"
-        style={{
-          marginTop: '24px',
-          padding: '12px 40px',
-          background: isDisabled
-            ? 'rgba(232,234,246,0.06)'
-            : 'linear-gradient(135deg, #2bcc60, #1a9946)',
-          color: isDisabled ? 'rgba(232,234,246,0.25)' : '#ffffff',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '1rem',
-          fontWeight: 600,
-          cursor: isDisabled ? 'not-allowed' : 'pointer',
-          transition: 'opacity 0.15s',
-          boxShadow: isDisabled ? 'none' : '0 0 14px rgba(37,211,102,0.25)',
-        }}
-      >
-        {loading ? 'Processing…' : 'Process'}
-      </button>
-
-      <div aria-live="polite" aria-atomic="true" className="sr-only">
-        {loading ? 'Processing your file, please wait.' : ''}
-      </div>
-
-      {error && (
-        <div
-          role="alert"
-          className="border border-red-500 rounded-xl px-5 py-3 mt-6 w-full max-w-md text-sm"
-          style={{ backgroundColor: 'rgba(127,29,29,0.35)', color: '#fca5a5' }}
-        >
-          <span className="font-semibold">Error: </span>{error}
+    <div className="min-h-[calc(100vh-56px)] bg-[#0e1020] flex flex-col items-center justify-center px-4 py-12">
+      <div className="w-full max-w-lg">
+        {/* Page title */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold text-slate-100">Summarize a chat</h1>
+          <p className="mt-2 text-sm text-slate-500">
+            Upload a WhatsApp <code className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-slate-400">.txt</code> export and get an AI-generated summary in seconds.
+          </p>
         </div>
-      )}
+
+        {/* Card */}
+        <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6 space-y-6">
+          <UploadZone files={files} setFiles={setFiles} error={zoneError} setError={setZoneError} />
+
+          {/* Summary type */}
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">
+              Summary length
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {SUMMARY_TYPES.map(({ value, label, desc }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setSummaryType(value)}
+                  className={[
+                    'rounded-lg border px-3 py-2.5 text-left transition-all',
+                    summaryType === value
+                      ? 'border-[#25D366]/50 bg-[#25D366]/[0.08]'
+                      : 'border-white/[0.07] bg-white/[0.02] hover:border-white/[0.14] hover:bg-white/[0.04]',
+                  ].join(' ')}
+                >
+                  <span className={`block text-sm font-semibold ${summaryType === value ? 'text-[#25D366]' : 'text-slate-200'}`}>
+                    {label}
+                  </span>
+                  <span className="block text-xs text-slate-500 mt-0.5">{desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div role="alert" className="rounded-lg border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            onClick={handleProcess}
+            disabled={!canProcess}
+            aria-busy={loading}
+            className={[
+              'w-full rounded-xl py-3 text-sm font-semibold transition-all',
+              canProcess
+                ? 'bg-[#25D366] text-slate-950 hover:bg-[#20bc59] shadow-[0_0_20px_rgba(37,211,102,0.2)]'
+                : 'bg-white/[0.05] text-slate-600 cursor-not-allowed',
+            ].join(' ')}
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Processing…
+              </span>
+            ) : 'Process'}
+          </button>
+        </div>
+
+        <p className="mt-4 text-center text-xs text-slate-600">
+          Export from WhatsApp: open a chat → ⋮ → More → Export chat → Without media
+        </p>
+      </div>
     </div>
   );
 }

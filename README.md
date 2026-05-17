@@ -152,7 +152,7 @@ JWT_SECRET=a-long-random-string-at-least-32-chars
 ```bash
 cd backend
 npm install
-node src/server.js
+node server.js
 ```
 
 Verify:
@@ -233,7 +233,7 @@ TEST_EMAIL=you@example.com TEST_PASSWORD=YourPassword123! npx playwright test au
 
 | Command | Description |
 |---|---|
-| `node src/server.js` | Start API server |
+| `node server.js` | Start API server |
 | `npm test` | Run Jest suite |
 | `npm run test:coverage` | Jest with coverage |
 | `npm run lint` | ESLint check |
