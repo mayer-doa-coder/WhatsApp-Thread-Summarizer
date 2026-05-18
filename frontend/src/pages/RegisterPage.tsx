@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 interface FieldErrors {
   email?: string;
@@ -12,12 +13,14 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { register, loading, error } = useAuth();
+  const { initiateRegister } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   function validate(): boolean {
     const errors: FieldErrors = {};
@@ -31,8 +34,19 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    const result = await register(email.trim(), password);
-    if (result) navigate('/');
+    setLoading(true);
+    setError(null);
+    try {
+      const confirmedEmail = await initiateRegister(email.trim(), password);
+      navigate(`/verify-otp?email=${encodeURIComponent(confirmedEmail)}`);
+    } catch (err) {
+      const msg = axios.isAxiosError(err)
+        ? (err.response?.data?.message ?? err.message)
+        : 'An unexpected error occurred.';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputCls = (hasError: boolean) => [
@@ -114,7 +128,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
-              {loading ? 'Creating account…' : 'Create account'}
+              {loading ? 'Sending code…' : 'Create account'}
             </button>
           </form>
         </div>

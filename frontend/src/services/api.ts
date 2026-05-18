@@ -249,12 +249,43 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
+export interface RegisterResponse {
+  message: string;
+  email: string;
+}
+
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
   const { data } = await client.post<AuthResponse>('/auth/login', { email, password });
   return data;
 }
 
-export async function registerUser(email: string, password: string): Promise<AuthResponse> {
-  const { data } = await client.post<AuthResponse>('/auth/register', { email, password });
+export async function registerUser(email: string, password: string): Promise<RegisterResponse> {
+  const { data } = await client.post<RegisterResponse>('/auth/register', { email, password });
+  return data;
+}
+
+export interface VerifyOtpResponse {
+  message: string;
+  token?: string;
+  user?: AuthUser;
+}
+
+export async function verifyOtp(email: string, otp: string): Promise<VerifyOtpResponse> {
+  const { data } = await client.post<VerifyOtpResponse>('/auth/verify-otp', { email, otp });
+  return data;
+}
+
+export async function resendOtp(email: string): Promise<{ message: string }> {
+  const { data } = await client.post<{ message: string }>('/auth/resend-otp', { email });
+  return data;
+}
+
+export async function forgotPassword(email: string): Promise<{ message: string }> {
+  const { data } = await client.post<{ message: string }>('/auth/forgot-password', { email });
+  return data;
+}
+
+export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
+  const { data } = await client.post<{ message: string }>('/auth/reset-password', { token, password });
   return data;
 }

@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
     "multer": "^2.1.1",
+    "nodemailer": "^8.0.7",
     "openai": "^6.37.0",
     "puppeteer": "^25.0.2",
     "puppeteer-core": "^25.0.2"

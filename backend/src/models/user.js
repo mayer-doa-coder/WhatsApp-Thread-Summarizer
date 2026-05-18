@@ -10,7 +10,7 @@ const supabase = require('../config/supabase');
 async function createUser(email, passwordHash) {
   const { data, error } = await supabase
     .from('users')
-    .insert({ email, password_hash: passwordHash })
+    .insert({ email, password_hash: passwordHash, is_verified: false })
     .select('id, email, created_at')
     .single();
 
@@ -25,7 +25,7 @@ async function createUser(email, passwordHash) {
 async function findUserByEmail(email) {
   const { data, error } = await supabase
     .from('users')
-    .select('id, email, password_hash, created_at')
+    .select('id, email, password_hash, created_at, is_verified')
     .eq('email', email)
     .maybeSingle();
 
@@ -48,4 +48,13 @@ async function findUserById(id) {
   return data ?? null;
 }
 
-module.exports = { createUser, findUserByEmail, findUserById };
+async function markUserVerified(email) {
+  const { error } = await supabase
+    .from('users')
+    .update({ is_verified: true })
+    .eq('email', email);
+
+  if (error) throw new Error(error.message);
+}
+
+module.exports = { createUser, findUserByEmail, findUserById, markUserVerified };
