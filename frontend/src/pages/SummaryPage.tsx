@@ -42,7 +42,7 @@ export default function SummaryPage() {
 
   if (!summary) {
     return (
-      <div className="min-h-[calc(100vh-56px)] flex items-center justify-center bg-[#0e1020]">
+      <div className="page-shell flex items-center justify-center">
         <p className="text-sm text-slate-600">Redirecting…</p>
       </div>
     );
@@ -77,19 +77,20 @@ export default function SummaryPage() {
   const contextText = [summary.topic, summary.summaryText].filter(Boolean).join(' — ');
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-[#0e1020] px-4 py-8 sm:px-6">
-      <div className="mx-auto max-w-3xl">
+    <div className="page-shell px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-3xl fade-up">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl font-bold text-slate-100">Conversation Summary</h1>
-            <p className="text-sm text-slate-500 mt-0.5">AI-generated from your WhatsApp export</p>
+            <p className="section-kicker">Summary</p>
+            <h1 className="mt-2 text-3xl font-semibold text-slate-100">Conversation Summary</h1>
+            <p className="text-sm text-slate-400 mt-0.5">AI-generated from your WhatsApp export</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/')}
-              className="rounded-lg border border-white/[0.08] px-4 py-2 text-sm font-medium text-slate-400 hover:border-white/20 hover:text-slate-200 transition-colors"
+              className="btn-outline"
             >
               ← New summary
             </button>
@@ -101,8 +102,8 @@ export default function SummaryPage() {
                 className={[
                   'rounded-lg px-4 py-2 text-sm font-medium transition-colors border',
                   isSaved
-                    ? 'border-[#25D366]/30 bg-[#25D366]/[0.08] text-[#25D366] cursor-default'
-                    : 'border-white/[0.08] bg-white/[0.04] text-slate-300 hover:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed',
+                    ? 'border-[var(--accent)]/30 bg-[var(--success-bg)] text-[var(--accent)] cursor-default'
+                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed',
                 ].join(' ')}
               >
                 {isSaving ? 'Saving…' : isSaved ? '✓ Saved' : 'Save to History'}
@@ -111,7 +112,7 @@ export default function SummaryPage() {
 
             <button
               onClick={() => setIsDrafterOpen(true)}
-              className="rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-[#20bc59] transition-colors"
+              className="btn-primary"
             >
               Draft a Reply
             </button>
@@ -119,17 +120,19 @@ export default function SummaryPage() {
         </div>
 
         {/* Card / skeleton */}
-        <div aria-live="polite" aria-busy={loading}>
-          {loading ? (
-            <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6 space-y-4 animate-pulse">
-              <div className="h-5 w-2/3 rounded-lg bg-white/[0.06]" />
-              <div className="h-4 rounded-lg bg-white/[0.04]" />
-              <div className="h-4 w-5/6 rounded-lg bg-white/[0.04]" />
-              <div className="h-4 w-3/4 rounded-lg bg-white/[0.04]" />
-            </div>
-          ) : (
-            <SummaryCard data={summary} />
-          )}
+        <div aria-live="polite" aria-busy={loading} className="timeline space-y-6">
+          <div className="timeline-item">
+            {loading ? (
+              <div className="surface-card rounded-2xl p-6 space-y-4 animate-pulse">
+                <div className="h-5 w-2/3 rounded-lg bg-white/[0.06]" />
+                <div className="h-4 rounded-lg bg-white/[0.04]" />
+                <div className="h-4 w-5/6 rounded-lg bg-white/[0.04]" />
+                <div className="h-4 w-3/4 rounded-lg bg-white/[0.04]" />
+              </div>
+            ) : (
+              <SummaryCard data={summary} />
+            )}
+          </div>
         </div>
       </div>
 

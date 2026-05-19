@@ -69,14 +69,14 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
         onDragLeave={(e) => { e.preventDefault(); setDragOver(false); }}
         onDrop={(e) => { e.preventDefault(); setDragOver(false); if (!atLimit) addFiles(Array.from(e.dataTransfer.files)); }}
         className={[
-          'relative flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center cursor-pointer transition-all duration-200 select-none',
+          'relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-10 text-center cursor-pointer transition-all duration-200 select-none',
           atLimit
             ? 'border-white/[0.06] opacity-50 cursor-not-allowed'
             : dragOver
-            ? 'border-[#25D366] bg-[#25D366]/[0.04]'
+            ? 'border-[var(--accent)] bg-white/5 shadow-[0_0_22px_rgba(37,99,235,0.25)]'
             : files.length > 0
-            ? 'border-[#25D366]/40 bg-[#25D366]/[0.02]'
-            : 'border-white/[0.1] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.03]',
+            ? 'border-[var(--accent)]/50 bg-white/[0.04]'
+            : 'border-white/[0.14] bg-white/[0.04] hover:border-white/25 hover:bg-white/[0.06]',
         ].join(' ')}
       >
         <input
@@ -90,17 +90,17 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
         />
 
         {/* Icon */}
-        <div className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${dragOver ? 'bg-[#25D366]/20' : 'bg-white/[0.04]'}`}>
-          <svg className={`h-5 w-5 transition-colors ${dragOver ? 'text-[#25D366]' : 'text-slate-500'}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <div className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${dragOver ? 'bg-white/10' : 'bg-white/[0.05]'}`}>
+          <svg className={`h-5 w-5 transition-colors ${dragOver ? 'text-[var(--accent)]' : 'text-slate-400'}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
           </svg>
         </div>
 
         <div>
-          <p className="text-sm font-medium text-slate-200">
+            <p className="text-sm font-medium text-slate-100">
             {dragOver ? 'Drop files to upload' : atLimit ? 'File limit reached' : 'Drop your WhatsApp exports here'}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-400">
             {atLimit ? '10 / 10 files added' : `or click to browse · .txt only · up to ${MAX_FILES} files`}
           </p>
         </div>
@@ -118,16 +118,16 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
           {files.map((file, idx) => (
             <li
               key={`${file.name}-${idx}`}
-              className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2"
+              className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.12] bg-white/[0.05] px-3 py-2"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#25D366]" />
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-mint)]" />
                 <span className="truncate text-sm text-slate-300" title={file.name}>
                   {file.name}
                 </span>
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <span className="text-xs text-slate-600">{formatBytes(file.size)}</span>
+                <span className="text-xs text-slate-500">{formatBytes(file.size)}</span>
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); removeFile(idx); }}

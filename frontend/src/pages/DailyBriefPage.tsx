@@ -125,19 +125,9 @@ const MOCK_BRIEF: DailyBriefData = {
   ],
 };
 
-// ── Styles shared with the rest of the app ────────────────────────────────────
-
-const NEU_UP: React.CSSProperties = {
-  boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)',
-  backgroundColor: '#0e1020',
-};
-
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p
-      className="text-[10px] font-semibold tracking-[0.15em] uppercase mb-3"
-      style={{ color: 'rgba(232,234,246,0.22)' }}
-    >
+    <p className="section-kicker mb-3">
       {children}
     </p>
   );
@@ -240,47 +230,30 @@ export default function DailyBriefPage() {
   const { overviewParagraph, chatCards, crossChatInsights, keyPeople } = MOCK_BRIEF;
 
   return (
-    <div className="min-h-screen px-4 py-8 sm:px-6 sm:py-10" style={{ backgroundColor: '#0e1020' }}>
-      <div className="mx-auto max-w-5xl space-y-8">
+    <div className="page-shell px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-5xl space-y-8 fade-up">
 
         {/* ── Header ── */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p
-              className="text-[10px] font-semibold tracking-[0.15em] uppercase mb-1"
-              style={{ color: 'rgba(232,234,246,0.22)' }}
-            >
-              Daily Brief
-            </p>
-            <h1
-              className="text-2xl font-bold"
-              style={{ color: 'rgba(232,234,246,0.9)' }}
-            >
-              {today}
-            </h1>
+            <p className="section-kicker">Daily Brief</p>
+            <h1 className="mt-2 text-3xl font-semibold text-slate-100">{today}</h1>
           </div>
 
           <div className="flex items-center gap-3 flex-shrink-0">
             <button
               onClick={handleCopyHtml}
-              className="rounded-md px-4 py-2 text-xs font-semibold tracking-wide transition-colors"
-              style={{
-                backgroundColor: isCopiedHtml ? 'rgba(37,211,102,0.2)' : 'rgba(37,211,102,0.1)',
-                color: '#25D366',
-                border: '1px solid rgba(37,211,102,0.25)',
-              }}
+              className={[
+                'btn-outline text-xs tracking-wide',
+                isCopiedHtml ? 'border-[var(--accent)]/40 bg-[var(--success-bg)] text-[var(--accent)]' : '',
+              ].join(' ')}
             >
               {isCopiedHtml ? 'Copied!' : 'Copy as HTML'}
             </button>
             <button
               onClick={handleDownloadPdf}
               disabled={isDownloadingPdf}
-              className="rounded-md px-4 py-2 text-xs font-semibold tracking-wide transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                backgroundColor: 'rgba(232,234,246,0.05)',
-                color: 'rgba(232,234,246,0.5)',
-                border: '1px solid rgba(232,234,246,0.12)',
-              }}
+              className="btn-outline text-xs tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isDownloadingPdf ? 'Generating PDF…' : 'Download PDF'}
             </button>
@@ -293,14 +266,8 @@ export default function DailyBriefPage() {
         {/* ── Overview ── */}
         <section>
           <SectionLabel>Overview</SectionLabel>
-          <div
-            className="rounded-xl p-5 border-l-4"
-            style={{ ...NEU_UP, borderLeftColor: '#3b82f6' }}
-          >
-            <p
-              className="text-sm leading-relaxed"
-              style={{ color: 'rgba(232,234,246,0.75)' }}
-            >
+          <div className="surface-card rounded-xl p-5 border-l-4 border-l-[var(--accent-soft)]">
+            <p className="text-sm leading-relaxed text-slate-300">
               {overviewParagraph}
             </p>
           </div>
@@ -310,19 +277,15 @@ export default function DailyBriefPage() {
         <section>
           <SectionLabel>Chats ({loading ? '…' : chatCards.length})</SectionLabel>
           {loading ? (
-            <div className="flex overflow-x-auto flex-nowrap gap-4 pb-4 animate-pulse" style={{ scrollbarWidth: 'none' }}>
+            <div className="timeline space-y-4 animate-pulse">
               {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="w-[320px] min-w-[320px] h-48 bg-slate-800 rounded-xl shrink-0"
-                />
+                <div key={i} className="timeline-item">
+                  <div className="h-40 rounded-2xl bg-white/[0.06]" />
+                </div>
               ))}
             </div>
           ) : (
-            <div
-              className="flex flex-col gap-4 w-full md:flex-row md:overflow-x-auto md:flex-nowrap md:pb-4"
-              style={{ scrollbarWidth: 'none' }}
-            >
+            <div className="timeline space-y-5">
               {chatCards.map((card) => {
                 const chatCardMeta: ChatCardMeta = {
                   index: card.index,
@@ -338,11 +301,12 @@ export default function DailyBriefPage() {
                   summaryText: card.summaryText,
                 };
                 return (
-                  <BriefChatCardWidget
-                    key={card.index}
-                    chatCard={chatCardMeta}
-                    fullSummary={fullSummary}
-                  />
+                  <div key={card.index} className="timeline-item">
+                    <BriefChatCardWidget
+                      chatCard={chatCardMeta}
+                      fullSummary={fullSummary}
+                    />
+                  </div>
                 );
               })}
             </div>
@@ -352,9 +316,9 @@ export default function DailyBriefPage() {
         {/* ── Cross-Chat Insights ── */}
         <section>
           <SectionLabel>Cross-Chat Insights</SectionLabel>
-          <div className="rounded-xl p-5" style={NEU_UP}>
+          <div className="surface-card rounded-xl p-5">
             {crossChatInsights.length === 0 ? (
-              <p className="text-sm" style={{ color: 'rgba(232,234,246,0.28)' }}>
+              <p className="text-sm text-slate-500">
                 No cross-chat connections identified.
               </p>
             ) : (
@@ -362,8 +326,7 @@ export default function DailyBriefPage() {
                 {crossChatInsights.map((insight, i) => (
                   <li
                     key={i}
-                    className="text-sm leading-relaxed"
-                    style={{ color: 'rgba(232,234,246,0.65)' }}
+                    className="text-sm leading-relaxed text-slate-300"
                   >
                     {insight}
                   </li>
@@ -377,21 +340,13 @@ export default function DailyBriefPage() {
         <section>
           <SectionLabel>Key People</SectionLabel>
           {keyPeople.length === 0 ? (
-            <p className="text-sm" style={{ color: 'rgba(232,234,246,0.28)' }}>
+            <p className="text-sm text-slate-500">
               No key people identified.
             </p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {keyPeople.map((person, i) => (
-                <span
-                  key={i}
-                  className="rounded-full px-3 py-1 text-sm"
-                  style={{
-                    backgroundColor: 'rgba(232,234,246,0.06)',
-                    color: 'rgba(232,234,246,0.7)',
-                    border: '1px solid rgba(232,234,246,0.1)',
-                  }}
-                >
+                <span key={i} className="chip text-xs">
                   {person}
                 </span>
               ))}

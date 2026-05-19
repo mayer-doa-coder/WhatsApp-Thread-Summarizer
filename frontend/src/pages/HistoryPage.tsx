@@ -69,16 +69,17 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-[#0e1020] px-4 py-8 sm:px-6">
-      <div className="mx-auto max-w-5xl">
+    <div className="page-shell px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl fade-up">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-7">
           <div>
-            <h1 className="text-xl font-bold text-slate-100">History</h1>
-            <p className="text-sm text-slate-500 mt-0.5">Your saved summaries and daily briefs</p>
+            <p className="section-kicker">Archive</p>
+            <h1 className="mt-2 text-3xl font-semibold text-slate-100">History</h1>
+            <p className="text-sm text-slate-400 mt-0.5">Your saved summaries and daily briefs</p>
           </div>
           <div className="relative w-full sm:w-72">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 10.607z" />
             </svg>
             <input
@@ -87,7 +88,7 @@ export default function HistoryPage() {
               placeholder="Search summaries…"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-600 outline-none transition focus:border-[#25D366]/40 focus:ring-1 focus:ring-[#25D366]/20"
+              className="input-field pl-9 pr-4 py-2 text-sm placeholder-slate-600"
             />
           </div>
         </div>
@@ -117,17 +118,17 @@ export default function HistoryPage() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-400">
+              <p className="text-sm font-medium text-slate-600">
                 {searchTerm ? 'No results found' : 'No saved summaries yet'}
               </p>
-              <p className="text-xs text-slate-600 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 {searchTerm ? 'Try a different search term.' : 'Summarize a chat and click "Save to History".'}
               </p>
             </div>
             {!searchTerm && (
               <button
                 onClick={() => navigate('/')}
-                className="rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-[#20bc59] transition-colors"
+                className="btn-primary"
               >
                 Summarize a chat
               </button>
@@ -137,38 +138,38 @@ export default function HistoryPage() {
 
         {/* List */}
         {!loading && filtered.length > 0 && (
-          <div className="rounded-xl border border-white/[0.07] overflow-hidden">
+          <div className="surface-card rounded-2xl overflow-hidden">
             <table className="w-full text-left text-sm border-collapse">
               <caption className="sr-only">Your Summary History</caption>
               <thead>
-                <tr className="border-b border-white/[0.06] bg-white/[0.02]">
-                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Type</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Preview</th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                <tr className="border-b border-white/[0.08] bg-white/[0.03]">
+                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">Name</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider hidden sm:table-cell">Type</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">Preview</th>
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04]">
+              <tbody className="divide-y divide-white/[0.06]">
                 {filtered.map((s) => (
-                  <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-4 py-3.5 whitespace-nowrap text-xs text-slate-500">{formatDate(s.createdAt)}</td>
+                  <tr key={s.id} className="hover:bg-white/[0.04] transition-colors">
+                    <td className="px-4 py-3.5 whitespace-nowrap text-xs text-slate-400">{formatDate(s.createdAt)}</td>
                     <td className="px-4 py-3.5 max-w-[180px]">
                       <span className="block truncate text-sm font-medium text-slate-200" title={s.filename}>{s.filename}</span>
                     </td>
                     <td className="px-4 py-3.5 hidden sm:table-cell">
-                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${s.type === 'brief' ? 'bg-[#25D366]/10 text-[#25D366]' : 'bg-white/[0.06] text-slate-400'}`}>
+                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${s.type === 'brief' ? 'bg-[var(--success-bg)] text-[var(--accent-mint)]' : 'bg-white/[0.08] text-slate-400'}`}>
                         {typeLabel(s.type)}
                       </span>
                     </td>
                     <td className="px-4 py-3.5 hidden md:table-cell max-w-xs">
-                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{s.summaryText}</p>
+                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{s.summaryText}</p>
                     </td>
                     <td className="px-4 py-3.5 text-right whitespace-nowrap">
                       <button
                         onClick={() => setPreviewItem(s)}
                         aria-label={`View summary for ${s.filename}`}
-                        className="mr-2 rounded-lg border border-white/[0.07] px-3 py-1.5 text-xs font-medium text-slate-400 hover:border-white/[0.15] hover:text-slate-200 transition-colors"
+                        className="mr-2 btn-ghost"
                       >
                         View
                       </button>
@@ -196,7 +197,7 @@ export default function HistoryPage() {
           onClick={() => setPreviewItem(null)}
         >
           <div
-            className="w-full max-w-2xl rounded-2xl border border-white/[0.09] bg-[#111827] p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
+            className="surface-card w-full max-w-2xl rounded-2xl p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4 mb-5">
@@ -222,12 +223,12 @@ export default function HistoryPage() {
           role="dialog" aria-modal="true" aria-labelledby="delete-title"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
         >
-          <div className="w-full max-w-sm rounded-2xl border border-white/[0.09] bg-[#111827] p-6 shadow-2xl">
+          <div className="surface-card w-full max-w-sm rounded-2xl p-6 shadow-2xl">
             <h2 id="delete-title" className="text-base font-semibold text-slate-100 mb-1.5">Delete summary?</h2>
             <p className="text-sm text-slate-500 mb-6">This cannot be undone. The summary will be permanently removed.</p>
             <div className="flex justify-end gap-2">
               <button onClick={() => setDeleteConfirmId(null)}
-                className="rounded-lg border border-white/[0.08] px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 hover:border-white/20 transition-colors">
+                className="btn-outline">
                 Cancel
               </button>
               <button onClick={handleConfirmDelete} autoFocus

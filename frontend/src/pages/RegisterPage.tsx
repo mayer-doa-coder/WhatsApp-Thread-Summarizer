@@ -50,18 +50,17 @@ export default function RegisterPage() {
   }
 
   const inputCls = (hasError: boolean) => [
-    'w-full rounded-lg border bg-white/[0.03] px-4 py-2.5 text-sm text-slate-100',
-    'placeholder-slate-600 outline-none transition',
-    'focus:ring-1 focus:ring-[#25D366]/40 focus:border-[#25D366]/40',
-    hasError ? 'border-red-500/50' : 'border-white/[0.08]',
+    'input-field placeholder-slate-500',
+    hasError ? 'input-error' : '',
   ].join(' ');
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-[#0e1020]">
-      <div className="w-full max-w-sm">
+    <div className="page-shell flex items-center justify-center px-4">
+      <div className="w-full max-w-sm fade-up">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-slate-100">Create an account</h1>
-          <p className="mt-1.5 text-sm text-slate-500">Save and revisit your summaries</p>
+          <p className="section-kicker">Create account</p>
+          <h1 className="mt-2 text-2xl font-semibold text-slate-100">Start your AI workspace</h1>
+          <p className="mt-1.5 text-sm text-slate-400">Save, revisit, and export your briefings</p>
         </div>
 
         {error && (
@@ -70,10 +69,10 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6">
+        <div className="surface-card rounded-2xl p-6">
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-slate-500 mb-1.5">
+              <label htmlFor="email" className="block text-xs font-medium text-slate-400 mb-1.5">
                 Email address
               </label>
               <input
@@ -90,7 +89,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-medium text-slate-500 mb-1.5">
+              <label htmlFor="password" className="block text-xs font-medium text-slate-400 mb-1.5">
                 Password
               </label>
               <input
@@ -107,7 +106,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-xs font-medium text-slate-500 mb-1.5">
+              <label htmlFor="confirmPassword" className="block text-xs font-medium text-slate-400 mb-1.5">
                 Confirm password
               </label>
               <input
@@ -126,16 +125,16 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full btn-primary mt-2"
             >
               {loading ? 'Sending code…' : 'Create account'}
             </button>
           </form>
         </div>
 
-        <p className="mt-5 text-center text-sm text-slate-600">
+        <p className="mt-5 text-center text-sm text-slate-400">
           Already have an account?{' '}
-          <Link to="/login" className="text-[#25D366] hover:underline font-medium">
+          <Link to="/login" className="text-[var(--accent)] hover:underline font-medium">
             Log in
           </Link>
         </p>
