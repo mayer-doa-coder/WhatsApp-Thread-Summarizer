@@ -12,11 +12,6 @@ interface BriefChatCardProps {
   fullSummary: SummaryData;
 }
 
-const NEU_UP: React.CSSProperties = {
-  boxShadow: '-7px -7px 16px rgba(29,33,56,0.75), 7px 7px 16px rgba(6,7,15,1)',
-  backgroundColor: '#0e1020',
-};
-
 export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -40,54 +35,36 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
     <>
       {/* Card */}
       <div
-        className={`w-full md:w-[320px] md:shrink-0 rounded-xl p-4 flex flex-col gap-3 border ${
+        className={`surface-card w-full md:w-[320px] md:shrink-0 rounded-xl p-4 flex flex-col gap-3 border ${
           chatCard.actionRequired
-            ? 'border-l-4 border-l-[#25D366] border-slate-700'
-            : 'border-slate-700'
+            ? 'border-l-4 border-l-[var(--accent-mint)]'
+            : 'border-white/[0.12]'
         }`}
-        style={NEU_UP}
       >
         {/* Header row */}
         <div className="flex items-start justify-between gap-2">
-          <span
-            className="text-[10px] font-semibold tracking-[0.15em] uppercase"
-            style={{ color: 'rgba(232,234,246,0.22)' }}
-          >
+          <span className="section-kicker text-[10px]">
             Chat {chatCard.index}
           </span>
           {chatCard.actionRequired && (
-            <span className="flex items-center gap-1 text-[10px] font-medium text-[#25D366]">
-              <span className="h-2 w-2 rounded-full bg-[#25D366]" />
+            <span className="flex items-center gap-1 text-[10px] font-medium text-[var(--accent-mint)]">
+              <span className="h-2 w-2 rounded-full bg-[var(--accent-mint)]" />
               Action needed
             </span>
           )}
         </div>
 
         {/* One-liner */}
-        <p
-          className="text-sm leading-relaxed line-clamp-3 flex-1"
-          style={{ color: 'rgba(232,234,246,0.75)' }}
-        >
+        <p className="text-sm leading-relaxed line-clamp-3 flex-1 text-slate-200">
           {chatCard.oneLiner || (
-            <span style={{ color: 'rgba(232,234,246,0.28)' }}>No summary available</span>
+            <span className="text-slate-500">No summary available</span>
           )}
         </p>
 
         {/* View Full button */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="mt-auto w-full rounded-md py-2 text-xs font-semibold tracking-wide transition-colors"
-          style={{
-            backgroundColor: 'rgba(37,211,102,0.1)',
-            color: '#25D366',
-            border: '1px solid rgba(37,211,102,0.25)',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(37,211,102,0.18)';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(37,211,102,0.1)';
-          }}
+          className="mt-auto w-full rounded-lg border border-white/[0.16] bg-white/[0.06] py-2 text-xs font-semibold tracking-wide text-slate-200 transition hover:bg-white/[0.12]"
         >
           View Full
         </button>
@@ -109,12 +86,7 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
             {/* Close button */}
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-colors"
-              style={{
-                backgroundColor: 'rgba(232,234,246,0.08)',
-                color: 'rgba(232,234,246,0.55)',
-                border: '1px solid rgba(232,234,246,0.12)',
-              }}
+              className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-colors border border-white/[0.12] bg-white/[0.08] text-slate-300 hover:bg-white/[0.12]"
               aria-label="Close modal"
             >
               ✕

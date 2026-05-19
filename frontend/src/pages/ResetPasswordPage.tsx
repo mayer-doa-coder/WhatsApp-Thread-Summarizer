@@ -18,10 +18,10 @@ export default function ResetPasswordPage() {
   // Show an error page immediately if the token is missing from the URL
   if (!token) {
     return (
-      <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-[#0e1020]">
-        <div className="w-full max-w-sm text-center space-y-4">
+      <div className="page-shell flex items-center justify-center px-4">
+        <div className="w-full max-w-sm text-center space-y-4 fade-up">
           <p className="text-slate-400">This reset link is invalid or missing a token.</p>
-          <Link to="/forgot-password" className="text-[#25D366] hover:underline font-medium text-sm">
+          <Link to="/forgot-password" className="text-[var(--accent)] hover:underline font-medium text-sm">
             Request a new link
           </Link>
         </div>
@@ -56,27 +56,25 @@ export default function ResetPasswordPage() {
   }
 
   const inputCls = (hasError: boolean) => [
-    'w-full rounded-lg border bg-white/[0.03] px-4 py-2.5 text-sm text-slate-100',
-    'placeholder-slate-600 outline-none transition',
-    'focus:ring-1 focus:ring-[#25D366]/40 focus:border-[#25D366]/40',
-    hasError ? 'border-red-500/50' : 'border-white/[0.08]',
+    'input-field placeholder-slate-600',
+    hasError ? 'input-error' : '',
   ].join(' ');
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-[#0e1020]">
-      <div className="w-full max-w-sm">
+    <div className="page-shell flex items-center justify-center px-4">
+      <div className="w-full max-w-sm fade-up">
 
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#25D366]/10 mb-4">
-            <svg viewBox="0 0 24 24" className="h-7 w-7 text-[#25D366]" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--success-bg)] mb-4">
+            <svg viewBox="0 0 24 24" className="h-7 w-7 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round"
                 d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-slate-100">
+          <h1 className="text-2xl font-bold text-slate-900">
             {done ? 'Password updated' : 'Set a new password'}
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-slate-600">
             {done
               ? 'Your password has been changed successfully.'
               : 'Choose a strong password for your account.'}
@@ -85,16 +83,16 @@ export default function ResetPasswordPage() {
 
         {done ? (
           /* Success state */
-          <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6 text-center space-y-4">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366]/10">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#25D366]" fill="none" stroke="currentColor" strokeWidth={2}>
+          <div className="surface-card rounded-2xl p-6 text-center space-y-4">
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--success-bg)]">
+              <svg viewBox="0 0 24 24" className="h-6 w-6 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
             </div>
             <p className="text-sm text-slate-300">You can now log in with your new password.</p>
             <button
               onClick={() => navigate('/login')}
-              className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59]"
+              className="w-full btn-primary"
             >
               Go to log in
             </button>
@@ -113,7 +111,7 @@ export default function ResetPasswordPage() {
               </div>
             )}
 
-            <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6">
+            <div className="surface-card rounded-2xl p-6">
               <form onSubmit={handleSubmit} noValidate className="space-y-4">
                 <div>
                   <label htmlFor="password" className="block text-xs font-medium text-slate-500 mb-1.5">
@@ -152,7 +150,7 @@ export default function ResetPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                  className="w-full btn-primary mt-2"
                 >
                   {loading ? 'Updating…' : 'Update password'}
                 </button>

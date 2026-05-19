@@ -101,10 +101,10 @@ export default function VerifyOTPPage() {
 
   if (!email) {
     return (
-      <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-[#0e1020]">
-        <div className="text-center">
+      <div className="page-shell flex items-center justify-center px-4">
+        <div className="text-center fade-up">
           <p className="text-slate-400 mb-4">No email address found. Please sign up first.</p>
-          <Link to="/register" className="text-[#25D366] hover:underline font-medium text-sm">
+          <Link to="/register" className="text-[var(--accent)] hover:underline font-medium text-sm">
             Go to Sign Up
           </Link>
         </div>
@@ -113,22 +113,22 @@ export default function VerifyOTPPage() {
   }
 
   const digitInputCls = (hasValue: boolean) => [
-    'w-11 h-14 rounded-lg border text-center text-xl font-bold text-slate-100 bg-white/[0.03] outline-none transition',
-    'focus:ring-1 focus:ring-[#25D366]/40 focus:border-[#25D366]/40',
-    hasValue ? 'border-[#25D366]/40' : 'border-white/[0.08]',
+    'w-11 h-14 rounded-xl border text-center text-xl font-bold text-slate-100 bg-white/[0.03] outline-none transition',
+    'focus:ring-1 focus:ring-[var(--accent)]/40 focus:border-[var(--accent)]/40',
+    hasValue ? 'border-[var(--accent)]/50 shadow-[0_0_16px_rgba(46,232,156,0.2)]' : 'border-white/[0.08]',
   ].join(' ');
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-[#0e1020]">
-      <div className="w-full max-w-sm">
+    <div className="page-shell flex items-center justify-center px-4">
+      <div className="w-full max-w-sm fade-up">
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#25D366]/10 mb-4">
-            <svg viewBox="0 0 24 24" className="h-7 w-7 text-[#25D366]" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--success-bg)] mb-4">
+            <svg viewBox="0 0 24 24" className="h-7 w-7 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-slate-100">Check your email</h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-slate-900">Check your email</h1>
+          <p className="mt-2 text-sm text-slate-600">
             We sent a 6-digit code to{' '}
             <span className="text-slate-300 font-medium">{email}</span>
           </p>
@@ -140,12 +140,12 @@ export default function VerifyOTPPage() {
           </div>
         )}
         {success && (
-          <div role="status" className="mb-5 rounded-lg border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-3 text-sm text-[#25D366]">
+          <div role="status" className="mb-5 rounded-lg border border-[var(--accent)]/30 bg-[var(--success-bg)] px-4 py-3 text-sm text-[var(--accent)]">
             {success}
           </div>
         )}
 
-        <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6">
+        <div className="surface-card rounded-2xl p-6">
           <form onSubmit={handleVerify} noValidate>
             <label className="block text-xs font-medium text-slate-500 mb-4 text-center uppercase tracking-wider">
               Verification code
@@ -172,7 +172,7 @@ export default function VerifyOTPPage() {
             <button
               type="submit"
               disabled={loading || digits.join('').length < DIGITS}
-              className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-primary"
             >
               {loading ? 'Verifying…' : 'Verify email'}
             </button>
@@ -185,7 +185,7 @@ export default function VerifyOTPPage() {
             <button
               onClick={handleResend}
               disabled={resending}
-              className="text-[#25D366] hover:underline font-medium disabled:opacity-50"
+              className="text-[var(--accent)] hover:underline font-medium disabled:opacity-50"
             >
               {resending ? 'Sending…' : 'Resend code'}
             </button>

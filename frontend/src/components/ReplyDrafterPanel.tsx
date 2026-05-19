@@ -40,7 +40,7 @@ function DraftCard({ text, index, isPlaceholder }: { text: string; index: number
             className={[
               'rounded-md px-2.5 py-1 text-xs font-medium transition-all',
               isCopied
-                ? 'bg-[#25D366]/10 text-[#25D366]'
+                ? 'bg-[var(--success-bg)] text-[var(--accent-mint)]'
                 : 'bg-white/[0.06] text-slate-400 hover:bg-white/[0.1] hover:text-slate-200',
             ].join(' ')}
           >
@@ -96,7 +96,7 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
           'fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl',
           'md:left-auto md:right-0 md:top-0 md:bottom-0 md:w-96 md:rounded-none',
           'border-t border-white/[0.07] md:border-t-0 md:border-l',
-          'bg-[#111827] transition-transform duration-300 ease-out',
+          'surface-card transition-transform duration-300 ease-out',
           'max-h-[88vh] md:max-h-none overflow-hidden',
           isOpen ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-full',
         ].join(' ')}
@@ -128,8 +128,8 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
           {/* Context */}
           <div>
             <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Context</p>
-            <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5">
-              <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
+            <div className="rounded-lg border border-white/[0.12] bg-white/[0.05] px-3 py-2.5">
+              <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">
                 {contextText || 'No context provided.'}
               </p>
             </div>
@@ -146,8 +146,8 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
                   className={[
                     'rounded-full px-3 py-1 text-xs font-medium border transition-colors',
                     selectedTone === value
-                      ? 'border-[#25D366]/40 bg-[#25D366]/[0.1] text-[#25D366]'
-                      : 'border-white/[0.07] text-slate-500 hover:border-white/[0.15] hover:text-slate-300',
+                      ? 'border-[var(--accent)]/60 bg-white/10 text-[var(--accent-soft)]'
+                      : 'border-white/[0.1] text-slate-500 hover:border-white/[0.2] hover:text-slate-300',
                   ].join(' ')}
                 >
                   {label}
@@ -167,7 +167,7 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
               value={userIntent}
               onChange={(e) => setUserIntent(e.target.value)}
               placeholder="e.g. agree to the meeting but mention I'm 5 min late…"
-              className="w-full resize-none rounded-lg border border-white/[0.07] bg-white/[0.02] px-3 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none transition focus:border-[#25D366]/40 focus:ring-1 focus:ring-[#25D366]/20"
+              className="w-full resize-none input-field placeholder-slate-500"
             />
           </div>
 
@@ -176,10 +176,8 @@ export default function ReplyDrafterPanel({ isOpen, onClose, contextText }: Repl
             onClick={() => generate(proxyMessages, userIntent, selectedTone)}
             disabled={loading}
             className={[
-              'w-full rounded-xl py-2.5 text-sm font-semibold transition-all',
-              loading
-                ? 'bg-white/[0.05] text-slate-500 cursor-not-allowed'
-                : 'bg-[#25D366] text-slate-950 hover:bg-[#20bc59]',
+              'w-full',
+              loading ? 'btn-primary opacity-60 cursor-not-allowed' : 'btn-primary',
             ].join(' ')}
           >
             {loading ? (

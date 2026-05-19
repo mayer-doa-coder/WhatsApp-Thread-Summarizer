@@ -40,26 +40,24 @@ export default function ForgotPasswordPage() {
   }
 
   const inputCls = (hasError: boolean) => [
-    'w-full rounded-lg border bg-white/[0.03] px-4 py-2.5 text-sm text-slate-100',
-    'placeholder-slate-600 outline-none transition',
-    'focus:ring-1 focus:ring-[#25D366]/40 focus:border-[#25D366]/40',
-    hasError ? 'border-red-500/50' : 'border-white/[0.08]',
+    'input-field placeholder-slate-500',
+    hasError ? 'input-error' : '',
   ].join(' ');
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-[#0e1020]">
-      <div className="w-full max-w-sm">
+    <div className="page-shell flex items-center justify-center px-4">
+      <div className="w-full max-w-sm fade-up">
 
         {/* Icon */}
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#25D366]/10 mb-4">
-            <svg viewBox="0 0 24 24" className="h-7 w-7 text-[#25D366]" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--success-bg)] mb-4">
+            <svg viewBox="0 0 24 24" className="h-7 w-7 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round"
                 d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-slate-100">Forgot password?</h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-slate-400">
             {submitted
               ? 'Check your inbox for a reset link.'
               : "Enter your account email and we'll send you a reset link."}
@@ -68,9 +66,9 @@ export default function ForgotPasswordPage() {
 
         {submitted ? (
           /* Success state */
-          <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6 text-center space-y-4">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366]/10">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#25D366]" fill="none" stroke="currentColor" strokeWidth={2}>
+          <div className="surface-card rounded-2xl p-6 text-center space-y-4">
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--success-bg)]">
+              <svg viewBox="0 0 24 24" className="h-6 w-6 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
             </div>
@@ -80,7 +78,7 @@ export default function ForgotPasswordPage() {
             </p>
             <Link
               to="/login"
-              className="inline-block w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59] mt-2"
+              className="inline-block w-full btn-primary mt-2"
             >
               Back to log in
             </Link>
@@ -94,10 +92,10 @@ export default function ForgotPasswordPage() {
               </div>
             )}
 
-            <div className="rounded-2xl border border-white/[0.07] bg-[#111827] p-6">
+            <div className="surface-card rounded-2xl p-6">
               <form onSubmit={handleSubmit} noValidate className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-xs font-medium text-slate-500 mb-1.5">
+                  <label htmlFor="email" className="block text-xs font-medium text-slate-400 mb-1.5">
                     Email address
                   </label>
                   <input
@@ -116,16 +114,16 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-[#20bc59] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                  className="w-full btn-primary mt-2"
                 >
                   {loading ? 'Sending…' : 'Send reset link'}
                 </button>
               </form>
             </div>
 
-            <p className="mt-5 text-center text-sm text-slate-600">
+            <p className="mt-5 text-center text-sm text-slate-400">
               Remember it?{' '}
-              <Link to="/login" className="text-[#25D366] hover:underline font-medium">
+              <Link to="/login" className="text-[var(--accent)] hover:underline font-medium">
                 Log in
               </Link>
             </p>
