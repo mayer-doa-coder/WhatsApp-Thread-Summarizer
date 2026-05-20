@@ -56,7 +56,7 @@ export default function ResetPasswordPage() {
   }
 
   const inputCls = (hasError: boolean) => [
-    'input-field placeholder-slate-600',
+    'input-field placeholder-slate-500',
     hasError ? 'input-error' : '',
   ].join(' ');
 
@@ -71,10 +71,10 @@ export default function ResetPasswordPage() {
                 d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-slate-100">
             {done ? 'Password updated' : 'Set a new password'}
           </h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-slate-400">
             {done
               ? 'Your password has been changed successfully.'
               : 'Choose a strong password for your account.'}
@@ -114,7 +114,7 @@ export default function ResetPasswordPage() {
             <div className="surface-card rounded-2xl p-6">
               <form onSubmit={handleSubmit} noValidate className="space-y-4">
                 <div>
-                  <label htmlFor="password" className="block text-xs font-medium text-slate-500 mb-1.5">
+                  <label htmlFor="password" className="block text-xs font-medium text-slate-400 mb-1.5">
                     New password
                   </label>
                   <input
@@ -131,7 +131,7 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-xs font-medium text-slate-500 mb-1.5">
+                  <label htmlFor="confirmPassword" className="block text-xs font-medium text-slate-400 mb-1.5">
                     Confirm new password
                   </label>
                   <input

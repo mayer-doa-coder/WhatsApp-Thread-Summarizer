@@ -127,8 +127,8 @@ export default function VerifyOTPPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Check your email</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <h1 className="text-2xl font-bold text-slate-100">Check your email</h1>
+          <p className="mt-2 text-sm text-slate-400">
             We sent a 6-digit code to{' '}
             <span className="text-slate-300 font-medium">{email}</span>
           </p>
@@ -147,7 +147,7 @@ export default function VerifyOTPPage() {
 
         <div className="surface-card rounded-2xl p-6">
           <form onSubmit={handleVerify} noValidate>
-            <label className="block text-xs font-medium text-slate-500 mb-4 text-center uppercase tracking-wider">
+            <label className="block text-xs font-medium text-slate-400 mb-4 text-center uppercase tracking-wider">
               Verification code
             </label>
 
@@ -180,7 +180,7 @@ export default function VerifyOTPPage() {
         </div>
 
         <div className="mt-5 text-center space-y-2">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-400">
             Didn't receive a code?{' '}
             <button
               onClick={handleResend}
@@ -190,7 +190,7 @@ export default function VerifyOTPPage() {
               {resending ? 'Sending…' : 'Resend code'}
             </button>
           </p>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-slate-500">
             <Link to="/register" className="hover:text-slate-500 transition-colors">
               ← Back to sign up
             </Link>
