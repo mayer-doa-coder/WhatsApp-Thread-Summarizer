@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export default function NavBar() {
+interface NavBarProps {
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
+}
+
+export default function NavBar({ theme, onToggleTheme }: NavBarProps) {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,6 +29,9 @@ export default function NavBar() {
         ? 'text-[var(--accent)] after:absolute after:-bottom-2 after:left-0 after:h-[2px] after:w-full after:rounded-full after:bg-[var(--accent)]'
         : 'text-slate-400 hover:text-slate-100'
     }`;
+
+  const nextThemeLabel = theme === 'dark' ? 'Light' : 'Dark';
+  const toggleLabel = `Switch to ${nextThemeLabel} mode`;
 
   return (
     <nav className="sticky top-0 z-30 glass-nav">
@@ -49,8 +57,26 @@ export default function NavBar() {
             {user && <Link to="/history" className={linkCls('/history')}>History</Link>}
           </div>
 
-          {/* Desktop auth */}
+          {/* Desktop actions */}
           <div className="hidden sm:flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className="btn-ghost"
+              aria-label={toggleLabel}
+              title={toggleLabel}
+            >
+              <span className="inline-flex items-center gap-2">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  {theme === 'dark' ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5V3m0 18v-1.5m8.5-7.5H21m-18 0H4.5m12.02-5.02 1.06-1.06M6.42 17.58l-1.06 1.06m0-12.12 1.06 1.06m10.1 10.1 1.06 1.06M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+                  )}
+                </svg>
+                <span className="text-xs font-semibold tracking-wide">{nextThemeLabel}</span>
+              </span>
+            </button>
             {user ? (
               <>
                 <span className="text-xs text-slate-500 truncate max-w-[160px]">{user.email}</span>
@@ -98,6 +124,16 @@ export default function NavBar() {
             <Link to="/daily-brief" onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]">Daily Brief</Link>
             {user && <Link to="/history" onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]">History</Link>}
             <div className="pt-2 border-t border-white/[0.08] mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onToggleTheme();
+                  setMenuOpen(false);
+                }}
+                className="block w-full text-left rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]"
+              >
+                {toggleLabel}
+              </button>
               {user ? (
                 <button onClick={handleLogout} className="block w-full text-left rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-white/[0.06]">Log out</button>
               ) : (

@@ -231,7 +231,7 @@ export default function DailyBriefPage() {
 
   return (
     <div className="page-shell px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-5xl space-y-8 fade-up">
+      <div className="mx-auto max-w-6xl space-y-8 fade-up">
 
         {/* ── Header ── */}
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -267,7 +267,7 @@ export default function DailyBriefPage() {
         <section>
           <SectionLabel>Overview</SectionLabel>
           <div className="surface-card rounded-xl p-5 border-l-4 border-l-[var(--accent-soft)]">
-            <p className="text-sm leading-relaxed text-slate-300">
+            <p className="text-sm leading-relaxed text-[var(--text-muted)]">
               {overviewParagraph}
             </p>
           </div>
@@ -318,7 +318,7 @@ export default function DailyBriefPage() {
           <SectionLabel>Cross-Chat Insights</SectionLabel>
           <div className="surface-card rounded-xl p-5">
             {crossChatInsights.length === 0 ? (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--text-subtle)]">
                 No cross-chat connections identified.
               </p>
             ) : (
@@ -326,7 +326,7 @@ export default function DailyBriefPage() {
                 {crossChatInsights.map((insight, i) => (
                   <li
                     key={i}
-                    className="text-sm leading-relaxed text-slate-300"
+                    className="text-sm leading-relaxed text-[var(--text-muted)]"
                   >
                     {insight}
                   </li>
@@ -340,7 +340,7 @@ export default function DailyBriefPage() {
         <section>
           <SectionLabel>Key People</SectionLabel>
           {keyPeople.length === 0 ? (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-[var(--text-subtle)]">
               No key people identified.
             </p>
           ) : (

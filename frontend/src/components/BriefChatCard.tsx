@@ -35,7 +35,7 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
     <>
       {/* Card */}
       <div
-        className={`surface-card w-full md:w-[320px] md:shrink-0 rounded-xl p-4 flex flex-col gap-3 border ${
+        className={`surface-card w-full rounded-xl p-4 flex flex-col gap-3 border ${
           chatCard.actionRequired
             ? 'border-l-4 border-l-[var(--accent-mint)]'
             : 'border-white/[0.12]'
@@ -55,16 +55,16 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
         </div>
 
         {/* One-liner */}
-        <p className="text-sm leading-relaxed line-clamp-3 flex-1 text-slate-200">
+        <p className="text-sm leading-relaxed line-clamp-3 flex-1 text-[var(--text-muted)]">
           {chatCard.oneLiner || (
-            <span className="text-slate-500">No summary available</span>
+            <span className="text-[var(--text-subtle)]">No summary available</span>
           )}
         </p>
 
         {/* View Full button */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="mt-auto w-full rounded-lg border border-white/[0.16] bg-white/[0.06] py-2 text-xs font-semibold tracking-wide text-slate-200 transition hover:bg-white/[0.12]"
+          className="mt-auto w-full rounded-lg border border-[var(--card-border)] bg-[var(--soft-bg)] py-2 text-xs font-semibold tracking-wide text-[var(--text-strong)] transition hover:bg-[var(--btn-outline-hover-bg)]"
         >
           View Full
         </button>
@@ -73,7 +73,7 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
       {/* Modal */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop p-4"
           role="dialog"
           aria-modal="true"
           aria-label={`Full summary for chat ${chatCard.index}`}
