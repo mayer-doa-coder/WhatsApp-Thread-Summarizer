@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SummaryCard, { SummaryData } from '../components/SummaryCard';
 import ReplyDrafterPanel from '../components/ReplyDrafterPanel';
+import { saveToHistory } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -22,12 +23,13 @@ function isSummaryData(value: unknown): value is SummaryData {
 export default function SummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const { showSuccess, showError } = useToast();
 
   const [isDrafterOpen, setIsDrafterOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [saveLimitReached, setSaveLimitReached] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const summary = isSummaryData(location.state) ? location.state : null;
@@ -49,26 +51,27 @@ export default function SummaryPage() {
   }
 
   async function handleSaveToHistory() {
-    if (!token || !summary) return;
+    if (!summary) return;
     setIsSaving(true);
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL ?? 'http://localhost:4000'}/api/history`,
-        {
-          filename: summary.topic || 'Untitled Thread',
-          type: 'thread',
-          summaryText: summary.summaryText,
-          participants: summary.participants,
-        },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await saveToHistory({
+        filename: summary.topic || 'Untitled Thread',
+        type: 'thread',
+        summaryText: summary.summaryText,
+        participants: summary.participants,
+      });
       setIsSaved(true);
       showSuccess('Saved to history!');
     } catch (err) {
-      const msg = axios.isAxiosError(err)
-        ? (err.response?.data?.message ?? err.message)
-        : 'Failed to save. Please try again.';
-      showError(msg);
+      if (axios.isAxiosError(err) && err.response?.status === 402) {
+        setSaveLimitReached(true);
+        showError('Free plan limit reached (10/10). Visit your Profile to see your usage.');
+      } else {
+        const msg = axios.isAxiosError(err)
+          ? (err.response?.data?.message ?? err.message)
+          : 'Failed to save. Please try again.';
+        showError(msg);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -98,15 +101,18 @@ export default function SummaryPage() {
             {user && (
               <button
                 onClick={handleSaveToHistory}
-                disabled={isSaving || isSaved}
+                disabled={isSaving || isSaved || saveLimitReached}
                 className={[
                   'rounded-lg px-4 py-2 text-sm font-medium transition-colors border',
                   isSaved
                     ? 'border-[var(--accent)]/30 bg-[var(--success-bg)] text-[var(--accent)] cursor-default'
+                    : saveLimitReached
+                    ? 'border-[var(--danger)]/30 bg-red-900/10 text-[var(--danger)] cursor-not-allowed'
                     : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed',
                 ].join(' ')}
+                title={saveLimitReached ? 'Free plan limit reached — visit Profile to upgrade' : undefined}
               >
-                {isSaving ? 'Saving…' : isSaved ? '✓ Saved' : 'Save to History'}
+                {isSaving ? 'Saving…' : isSaved ? '✓ Saved' : saveLimitReached ? '✕ Limit reached' : 'Save to History'}
               </button>
             )}
 

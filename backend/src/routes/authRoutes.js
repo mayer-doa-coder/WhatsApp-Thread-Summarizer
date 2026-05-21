@@ -4,7 +4,8 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
-const { createUser, findUserByEmail, markUserVerified } = require('../models/user');
+const { createUser, findUserByEmail, findUserById, markUserVerified, updateUserProfile } = require('../models/user');
+const authenticate = require('../middleware/authenticate');
 const { createOTP, verifyOTP } = require('../models/otp');
 const { createResetToken, findResetRecord, consumeResetToken } = require('../models/passwordReset');
 const { sendOTPEmail, sendPasswordResetEmail } = require('../services/emailService');
@@ -239,6 +240,78 @@ router.post('/reset-password', async (req, res, next) => {
     await consumeResetToken(record.id);
 
     return res.status(200).json({ message: 'Password updated successfully. You can now log in.' });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// GET /api/auth/me — returns the authenticated user's full profile
+router.get('/me', authenticate, async (req, res, next) => {
+  try {
+    const user = await findUserById(req.user.sub);
+    if (!user) {
+      return res.status(404).json({ error: 'Not Found', message: 'User not found.', code: 404 });
+    }
+    return res.status(200).json({
+      id: user.id,
+      email: user.email,
+      displayName: user.display_name ?? null,
+      plan: user.plan ?? 'free',
+      createdAt: user.created_at,
+    });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// PATCH /api/auth/profile — update display name and/or password
+router.patch('/profile', authenticate, async (req, res, next) => {
+  const userId = req.user.sub;
+  const { displayName, currentPassword, newPassword } = req.body;
+
+  if (displayName === undefined && newPassword === undefined) {
+    return res.status(400).json({
+      error: 'Bad Request',
+      message: 'At least one of displayName or newPassword must be provided.',
+      code: 400,
+    });
+  }
+
+  try {
+    const updates = {};
+
+    if (displayName !== undefined) {
+      if (typeof displayName !== 'string' || displayName.trim().length === 0) {
+        return res.status(422).json({ error: 'Unprocessable Entity', message: 'displayName must be a non-empty string.', code: 422 });
+      }
+      updates.displayName = displayName.trim();
+    }
+
+    if (newPassword !== undefined) {
+      if (!currentPassword) {
+        return res.status(400).json({ error: 'Bad Request', message: 'currentPassword is required to change your password.', code: 400 });
+      }
+      if (newPassword.length < 8) {
+        return res.status(422).json({ error: 'Unprocessable Entity', message: 'New password must be at least 8 characters.', code: 422 });
+      }
+
+      const supabase = require('../config/supabase');
+      const { data: userRow } = await supabase
+        .from('users')
+        .select('password_hash')
+        .eq('id', userId)
+        .single();
+
+      const match = await bcrypt.compare(currentPassword, userRow.password_hash);
+      if (!match) {
+        return res.status(401).json({ error: 'Unauthorized', message: 'Current password is incorrect.', code: 401 });
+      }
+
+      updates.passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+    }
+
+    await updateUserProfile(userId, updates);
+    return res.status(200).json({ message: 'Profile updated successfully.' });
   } catch (err) {
     return next(err);
   }

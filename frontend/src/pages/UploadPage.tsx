@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import UploadZone from '../components/UploadZone';
-import { SummaryType } from '../services/api';
+import { SummaryType, generateBrief } from '../services/api';
 import { useSummarize } from '../hooks/useSummarize';
 
 const SUMMARY_TYPES: { value: SummaryType; label: string; desc: string }[] = [
@@ -9,6 +10,8 @@ const SUMMARY_TYPES: { value: SummaryType; label: string; desc: string }[] = [
   { value: 'medium',   label: 'Medium',   desc: '~100 words'     },
   { value: 'detailed', label: 'Detailed', desc: '~300 words'     },
 ];
+
+const FOCUS_PILLS = ['Decisions', 'Risks', 'Deadlines', 'Action items', 'Follow-ups'];
 
 export default function UploadPage() {
   const navigate = useNavigate();
@@ -18,16 +21,54 @@ export default function UploadPage() {
   const [zoneError, setZoneError] = useState<string | undefined>(undefined);
   const [summaryType, setSummaryType] = useState<SummaryType>('medium');
 
+  // Agent intent state
+  const [focusPills, setFocusPills] = useState<string[]>([]);
+  const [customIntent, setCustomIntent] = useState('');
+
+  // Daily brief state
+  const [briefLoading, setBriefLoading] = useState(false);
+  const [briefError, setBriefError] = useState<string | null>(null);
+
   useEffect(() => {
     if (summary) navigate('/summary', { state: summary });
   }, [summary, navigate]);
 
-  function handleProcess() {
-    if (files.length === 0 || loading) return;
-    trigger(files[0], summaryType);
+  const focusOn = [...focusPills, customIntent.trim()].filter(Boolean).join(', ') || undefined;
+
+  function togglePill(pill: string) {
+    setFocusPills((prev) =>
+      prev.includes(pill) ? prev.filter((p) => p !== pill) : [...prev, pill],
+    );
   }
 
-  const canProcess = files.length > 0 && !loading;
+  function handleProcess() {
+    if (files.length === 0 || loading) return;
+    trigger(files[0], summaryType, focusOn);
+  }
+
+  async function handleGenerateBrief() {
+    if (files.length < 2 || briefLoading) return;
+    setBriefLoading(true);
+    setBriefError(null);
+    try {
+      const res = await generateBrief({ files });
+      navigate('/daily-brief', { state: res.brief });
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setBriefError(err.response?.data?.message ?? err.message);
+      } else if (err instanceof Error) {
+        setBriefError(err.message);
+      } else {
+        setBriefError('Brief generation failed. Please try again.');
+      }
+    } finally {
+      setBriefLoading(false);
+    }
+  }
+
+  const canProcess = files.length > 0 && !loading && !briefLoading;
+  const canBrief = files.length >= 2 && !loading && !briefLoading;
+  const combinedError = error || briefError;
 
   return (
     <div className="page-shell flex flex-col items-center justify-center px-4 py-12">
@@ -41,6 +82,7 @@ export default function UploadPage() {
           </p>
         </div>
 
+        {/* Agent intent panel */}
         <div className="glass-panel rounded-3xl p-6 sm:p-8 mb-8">
           <div className="flex flex-col gap-6">
             <div>
@@ -51,19 +93,37 @@ export default function UploadPage() {
             <div className="flex flex-col gap-3">
               <input
                 type="text"
+                value={customIntent}
+                onChange={(e) => setCustomIntent(e.target.value)}
                 placeholder="e.g. Highlight decisions, blockers, and deadlines"
                 className="input-field"
               />
               <div className="flex flex-wrap gap-2">
-                {['Decisions', 'Risks', 'Deadlines', 'Action items', 'Follow-ups'].map((pill) => (
-                  <span key={pill} className="pill">{pill}</span>
-                ))}
+                {FOCUS_PILLS.map((pill) => {
+                  const active = focusPills.includes(pill);
+                  return (
+                    <button
+                      key={pill}
+                      type="button"
+                      onClick={() => togglePill(pill)}
+                      className={[
+                        'pill transition-all',
+                        active
+                          ? 'bg-[var(--accent)]/20 border-[var(--accent)]/60 text-[var(--accent)] shadow-[0_0_12px_rgba(56,189,248,0.2)]'
+                          : 'hover:border-white/30 hover:text-slate-200',
+                      ].join(' ')}
+                    >
+                      {active && <span className="mr-1 text-[var(--accent)]">✓</span>}
+                      {pill}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Card */}
+        {/* Main card */}
         <div className="surface-card rounded-3xl p-6 sm:p-8 space-y-6">
           <UploadZone files={files} setFiles={setFiles} error={zoneError} setError={setZoneError} />
 
@@ -94,14 +154,14 @@ export default function UploadPage() {
             </div>
           </div>
 
-          {/* Error */}
-          {error && (
+          {/* Errors */}
+          {combinedError && (
             <div role="alert" className="rounded-lg border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
-              {error}
+              {combinedError}
             </div>
           )}
 
-          {/* Submit */}
+          {/* Summarize single file */}
           <button
             onClick={handleProcess}
             disabled={!canProcess}
@@ -121,6 +181,31 @@ export default function UploadPage() {
               </span>
             ) : 'Process'}
           </button>
+
+          {/* Generate Daily Brief — only visible when 2+ files are selected */}
+          {files.length >= 2 && (
+            <button
+              onClick={handleGenerateBrief}
+              disabled={!canBrief}
+              aria-busy={briefLoading}
+              className={[
+                'w-full btn-outline',
+                !canBrief ? 'opacity-60 cursor-not-allowed' : '',
+              ].join(' ')}
+            >
+              {briefLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Generating brief…
+                </span>
+              ) : (
+                `Generate Daily Brief (${files.length} files)`
+              )}
+            </button>
+          )}
         </div>
 
         <p className="mt-4 text-center text-xs text-slate-500">

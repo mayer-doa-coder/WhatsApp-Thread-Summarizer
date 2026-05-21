@@ -65,4 +65,18 @@ async function deleteSummary(summaryId, userId) {
   return true;
 }
 
-module.exports = { saveSummary, getUserSummaries, deleteSummary };
+/**
+ * Return the number of summaries saved by a user.
+ * @param {string} userId
+ */
+async function getSummaryCount(userId) {
+  const { count, error } = await supabase
+    .from('summaries')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId);
+
+  if (error) throw new Error(`getSummaryCount failed: ${error.message}`);
+  return count ?? 0;
+}
+
+module.exports = { saveSummary, getUserSummaries, deleteSummary, getSummaryCount };

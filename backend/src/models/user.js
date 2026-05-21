@@ -25,7 +25,7 @@ async function createUser(email, passwordHash) {
 async function findUserByEmail(email) {
   const { data, error } = await supabase
     .from('users')
-    .select('id, email, password_hash, created_at, is_verified')
+    .select('id, email, password_hash, display_name, plan, created_at, is_verified')
     .eq('email', email)
     .maybeSingle();
 
@@ -40,12 +40,27 @@ async function findUserByEmail(email) {
 async function findUserById(id) {
   const { data, error } = await supabase
     .from('users')
-    .select('id, email, created_at')
+    .select('id, email, display_name, plan, created_at')
     .eq('id', id)
     .maybeSingle();
 
   if (error) throw new Error(error.message);
   return data ?? null;
+}
+
+/**
+ * Update profile fields for a user.
+ * @param {string} id
+ * @param {{ displayName?: string, passwordHash?: string }} fields
+ */
+async function updateUserProfile(id, { displayName, passwordHash } = {}) {
+  const updates = {};
+  if (displayName !== undefined) updates.display_name = displayName;
+  if (passwordHash !== undefined) updates.password_hash = passwordHash;
+  if (Object.keys(updates).length === 0) return;
+
+  const { error } = await supabase.from('users').update(updates).eq('id', id);
+  if (error) throw new Error(error.message);
 }
 
 async function markUserVerified(email) {
@@ -57,4 +72,4 @@ async function markUserVerified(email) {
   if (error) throw new Error(error.message);
 }
 
-module.exports = { createUser, findUserByEmail, findUserById, markUserVerified };
+module.exports = { createUser, findUserByEmail, findUserById, markUserVerified, updateUserProfile };

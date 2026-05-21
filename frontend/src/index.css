@@ -17,6 +17,7 @@
   --text-subtle: #7b8797;
   --accent: #38bdf8;
   --accent-strong: #0ea5e9;
+  --accent-soft: rgba(56, 189, 248, 0.38);
   --accent-warm: #fbbf24;
   --accent-mint: #34d399;
   --danger: #f87171;
@@ -60,6 +61,7 @@
   --text-subtle: #334155;
   --accent: #0ea5e9;
   --accent-strong: #0284c7;
+  --accent-soft: rgba(14, 165, 233, 0.30);
   --accent-warm: #f59e0b;
   --accent-mint: #10b981;
   --success-bg: rgba(16, 185, 129, 0.16);

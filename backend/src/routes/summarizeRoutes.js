@@ -10,7 +10,11 @@ const router = express.Router();
 // Prompt builders (v1 templates from docs/prompt-templates.md)
 // ---------------------------------------------------------------------------
 
-function buildSystemPrompt(summaryLength) {
+function buildSystemPrompt(summaryLength, focusOn) {
+  const focusBlock = focusOn
+    ? `\nFocus directive: The user wants special emphasis on the following aspects: ${focusOn}. Prioritise these in summaryText, keyDecisions, and actionItems — populate those fields exhaustively for the requested focus areas.`
+    : '';
+
   return `You are an expert conversation analyst specializing in WhatsApp chat summarization. Your task is to analyze exported WhatsApp chat transcripts and produce structured, actionable summaries.
 
 You always respond with valid JSON matching this exact schema:
@@ -29,7 +33,7 @@ Rules:
 - For actionItems, prefer the format: "[Person] will/should [action] by [deadline if mentioned]".
 - summaryText length guide: short = 2–3 sentences, medium = 1 paragraph (~100 words), detailed = 2–3 paragraphs (~300 words).
 - Never include PII beyond what is already present in the chat (names, numbers stay as-is).
-- If the input is a partial chunk, treat it as a segment — do not fabricate a conclusion.`;
+- If the input is a partial chunk, treat it as a segment — do not fabricate a conclusion.${focusBlock}`;
 }
 
 function buildUserPrompt({ summaryLength, isChunk, chunkIndex, totalChunks, transcript }) {
@@ -88,7 +92,7 @@ function mergeSummaries(summaries) {
 // ---------------------------------------------------------------------------
 
 router.post('/', async (req, res) => {
-  const { messages, summaryType } = req.body;
+  const { messages, summaryType, focusOn } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({
@@ -112,7 +116,7 @@ router.post('/', async (req, res) => {
     for (let i = 0; i < chunks.length; i++) {
       const transcript = messagesToTranscript(chunks[i]);
       const llmMessages = [
-        { role: 'system', content: buildSystemPrompt(summaryLength) },
+        { role: 'system', content: buildSystemPrompt(summaryLength, focusOn) },
         {
           role: 'user',
           content: buildUserPrompt({

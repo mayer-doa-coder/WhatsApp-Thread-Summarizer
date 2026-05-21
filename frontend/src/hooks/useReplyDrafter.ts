@@ -21,9 +21,7 @@ export function useReplyDrafter(): UseReplyDrafterReturn {
 
       try {
         const response = await draftReply({ messages, userIntent, tone });
-        // api.ts types options as DraftOption[] (legacy schema); the backend returns
-        // string[] — cast to match the actual runtime shape.
-        setOptions(response.options as unknown as string[]);
+        setOptions(response.options);
       } catch (err) {
         if (axios.isAxiosError(err)) {
           const serverMessage = err.response?.data?.message as string | undefined;

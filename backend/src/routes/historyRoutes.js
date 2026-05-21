@@ -2,7 +2,8 @@
 
 const express = require('express');
 const authenticate = require('../middleware/authenticate');
-const { saveSummary, getUserSummaries, deleteSummary } = require('../models/summary');
+const { saveSummary, getUserSummaries, deleteSummary, getSummaryCount } = require('../models/summary');
+const { findUserById } = require('../models/user');
 
 const router = express.Router();
 
@@ -22,6 +23,20 @@ router.post('/', async (req, res, next) => {
   }
 
   try {
+    const userRecord = await findUserById(userId);
+    if (userRecord?.plan === 'free' || !userRecord?.plan) {
+      const count = await getSummaryCount(userId);
+      if (count >= 10) {
+        return res.status(402).json({
+          error: 'Payment Required',
+          message: 'You have reached the 10-summary limit on the free plan. Upgrade to Pro to save more.',
+          code: 402,
+          limit: 10,
+          current: count,
+        });
+      }
+    }
+
     const record = await saveSummary(userId, {
       filename,
       type,

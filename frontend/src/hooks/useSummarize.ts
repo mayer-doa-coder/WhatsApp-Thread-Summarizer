@@ -6,7 +6,7 @@ interface UseSummarizeReturn {
   loading: boolean;
   error: string | null;
   summary: SummaryResult | null;
-  trigger: (file: File, summaryType: SummaryType) => Promise<void>;
+  trigger: (file: File, summaryType: SummaryType, focusOn?: string) => Promise<void>;
 }
 
 export function useSummarize(): UseSummarizeReturn {
@@ -14,12 +14,12 @@ export function useSummarize(): UseSummarizeReturn {
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<SummaryResult | null>(null);
 
-  const trigger = useCallback(async (file: File, summaryType: SummaryType): Promise<void> => {
+  const trigger = useCallback(async (file: File, summaryType: SummaryType, focusOn?: string): Promise<void> => {
     setError(null);
     setLoading(true);
 
     try {
-      const response = await uploadAndSummarize(file, summaryType);
+      const response = await uploadAndSummarize(file, summaryType, focusOn);
       setSummary(response.summary);
     } catch (err) {
       if (axios.isAxiosError(err)) {

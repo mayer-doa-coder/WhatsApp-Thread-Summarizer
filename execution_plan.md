@@ -373,6 +373,24 @@ git push -u origin develop
 **Branch:** `git checkout develop && git checkout -b feature/phase-7-testing-deploy && git push -u origin feature/phase-7-testing-deploy`
 **Merge when done:** PR `feature/phase-7-testing-deploy` → `develop`, then final PR `develop` → `main` (this is the production release)
 
+### Remediation: Features found incomplete after phase mark-off
+
+- [x] Step 7.0a: Wire agent-intent / focus-area pills and custom text input in UploadPage through to the LLM summarization prompt
+  - *Files changed:* `backend/src/routes/summarizeRoutes.js`, `frontend/src/services/api.ts`, `frontend/src/hooks/useSummarize.ts`, `frontend/src/pages/UploadPage.tsx`
+  - *Acceptance Criteria:* Selecting "Decisions" pill and clicking Process sends `focusOn: "Decisions"` in the request body; backend appends a Focus directive to the LLM system prompt.
+
+- [x] Step 7.0b: Replace MOCK_BRIEF in DailyBriefPage with real router state; add "Generate Daily Brief" trigger to UploadPage for 2+ files
+  - *Files changed:* `frontend/src/pages/UploadPage.tsx`, `frontend/src/pages/DailyBriefPage.tsx`, `frontend/src/services/api.ts` (BriefChatCard type)
+  - *Acceptance Criteria:* Uploading 2+ .txt files reveals a "Generate Daily Brief (N files)" button; clicking it calls `/api/brief`, then navigates to `/daily-brief` with real data. Direct navigation to `/daily-brief` shows a preview banner instead of silently displaying mock data as real.
+
+- [x] Step 7.0c: Create /profile page (display name, password change, plan badge, usage bar); add `GET /api/auth/me` + `PATCH /api/auth/profile` endpoints; add `updateUserProfile` to user model
+  - *Files changed:* `backend/src/models/user.js`, `backend/src/routes/authRoutes.js`, `frontend/src/services/api.ts`, `frontend/src/context/AuthContext.tsx`, `frontend/src/pages/ProfilePage.tsx` (new), `frontend/src/App.tsx`, `frontend/src/components/NavBar.tsx`
+  - *Acceptance Criteria:* Logged-in user can update display name and password via /profile; plan badge shows "Free" or "Pro"; usage bar shows X/10 for free plan users.
+
+- [x] Step 7.0d: Enforce 10-summary save limit for free users; show 402 error and "Limit reached" button state in SummaryPage
+  - *Files changed:* `backend/src/models/summary.js`, `backend/src/routes/historyRoutes.js`, `frontend/src/pages/SummaryPage.tsx`
+  - *Acceptance Criteria:* After 10 saves, `POST /api/history` returns 402; frontend save button turns red with "✕ Limit reached" and a toast directs user to Profile.
+
 ### Integration Testing
 - [x] Step 7.1: Write `backend/tests/integration/api.test.js` with Supertest — 13 cases covering all critical endpoints
   - *Acceptance Criteria:* 0 test failures — 13/13 tests passing (auth register/login, history CRUD, IDOR guard, PDF export)
@@ -434,8 +452,8 @@ git push -u origin develop
 | Phase 4 | Daily Brief + Multi-File | 5 | 8 | 8 | `complete` |
 | Phase 5 | Authentication + History | 6 | 12 | 12 | `complete` |
 | Phase 6 | UI Polish + PDF Export | 7 | 12 | 12 | `complete` |
-| Phase 7 | Testing + Deployment | 8 | 18 | 14 | `in_progress` |
-| **TOTAL** | | **8 weeks** | **97** | **92** | **95% complete** |
+| Phase 7 | Testing + Deployment | 8 | 22 | 18 | `in_progress` |
+| **TOTAL** | | **8 weeks** | **101** | **96** | **95% complete** |
 
 ---
 

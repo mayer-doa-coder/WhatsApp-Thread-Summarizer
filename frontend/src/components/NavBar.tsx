@@ -55,6 +55,7 @@ export default function NavBar({ theme, onToggleTheme }: NavBarProps) {
             <Link to="/" className={linkCls('/')}>Summarize</Link>
             <Link to="/daily-brief" className={linkCls('/daily-brief')}>Daily Brief</Link>
             {user && <Link to="/history" className={linkCls('/history')}>History</Link>}
+            {user && <Link to="/profile" className={linkCls('/profile')}>Profile</Link>}
           </div>
 
           {/* Desktop actions */}
@@ -123,6 +124,7 @@ export default function NavBar({ theme, onToggleTheme }: NavBarProps) {
             <Link to="/" onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]">Summarize</Link>
             <Link to="/daily-brief" onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]">Daily Brief</Link>
             {user && <Link to="/history" onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]">History</Link>}
+            {user && <Link to="/profile" onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]">Profile</Link>}
             <div className="pt-2 border-t border-white/[0.08] mt-2">
               <button
                 type="button"

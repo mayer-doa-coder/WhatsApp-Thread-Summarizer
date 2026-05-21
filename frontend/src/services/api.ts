@@ -103,12 +103,6 @@ export interface SummarizeResponse {
 
 // ── /api/reply ────────────────────────────────────────────────────────────────
 
-export interface DraftOption {
-  tone: string;
-  text: string;
-  wordCount: number;
-}
-
 export interface DraftRequest {
   messages: Message[];
   tone?: Tone;
@@ -121,7 +115,7 @@ export interface DraftRequest {
 }
 
 export interface DraftResponse {
-  options: DraftOption[];
+  options: string[];
   model: string;
   processingMs: number;
 }
@@ -139,6 +133,9 @@ export interface BriefRequest {
 }
 
 export interface BriefChatCard {
+  index?: number;
+  oneLiner?: string;
+  actionRequired?: boolean;
   filename: string;
   topic: string;
   participants: string[];
@@ -146,6 +143,7 @@ export interface BriefChatCard {
   dateRange: DateRange;
   actionItems: string[];
   keyDecisions: string[];
+  notableFacts?: string[];
   sentiment?: string;
   summaryText: string;
 }
@@ -195,6 +193,7 @@ interface HistoryListEnvelope {
 export async function uploadAndSummarize(
   file: File,
   summaryType: SummaryType = 'medium',
+  focusOn?: string,
 ): Promise<SummarizeResponse> {
   const form = new FormData();
   form.append('files', file);
@@ -202,7 +201,12 @@ export async function uploadAndSummarize(
   const { data: uploadData } = await client.post<UploadResponse>('/upload', form);
   const messages: Message[] = uploadData.files[0]?.messages ?? [];
 
-  const body: SummarizeRequest = { messages, summaryType, filename: file.name };
+  const body: SummarizeRequest = {
+    messages,
+    summaryType,
+    filename: file.name,
+    ...(focusOn ? { focusOn: focusOn as FocusOn } : {}),
+  };
   const { data } = await client.post<SummarizeResponse>('/summarize', body);
   return data;
 }
@@ -242,6 +246,20 @@ export async function deleteHistoryItem(id: string): Promise<void> {
 export interface AuthUser {
   id: string;
   email: string;
+}
+
+export interface ProfileData {
+  id: string;
+  email: string;
+  displayName: string | null;
+  plan: 'free' | 'pro';
+  createdAt: string;
+}
+
+export interface UpdateProfileRequest {
+  displayName?: string;
+  currentPassword?: string;
+  newPassword?: string;
 }
 
 export interface AuthResponse {
@@ -287,5 +305,28 @@ export async function forgotPassword(email: string): Promise<{ message: string }
 
 export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
   const { data } = await client.post<{ message: string }>('/auth/reset-password', { token, password });
+  return data;
+}
+
+export async function getProfile(): Promise<ProfileData> {
+  const { data } = await client.get<ProfileData>('/auth/me');
+  return data;
+}
+
+export async function updateProfile(payload: UpdateProfileRequest): Promise<{ message: string }> {
+  const { data } = await client.patch<{ message: string }>('/auth/profile', payload);
+  return data;
+}
+
+export async function saveToHistory(payload: {
+  filename: string;
+  type: 'thread' | 'brief';
+  summaryText: string;
+  messageCount?: number;
+  participants?: string[];
+  dateFrom?: string;
+  dateTo?: string;
+}): Promise<{ summary: HistoryResponse }> {
+  const { data } = await client.post<{ summary: HistoryResponse }>('/history', payload);
   return data;
 }

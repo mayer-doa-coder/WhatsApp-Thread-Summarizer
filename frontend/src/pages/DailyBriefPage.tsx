@@ -1,37 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import BriefChatCardWidget from '../components/BriefChatCard';
 import { type ChatCardMeta } from '../components/BriefChatCard';
 import { type SummaryData } from '../components/SummaryCard';
+import { type BriefResult } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
-// ── Local types ───────────────────────────────────────────────────────────────
+// ── Mock data — used only as a preview when no real brief has been generated ──
 
-interface FullBriefCard extends ChatCardMeta {
-  filename: string;
-  topic: string;
-  participants: string[];
-  messageCount: number;
-  dateRange: { from: string; to: string };
-  actionItems: string[];
-  keyDecisions: string[];
-  notableFacts: string[];
-  summaryText: string;
-}
-
-interface DailyBriefData {
-  overviewParagraph: string;
-  chatCards: FullBriefCard[];
-  crossChatInsights: string[];
-  keyPeople: string[];
-}
-
-// ── Mock data (replaced by router state / API call in a future step) ──────────
-
-const MOCK_BRIEF: DailyBriefData = {
+const MOCK_BRIEF: BriefResult = {
+  generatedAt: new Date().toISOString(),
   overviewParagraph:
     'Today was marked by active coordination across five separate threads. The engineering team aligned on a Friday ship date, while the family group finalised holiday plans. A client escalation was resolved by mid-afternoon, and two new project proposals were circulated for review. Overall sentiment was constructive with several clear action items requiring follow-up before end of day.',
-
   chatCards: [
     {
       index: 1,
@@ -109,13 +90,11 @@ const MOCK_BRIEF: DailyBriefData = {
         'The group confirmed a Saturday morning hike leaving from Riverside car park at 9 AM. Jack is bringing extra water and Isla will share the route map overnight.',
     },
   ],
-
   crossChatInsights: [
     'Alice appears in both the engineering thread and the Project Alpha review, suggesting she is a cross-team decision maker.',
     'Two threads (engineering release and Project Alpha) have Friday/Thursday deadlines — potential calendar conflict for shared team members.',
     'Action items from the client escalation and engineering threads are both time-sensitive within the same business day.',
   ],
-
   keyPeople: [
     'Alice: Engineering lead & Project Alpha reviewer',
     'Carol: Release owner — v2.4',
@@ -123,14 +102,13 @@ const MOCK_BRIEF: DailyBriefData = {
     'Frank: Project Alpha cost analysis',
     'Sara: Family holiday booking coordinator',
   ],
+  totalActionItems: [],
+  filesProcessed: 5,
+  filesExcluded: 0,
 };
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="section-kicker mb-3">
-      {children}
-    </p>
-  );
+  return <p className="section-kicker mb-3">{children}</p>;
 }
 
 // ── Page ─────────────────────────────────────────────────────────────────────
@@ -138,20 +116,20 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export default function DailyBriefPage() {
   const { token } = useAuth();
   const { showError } = useToast();
+  const location = useLocation();
+  const realBrief = location.state as BriefResult | null;
+  const briefData = realBrief ?? MOCK_BRIEF;
+  const isPreview = !realBrief;
+
   const briefContainerRef = useRef<HTMLDivElement>(null);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isCopiedHtml, setIsCopiedHtml] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     return () => {
       if (copyTimeoutRef.current !== null) clearTimeout(copyTimeoutRef.current);
     };
-  }, []);
-
-  useEffect(() => {
-    setLoading(false);
   }, []);
 
   const today = new Date().toLocaleDateString('en-GB', {
@@ -206,7 +184,7 @@ export default function DailyBriefPage() {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify(MOCK_BRIEF),
+        body: JSON.stringify(briefData),
       });
       if (!response.ok) throw new Error(`Export failed: ${response.status}`);
       const blob = await response.blob();
@@ -227,17 +205,35 @@ export default function DailyBriefPage() {
     }
   }
 
-  const { overviewParagraph, chatCards, crossChatInsights, keyPeople } = MOCK_BRIEF;
+  const { overviewParagraph, chatCards, crossChatInsights, keyPeople } = briefData;
 
   return (
     <div className="page-shell px-4 py-8 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-6xl space-y-8 fade-up">
+
+        {/* ── Preview banner ── */}
+        {isPreview && (
+          <div className="rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-slate-400">
+              <span className="font-medium text-slate-300">Showing example data.</span>{' '}
+              Upload 2 or more chat files on the Summarize page to generate a real brief.
+            </p>
+            <Link to="/" className="btn-primary text-xs shrink-0">
+              Go to Summarize →
+            </Link>
+          </div>
+        )}
 
         {/* ── Header ── */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="section-kicker">Daily Brief</p>
             <h1 className="mt-2 text-3xl font-semibold text-slate-100">{today}</h1>
+            {!isPreview && (
+              <p className="mt-1 text-xs text-slate-500">
+                {briefData.filesProcessed} file{briefData.filesProcessed !== 1 ? 's' : ''} processed
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-3 flex-shrink-0">
@@ -263,45 +259,37 @@ export default function DailyBriefPage() {
         {/* ── Serializable content (captured by Copy as HTML) ── */}
         <div id="brief-container" ref={briefContainerRef} className="space-y-8">
 
-        {/* ── Overview ── */}
-        <section>
-          <SectionLabel>Overview</SectionLabel>
-          <div className="surface-card rounded-xl p-5 border-l-4 border-l-[var(--accent-soft)]">
-            <p className="text-sm leading-relaxed text-[var(--text-muted)]">
-              {overviewParagraph}
-            </p>
-          </div>
-        </section>
-
-        {/* ── Chat Cards (horizontal scroll) ── */}
-        <section>
-          <SectionLabel>Chats ({loading ? '…' : chatCards.length})</SectionLabel>
-          {loading ? (
-            <div className="timeline space-y-4 animate-pulse">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="timeline-item">
-                  <div className="h-40 rounded-2xl bg-white/[0.06]" />
-                </div>
-              ))}
+          {/* ── Overview ── */}
+          <section>
+            <SectionLabel>Overview</SectionLabel>
+            <div className="surface-card rounded-xl p-5 border-l-4 border-l-[var(--accent-soft)]">
+              <p className="text-sm leading-relaxed text-[var(--text-muted)]">
+                {overviewParagraph}
+              </p>
             </div>
-          ) : (
+          </section>
+
+          {/* ── Chat Cards ── */}
+          <section>
+            <SectionLabel>Chats ({chatCards.length})</SectionLabel>
             <div className="timeline space-y-5">
-              {chatCards.map((card) => {
+              {chatCards.map((card, idx) => {
+                const cardIndex = card.index ?? idx + 1;
                 const chatCardMeta: ChatCardMeta = {
-                  index: card.index,
-                  oneLiner: card.oneLiner,
-                  actionRequired: card.actionRequired,
+                  index: cardIndex,
+                  oneLiner: card.oneLiner ?? card.topic,
+                  actionRequired: card.actionRequired ?? false,
                 };
                 const fullSummary: SummaryData = {
                   topic: card.topic,
                   keyDecisions: card.keyDecisions,
                   actionItems: card.actionItems,
-                  notableFacts: card.notableFacts,
+                  notableFacts: card.notableFacts ?? [],
                   participants: card.participants,
                   summaryText: card.summaryText,
                 };
                 return (
-                  <div key={card.index} className="timeline-item">
+                  <div key={cardIndex} className="timeline-item">
                     <BriefChatCardWidget
                       chatCard={chatCardMeta}
                       fullSummary={fullSummary}
@@ -310,49 +298,45 @@ export default function DailyBriefPage() {
                 );
               })}
             </div>
-          )}
-        </section>
+          </section>
 
-        {/* ── Cross-Chat Insights ── */}
-        <section>
-          <SectionLabel>Cross-Chat Insights</SectionLabel>
-          <div className="surface-card rounded-xl p-5">
-            {crossChatInsights.length === 0 ? (
+          {/* ── Cross-Chat Insights ── */}
+          <section>
+            <SectionLabel>Cross-Chat Insights</SectionLabel>
+            <div className="surface-card rounded-xl p-5">
+              {crossChatInsights.length === 0 ? (
+                <p className="text-sm text-[var(--text-subtle)]">
+                  No cross-chat connections identified.
+                </p>
+              ) : (
+                <ul className="list-disc ml-5 space-y-2">
+                  {crossChatInsights.map((insight, i) => (
+                    <li key={i} className="text-sm leading-relaxed text-[var(--text-muted)]">
+                      {insight}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+
+          {/* ── Key People Tag Cloud ── */}
+          <section>
+            <SectionLabel>Key People</SectionLabel>
+            {keyPeople.length === 0 ? (
               <p className="text-sm text-[var(--text-subtle)]">
-                No cross-chat connections identified.
+                No key people identified.
               </p>
             ) : (
-              <ul className="list-disc ml-5 space-y-2">
-                {crossChatInsights.map((insight, i) => (
-                  <li
-                    key={i}
-                    className="text-sm leading-relaxed text-[var(--text-muted)]"
-                  >
-                    {insight}
-                  </li>
+              <div className="flex flex-wrap gap-2">
+                {keyPeople.map((person, i) => (
+                  <span key={i} className="chip text-xs">
+                    {person}
+                  </span>
                 ))}
-              </ul>
+              </div>
             )}
-          </div>
-        </section>
-
-        {/* ── Key People Tag Cloud ── */}
-        <section>
-          <SectionLabel>Key People</SectionLabel>
-          {keyPeople.length === 0 ? (
-            <p className="text-sm text-[var(--text-subtle)]">
-              No key people identified.
-            </p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {keyPeople.map((person, i) => (
-                <span key={i} className="chip text-xs">
-                  {person}
-                </span>
-              ))}
-            </div>
-          )}
-        </section>
+          </section>
 
         </div>{/* end #brief-container */}
 

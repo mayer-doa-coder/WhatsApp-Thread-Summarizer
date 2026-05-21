@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
     id            UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
     email         TEXT          NOT NULL UNIQUE,
     password_hash TEXT          NOT NULL,
+    is_verified   BOOLEAN       NOT NULL DEFAULT false,
     display_name  TEXT,
     plan          TEXT          NOT NULL DEFAULT 'free' CHECK (plan IN ('free', 'pro')),
     created_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW(),

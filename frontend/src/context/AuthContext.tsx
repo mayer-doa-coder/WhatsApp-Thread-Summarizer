@@ -1,9 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { loginUser, registerUser, setAuthToken } from '../services/api';
+import { loginUser, registerUser, setAuthToken, getProfile } from '../services/api';
 
 export interface User {
   id: string;
   email: string;
+  displayName?: string | null;
+  plan?: 'free' | 'pro';
 }
 
 interface AuthContextType {
@@ -25,6 +27,8 @@ interface AuthContextType {
   /** Called after OTP verification — stores the token and logs the user in immediately. */
   completeVerification: (token: string) => void;
   logout: () => void;
+  /** Re-fetch the user's full profile from the server and update context state. */
+  refreshProfile: () => Promise<void>;
 }
 
 const TOKEN_KEY = 'wts_token';
@@ -53,6 +57,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthToken(token);
   }, [token]);
 
+  // Hydrate displayName + plan from the server on initial load if already logged in.
+  useEffect(() => {
+    if (!token) return;
+    getProfile().then((profile) => {
+      setUser((prev) => prev ? { ...prev, displayName: profile.displayName, plan: profile.plan } : prev);
+    }).catch(() => {
+      // Profile fetch failures (e.g. expired token) are handled silently here;
+      // protected routes will redirect to login when the token is invalid.
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const refreshProfile = useCallback(async (): Promise<void> => {
+    try {
+      const profile = await getProfile();
+      setUser((prev) => prev ? { ...prev, displayName: profile.displayName, plan: profile.plan } : prev);
+    } catch {
+      // ignore — caller can handle if needed
+    }
+  }, []);
+
   const login = useCallback(async (
     email: string,
     password: string,
@@ -66,7 +90,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setAuthToken(data.token);
     setToken(data.token);
-    setUser(decodeUser(data.token));
+    const base = decodeUser(data.token);
+    setUser(base);
+    // Hydrate extra profile fields (displayName, plan) without blocking login.
+    getProfile().then((profile) => {
+      setUser({ ...base, displayName: profile.displayName, plan: profile.plan });
+    }).catch(() => {});
   }, []);
 
   const initiateRegister = useCallback(async (email: string, password: string): Promise<string> => {
@@ -80,7 +109,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(TOKEN_KEY, newToken);
     setAuthToken(newToken);
     setToken(newToken);
-    setUser(decodeUser(newToken));
+    const base = decodeUser(newToken);
+    setUser(base);
+    getProfile().then((profile) => {
+      setUser({ ...base, displayName: profile.displayName, plan: profile.plan });
+    }).catch(() => {});
   }, []);
 
   const logout = useCallback((): void => {
@@ -92,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, initiateRegister, completeVerification, logout }}>
+    <AuthContext.Provider value={{ user, token, login, initiateRegister, completeVerification, logout, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
