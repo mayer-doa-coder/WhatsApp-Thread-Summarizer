@@ -1,11 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import BriefChatCardWidget from '../components/BriefChatCard';
 import { type ChatCardMeta } from '../components/BriefChatCard';
 import { type SummaryData } from '../components/SummaryCard';
 import { type BriefResult } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+
+const PAGE_SPRING = { type: 'spring', stiffness: 260, damping: 28 } as const;
 
 // ── Mock data — used only as a preview when no real brief has been generated ──
 
@@ -107,13 +110,14 @@ const MOCK_BRIEF: BriefResult = {
   filesExcluded: 0,
 };
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children }: { children: ReactNode }) {
   return <p className="section-kicker mb-3">{children}</p>;
 }
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DailyBriefPage() {
+  const reduced = useReducedMotion();
   const { token } = useAuth();
   const { showError } = useToast();
   const location = useLocation();
@@ -208,8 +212,14 @@ export default function DailyBriefPage() {
   const { overviewParagraph, chatCards, crossChatInsights, keyPeople } = briefData;
 
   return (
-    <div className="page-shell px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-6xl space-y-8 fade-up">
+    <motion.div
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+      transition={PAGE_SPRING}
+      className="page-shell px-4 py-8 sm:px-6 sm:py-10"
+    >
+      <div className="mx-auto max-w-6xl space-y-8">
 
         {/* ── Preview banner ── */}
         {isPreview && (
@@ -341,6 +351,6 @@ export default function DailyBriefPage() {
         </div>{/* end #brief-container */}
 
       </div>
-    </div>
+    </motion.div>
   );
 }

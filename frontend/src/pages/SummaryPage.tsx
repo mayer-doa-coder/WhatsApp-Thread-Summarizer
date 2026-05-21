@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
+import { motion, useReducedMotion } from 'framer-motion';
 import SummaryCard, { SummaryData } from '../components/SummaryCard';
 import ReplyDrafterPanel from '../components/ReplyDrafterPanel';
 import { saveToHistory } from '../services/api';
@@ -20,11 +21,14 @@ function isSummaryData(value: unknown): value is SummaryData {
   );
 }
 
+const PAGE_SPRING = { type: 'spring', stiffness: 260, damping: 28 } as const;
+
 export default function SummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showSuccess, showError } = useToast();
+  const reduced = useReducedMotion();
 
   const [isDrafterOpen, setIsDrafterOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -63,11 +67,11 @@ export default function SummaryPage() {
       setIsSaved(true);
       showSuccess('Saved to history!');
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.status === 402) {
+      if (isAxiosError(err) && err.response?.status === 402) {
         setSaveLimitReached(true);
         showError('Free plan limit reached (10/10). Visit your Profile to see your usage.');
       } else {
-        const msg = axios.isAxiosError(err)
+        const msg = isAxiosError(err)
           ? (err.response?.data?.message ?? err.message)
           : 'Failed to save. Please try again.';
         showError(msg);
@@ -80,8 +84,14 @@ export default function SummaryPage() {
   const contextText = [summary.topic, summary.summaryText].filter(Boolean).join(' — ');
 
   return (
-    <div className="page-shell px-4 py-8 sm:px-6">
-      <div className="mx-auto max-w-3xl fade-up">
+    <motion.div
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+      transition={PAGE_SPRING}
+      className="page-shell px-4 py-8 sm:px-6"
+    >
+      <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
@@ -147,6 +157,6 @@ export default function SummaryPage() {
         onClose={() => setIsDrafterOpen(false)}
         contextText={contextText}
       />
-    </div>
+    </motion.div>
   );
 }

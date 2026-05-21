@@ -1,34 +1,32 @@
 import React, { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { updateProfile, getHistory } from '../services/api';
 
 const FREE_LIMIT = 10;
+const PAGE_SPRING = { type: 'spring', stiffness: 260, damping: 28 } as const;
 
 export default function ProfilePage() {
   const { user, refreshProfile } = useAuth();
   const { showSuccess, showError } = useToast();
+  const reduced = useReducedMotion();
 
-  // Display name form
   const [displayName, setDisplayName] = useState('');
   const [savingName, setSavingName] = useState(false);
 
-  // Password form
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [savingPassword, setSavingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
-  // Usage count (free plan)
   const [summaryCount, setSummaryCount] = useState<number | null>(null);
 
-  // Pre-fill display name when user context loads
   useEffect(() => {
     if (user?.displayName) setDisplayName(user.displayName);
   }, [user?.displayName]);
 
-  // Fetch history count for free plan users
   useEffect(() => {
     if (user?.plan === 'free' || user?.plan === undefined) {
       getHistory()
@@ -85,16 +83,20 @@ export default function ProfilePage() {
   const usagePercent = summaryCount !== null ? Math.min((summaryCount / FREE_LIMIT) * 100, 100) : 0;
 
   return (
-    <div className="page-shell px-4 py-10 sm:px-6">
-      <div className="mx-auto max-w-2xl space-y-8 fade-up">
+    <motion.div
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+      transition={PAGE_SPRING}
+      className="page-shell px-4 py-10 sm:px-6"
+    >
+      <div className="mx-auto max-w-2xl space-y-8">
 
-        {/* ── Page title ── */}
         <div>
           <p className="section-kicker">Account</p>
           <h1 className="mt-2 text-3xl font-semibold text-slate-100">Your Profile</h1>
         </div>
 
-        {/* ── Account info card ── */}
         <div className="surface-card rounded-2xl p-6 space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-500">Account Info</h2>
 
@@ -123,7 +125,6 @@ export default function ProfilePage() {
             </span>
           </div>
 
-          {/* Usage bar — only for free users */}
           {!isPro && summaryCount !== null && (
             <div className="pt-2">
               <div className="flex items-center justify-between mb-1.5">
@@ -150,7 +151,6 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* ── Display name ── */}
         <div className="surface-card rounded-2xl p-6 space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-500">Display Name</h2>
           <form onSubmit={handleSaveName} className="space-y-4">
@@ -167,17 +167,18 @@ export default function ProfilePage() {
                 className="input-field"
               />
             </div>
-            <button
+            <motion.button
               type="submit"
               disabled={savingName || !displayName.trim()}
+              whileTap={reduced ? {} : { scale: 0.97 }}
+              transition={PAGE_SPRING}
               className="btn-primary disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {savingName ? 'Saving…' : 'Save Name'}
-            </button>
+            </motion.button>
           </form>
         </div>
 
-        {/* ── Change password ── */}
         <div className="surface-card rounded-2xl p-6 space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-500">Change Password</h2>
           <form onSubmit={handleSavePassword} className="space-y-4">
@@ -227,17 +228,19 @@ export default function ProfilePage() {
               </div>
             )}
 
-            <button
+            <motion.button
               type="submit"
               disabled={savingPassword || !currentPassword || !newPassword || !confirmPassword}
+              whileTap={reduced ? {} : { scale: 0.97 }}
+              transition={PAGE_SPRING}
               className="btn-primary disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {savingPassword ? 'Updating…' : 'Update Password'}
-            </button>
+            </motion.button>
           </form>
         </div>
 
       </div>
-    </div>
+    </motion.div>
   );
 }

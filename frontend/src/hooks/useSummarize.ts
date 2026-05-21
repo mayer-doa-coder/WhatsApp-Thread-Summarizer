@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import { uploadAndSummarize, SummaryResult, SummaryType } from '../services/api';
 
 interface UseSummarizeReturn {
@@ -22,7 +22,7 @@ export function useSummarize(): UseSummarizeReturn {
       const response = await uploadAndSummarize(file, summaryType, focusOn);
       setSummary(response.summary);
     } catch (err) {
-      if (axios.isAxiosError(err)) {
+      if (isAxiosError(err)) {
         const serverMessage = err.response?.data?.message as string | undefined;
         setError(serverMessage ?? err.message);
       } else if (err instanceof Error) {

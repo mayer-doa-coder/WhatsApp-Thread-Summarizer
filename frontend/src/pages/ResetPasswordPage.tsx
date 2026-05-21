@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
+import { motion, useReducedMotion } from 'framer-motion';
 import { resetPassword } from '../services/api';
+
+const PAGE_SPRING = { type: 'spring', stiffness: 260, damping: 28 } as const;
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const reduced = useReducedMotion();
   const token = searchParams.get('token') ?? '';
 
   const [password, setPassword] = useState('');
@@ -15,17 +19,22 @@ export default function ResetPasswordPage() {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Show an error page immediately if the token is missing from the URL
   if (!token) {
     return (
-      <div className="page-shell flex items-center justify-center px-4">
-        <div className="w-full max-w-sm text-center space-y-4 fade-up">
+      <motion.div
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+        transition={PAGE_SPRING}
+        className="page-shell flex items-center justify-center px-4"
+      >
+        <div className="w-full max-w-sm text-center space-y-4">
           <p className="text-slate-400">This reset link is invalid or missing a token.</p>
           <Link to="/forgot-password" className="text-[var(--accent)] hover:underline font-medium text-sm">
             Request a new link
           </Link>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -46,7 +55,7 @@ export default function ResetPasswordPage() {
       await resetPassword(token, password);
       setDone(true);
     } catch (err) {
-      const msg = axios.isAxiosError(err)
+      const msg = isAxiosError(err)
         ? (err.response?.data?.message ?? err.message)
         : 'An unexpected error occurred.';
       setError(msg);
@@ -61,9 +70,14 @@ export default function ResetPasswordPage() {
   ].join(' ');
 
   return (
-    <div className="page-shell flex items-center justify-center px-4">
-      <div className="w-full max-w-sm fade-up">
-
+    <motion.div
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+      transition={PAGE_SPRING}
+      className="page-shell flex items-center justify-center px-4"
+    >
+      <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--success-bg)] mb-4">
             <svg viewBox="0 0 24 24" className="h-7 w-7 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -82,7 +96,6 @@ export default function ResetPasswordPage() {
         </div>
 
         {done ? (
-          /* Success state */
           <div className="surface-card rounded-2xl p-6 text-center space-y-4">
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--success-bg)]">
               <svg viewBox="0 0 24 24" className="h-6 w-6 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -90,15 +103,16 @@ export default function ResetPasswordPage() {
               </svg>
             </div>
             <p className="text-sm text-slate-300">You can now log in with your new password.</p>
-            <button
+            <motion.button
               onClick={() => navigate('/login')}
+              whileTap={reduced ? {} : { scale: 0.97 }}
+              transition={PAGE_SPRING}
               className="w-full btn-primary"
             >
               Go to log in
-            </button>
+            </motion.button>
           </div>
         ) : (
-          /* Form state */
           <>
             {error && (
               <div role="alert" className="mb-5 rounded-lg border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
@@ -147,18 +161,20 @@ export default function ResetPasswordPage() {
                   {fieldErrors.confirm && <p className="mt-1.5 text-xs text-red-400">{fieldErrors.confirm}</p>}
                 </div>
 
-                <button
+                <motion.button
                   type="submit"
                   disabled={loading}
+                  whileTap={reduced ? {} : { scale: 0.97 }}
+                  transition={PAGE_SPRING}
                   className="w-full btn-primary mt-2"
                 >
                   {loading ? 'Updating…' : 'Update password'}
-                </button>
+                </motion.button>
               </form>
             </div>
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

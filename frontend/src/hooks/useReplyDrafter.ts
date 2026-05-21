@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import { draftReply, Message, Tone } from '../services/api';
 
 interface UseReplyDrafterReturn {
@@ -23,7 +23,7 @@ export function useReplyDrafter(): UseReplyDrafterReturn {
         const response = await draftReply({ messages, userIntent, tone });
         setOptions(response.options);
       } catch (err) {
-        if (axios.isAxiosError(err)) {
+        if (isAxiosError(err)) {
           const serverMessage = err.response?.data?.message as string | undefined;
           setError(serverMessage ?? err.message);
         } else if (err instanceof Error) {

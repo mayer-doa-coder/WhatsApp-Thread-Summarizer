@@ -1,18 +1,20 @@
 import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
+import { motion, useReducedMotion } from 'framer-motion';
 import { verifyOtp, resendOtp } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const DIGITS = 6;
+const PAGE_SPRING = { type: 'spring', stiffness: 260, damping: 28 } as const;
 
 export default function VerifyOTPPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const { completeVerification } = useAuth();
+  const reduced = useReducedMotion();
 
-  // Prefer URL query param so the email survives page refreshes
   const email: string =
     searchParams.get('email') ??
     (location.state as { email?: string } | null)?.email ??
@@ -71,7 +73,7 @@ export default function VerifyOTPPage() {
         navigate('/login', { state: { verified: true } });
       }
     } catch (err) {
-      const msg = axios.isAxiosError(err)
+      const msg = isAxiosError(err)
         ? (err.response?.data?.message ?? err.message)
         : 'An unexpected error occurred.';
       setError(msg);
@@ -90,7 +92,7 @@ export default function VerifyOTPPage() {
       setDigits(Array(DIGITS).fill(''));
       inputRefs.current[0]?.focus();
     } catch (err) {
-      const msg = axios.isAxiosError(err)
+      const msg = isAxiosError(err)
         ? (err.response?.data?.message ?? err.message)
         : 'Failed to resend code.';
       setError(msg);
@@ -101,14 +103,20 @@ export default function VerifyOTPPage() {
 
   if (!email) {
     return (
-      <div className="page-shell flex items-center justify-center px-4">
-        <div className="text-center fade-up">
+      <motion.div
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+        transition={PAGE_SPRING}
+        className="page-shell flex items-center justify-center px-4"
+      >
+        <div className="text-center">
           <p className="text-slate-400 mb-4">No email address found. Please sign up first.</p>
           <Link to="/register" className="text-[var(--accent)] hover:underline font-medium text-sm">
             Go to Sign Up
           </Link>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -119,8 +127,14 @@ export default function VerifyOTPPage() {
   ].join(' ');
 
   return (
-    <div className="page-shell flex items-center justify-center px-4">
-      <div className="w-full max-w-sm fade-up">
+    <motion.div
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+      transition={PAGE_SPRING}
+      className="page-shell flex items-center justify-center px-4"
+    >
+      <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--success-bg)] mb-4">
             <svg viewBox="0 0 24 24" className="h-7 w-7 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -169,13 +183,15 @@ export default function VerifyOTPPage() {
               ))}
             </div>
 
-            <button
+            <motion.button
               type="submit"
               disabled={loading || digits.join('').length < DIGITS}
+              whileTap={reduced ? {} : { scale: 0.97 }}
+              transition={PAGE_SPRING}
               className="w-full btn-primary"
             >
               {loading ? 'Verifying…' : 'Verify email'}
-            </button>
+            </motion.button>
           </form>
         </div>
 
@@ -197,6 +213,6 @@ export default function VerifyOTPPage() {
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

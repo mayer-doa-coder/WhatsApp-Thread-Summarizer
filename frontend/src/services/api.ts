@@ -172,7 +172,7 @@ export interface HistoryResponse {
   filename: string;
   type: 'thread' | 'brief';
   summaryText: string;
-  messageCount: number;
+  messageCount: number | null;
   createdAt: string;
 }
 

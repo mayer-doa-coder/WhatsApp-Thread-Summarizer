@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { motion, useReducedMotion } from 'framer-motion';
+import { isAxiosError } from 'axios';
 import { forgotPassword } from '../services/api';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PAGE_SPRING = { type: 'spring', stiffness: 260, damping: 28 } as const;
 
 export default function ForgotPasswordPage() {
+  const reduced = useReducedMotion();
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -30,7 +33,7 @@ export default function ForgotPasswordPage() {
       await forgotPassword(email.trim());
       setSubmitted(true);
     } catch (err) {
-      const msg = axios.isAxiosError(err)
+      const msg = isAxiosError(err)
         ? (err.response?.data?.message ?? err.message)
         : 'An unexpected error occurred.';
       setError(msg);
@@ -45,10 +48,14 @@ export default function ForgotPasswordPage() {
   ].join(' ');
 
   return (
-    <div className="page-shell flex items-center justify-center px-4">
-      <div className="w-full max-w-sm fade-up">
-
-        {/* Icon */}
+    <motion.div
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+      transition={PAGE_SPRING}
+      className="page-shell flex items-center justify-center px-4"
+    >
+      <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--success-bg)] mb-4">
             <svg viewBox="0 0 24 24" className="h-7 w-7 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -65,7 +72,6 @@ export default function ForgotPasswordPage() {
         </div>
 
         {submitted ? (
-          /* Success state */
           <div className="surface-card rounded-2xl p-6 text-center space-y-4">
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--success-bg)]">
               <svg viewBox="0 0 24 24" className="h-6 w-6 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -76,60 +82,44 @@ export default function ForgotPasswordPage() {
               If <span className="font-medium text-slate-100">{email}</span> is registered, you'll receive a
               password reset link shortly. Check your spam folder if it doesn't arrive within a few minutes.
             </p>
-            <Link
-              to="/login"
-              className="inline-block w-full btn-primary mt-2"
-            >
-              Back to log in
-            </Link>
+            <Link to="/login" className="inline-block w-full btn-primary mt-2">Back to log in</Link>
           </div>
         ) : (
-          /* Form state */
           <>
             {error && (
               <div role="alert" className="mb-5 rounded-lg border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
                 {error}
               </div>
             )}
-
             <div className="surface-card rounded-2xl p-6">
               <form onSubmit={handleSubmit} noValidate className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-xs font-medium text-slate-400 mb-1.5">
-                    Email address
-                  </label>
+                  <label htmlFor="email" className="block text-xs font-medium text-slate-400 mb-1.5">Email address</label>
                   <input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    value={email}
+                    id="email" type="email" autoComplete="email" value={email}
                     onChange={(e) => { setEmail(e.target.value); setEmailError(null); }}
-                    disabled={loading}
-                    className={inputCls(!!emailError)}
-                    placeholder="you@example.com"
+                    disabled={loading} className={inputCls(!!emailError)} placeholder="you@example.com"
                   />
                   {emailError && <p className="mt-1.5 text-xs text-red-400">{emailError}</p>}
                 </div>
-
-                <button
+                <motion.button
                   type="submit"
                   disabled={loading}
+                  whileTap={reduced ? {} : { scale: 0.97 }}
+                  transition={PAGE_SPRING}
                   className="w-full btn-primary mt-2"
                 >
                   {loading ? 'Sending…' : 'Send reset link'}
-                </button>
+                </motion.button>
               </form>
             </div>
-
             <p className="mt-5 text-center text-sm text-slate-400">
               Remember it?{' '}
-              <Link to="/login" className="text-[var(--accent)] hover:underline font-medium">
-                Log in
-              </Link>
+              <Link to="/login" className="text-[var(--accent)] hover:underline font-medium">Log in</Link>
             </p>
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

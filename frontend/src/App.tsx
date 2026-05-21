@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import ToastContainer from './components/ToastContainer';
@@ -26,6 +27,28 @@ function getInitialTheme(): ThemeMode {
   return stored === 'light' ? 'light' : 'dark';
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<UploadPage />} />
+        <Route path="/summary" element={<SummaryPage />} />
+        <Route path="/daily-brief" element={<DailyBriefPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-otp" element={<VerifyOTPPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
 
@@ -46,22 +69,15 @@ export default function App() {
   return (
     <ToastProvider>
       <AuthProvider>
+        <div className="bg-orbs" aria-hidden="true">
+          <div className="bg-orb bg-orb-1" />
+          <div className="bg-orb bg-orb-2" />
+          <div className="bg-orb bg-orb-3" />
+          <div className="bg-orb bg-orb-4" />
+        </div>
         <BrowserRouter>
           <NavBar theme={theme} onToggleTheme={toggleTheme} />
-          <Routes>
-            <Route path="/" element={<UploadPage />} />
-            <Route path="/summary" element={<SummaryPage />} />
-            <Route path="/daily-brief" element={<DailyBriefPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/verify-otp" element={<VerifyOTPPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route element={<PrivateRoute />}>
-              <Route path="/history" element={<HistoryPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-            </Route>
-          </Routes>
+          <AnimatedRoutes />
         </BrowserRouter>
         <ToastContainer />
       </AuthProvider>
