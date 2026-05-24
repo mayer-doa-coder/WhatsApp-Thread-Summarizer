@@ -47,6 +47,8 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
   const [dragOver, setDragOver] = useState(false);
   const [typeRejected, setTypeRejected] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Counter prevents false onDragLeave events fired when cursor moves over child elements
+  const dragCounterRef = useRef<number>(0);
   const reduced = useReducedMotion();
 
   function addFiles(incoming: File[]) {
@@ -73,19 +75,27 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
 
   /* Zone border/bg state classes */
   const zoneClass = [
-    'relative w-full rounded-2xl border border-dashed select-none overflow-hidden',
+    'relative w-full rounded-2xl border select-none overflow-hidden',
     'transition-all duration-300 ease-out',
+    // Switch border-style: solid + glowing when a file is dragged over, dashed otherwise
+    dragOver ? 'border-solid' : 'border-dashed',
     atLimit
       ? 'border-white/[0.05] opacity-50 cursor-default bg-transparent'
       : dragOver
-      ? 'border-[var(--accent)]/80 bg-[var(--accent)]/[0.05] shadow-[0_0_50px_rgba(56,189,248,0.18),inset_0_0_30px_rgba(56,189,248,0.04)] cursor-copy'
-      : files.length > 0
-      ? 'border-[var(--accent)]/30 bg-[var(--accent)]/[0.02] cursor-pointer'
-      : 'border-white/[0.07] bg-transparent hover:border-[var(--accent)]/30 hover:bg-[var(--accent)]/[0.02] hover:shadow-[0_0_28px_rgba(56,189,248,0.08)] cursor-pointer',
+        ? 'border-[var(--accent)] bg-[var(--accent)]/[0.05] shadow-[0_0_50px_rgba(56,189,248,0.25),0_0_0_1px_rgba(56,189,248,0.35),inset_0_0_30px_rgba(56,189,248,0.06)] cursor-copy'
+        : files.length > 0
+          ? 'border-[var(--accent)]/30 bg-[var(--accent)]/[0.02] cursor-pointer'
+          : 'border-white/[0.07] bg-transparent hover:border-[var(--accent)]/30 hover:bg-[var(--accent)]/[0.02] hover:shadow-[0_0_28px_rgba(56,189,248,0.08)] cursor-pointer',
   ].join(' ');
 
   return (
-    <div className="w-full">
+    // Task 1: outer wrapper is now a motion.div
+    // Task 2: whileHover scales the whole zone up smoothly with a spring
+    <motion.div
+      className="w-full"
+      whileHover={reduced ? {} : { scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+    >
       {/*
         Using <motion.label> makes the ENTIRE bounding box a native
         click target for the hidden file input — no onClick handler needed.
@@ -97,12 +107,31 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
           atLimit
             ? 'File limit reached.'
             : files.length > 0
-            ? 'Files loaded. Click to add more, or drag new files here.'
-            : 'Upload WhatsApp export files. Click anywhere or drag .txt files here.'
+              ? 'Files loaded. Click to add more, or drag new files here.'
+              : 'Upload WhatsApp export files. Click anywhere or drag .txt files here.'
         }
-        onDragOver={(e) => { e.preventDefault(); if (!atLimit) { setDragOver(true); setTypeRejected(false); } }}
-        onDragLeave={(e) => { e.preventDefault(); setDragOver(false); }}
-        onDrop={(e) => { e.preventDefault(); setDragOver(false); if (!atLimit) addFiles(Array.from(e.dataTransfer.files)); }}
+        // Task 3: onDragEnter/onDragLeave with a counter ref to prevent false leave
+        // events triggered when the pointer moves over child elements.
+        onDragEnter={(e: React.DragEvent<HTMLLabelElement>) => {
+          e.preventDefault();
+          dragCounterRef.current += 1;
+          if (!atLimit) { setDragOver(true); setTypeRejected(false); }
+        }}
+        onDragOver={(e: React.DragEvent<HTMLLabelElement>) => {
+          // Must preventDefault here to allow the drop event to fire
+          e.preventDefault();
+        }}
+        onDragLeave={(e: React.DragEvent<HTMLLabelElement>) => {
+          e.preventDefault();
+          dragCounterRef.current -= 1;
+          if (dragCounterRef.current === 0) setDragOver(false);
+        }}
+        onDrop={(e: React.DragEvent<HTMLLabelElement>) => {
+          e.preventDefault();
+          dragCounterRef.current = 0;
+          setDragOver(false);
+          if (!atLimit) addFiles(Array.from(e.dataTransfer.files));
+        }}
         animate={reduced ? {} : dragOver ? { scale: 1.018 } : { scale: 1 }}
         transition={{ type: 'spring', stiffness: 400, damping: 28 }}
         className={zoneClass}
@@ -149,9 +178,23 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
               transition={STATE_SPRING}
               className="flex flex-col items-center justify-center gap-4 px-6 py-10 text-center"
             >
+              {/* Task 3: upload icon bounces continuously while a file is dragged over */}
               <motion.div
-                animate={reduced ? {} : dragOver ? { y: -6, scale: 1.15 } : { y: 0, scale: 1 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+                animate={
+                  reduced ? {} :
+                  dragOver
+                    ? { y: [0, -8, -4, -8], scale: 1.18 }
+                    : { y: 0, scale: 1 }
+                }
+                transition={
+                  reduced ? {} :
+                  dragOver
+                    ? {
+                        y: { repeat: Infinity, duration: 0.85, ease: 'easeInOut' },
+                        scale: { type: 'spring', stiffness: 350, damping: 22 },
+                      }
+                    : { type: 'spring', stiffness: 350, damping: 22 }
+                }
                 className={[
                   'flex h-14 w-14 items-center justify-center',
                   'transition-all duration-500',
@@ -320,6 +363,6 @@ export default function UploadZone({ files, setFiles, error, setError }: UploadZ
           </motion.p>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

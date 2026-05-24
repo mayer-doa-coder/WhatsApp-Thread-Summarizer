@@ -3,8 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion, useReducedMotion, type Variants } from 'framer-motion';
 import UploadZone from '../components/UploadZone';
+import SummaryCard from '../components/SummaryCard';
 import { SummaryType, generateBrief } from '../services/api';
 import { useSummarize } from '../hooks/useSummarize';
+import { updateParticleState } from '../components/ParticleBackground';
+
+type AppState = 'idle' | 'processing' | 'success';
 
 const SUMMARY_TYPES: { value: SummaryType; label: string; desc: string }[] = [
   { value: 'short',    label: 'Short',    desc: '2–3 sentences' },
@@ -15,31 +19,37 @@ const SUMMARY_TYPES: { value: SummaryType; label: string; desc: string }[] = [
 const FOCUS_PILLS = ['Decisions', 'Risks', 'Deadlines', 'Action items', 'Follow-ups'];
 
 const PAGE_VARIANTS: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 260, damping: 28 } },
-  exit:   { opacity: 0, y: -8, transition: { duration: 0.16 } },
+  hidden:  { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 28 } },
+  exit:    { opacity: 0, y: -8, transition: { duration: 0.16 } },
 };
 
-const SPRING     = { type: 'spring', stiffness: 380, damping: 26 } as const;
+const SPRING      = { type: 'spring', stiffness: 380, damping: 26 } as const;
 const FAST_SPRING = { type: 'spring', stiffness: 420, damping: 30 } as const;
+const LAYOUT_SPRING = { type: 'spring', stiffness: 300, damping: 30 } as const;
 
 export default function UploadPage() {
   const navigate = useNavigate();
-  const { loading, error, summary, trigger } = useSummarize();
+  const { loading, error, summary, trigger, reset } = useSummarize();
   const reduced = useReducedMotion();
 
-  const [files, setFiles]           = useState<File[]>([]);
-  const [zoneError, setZoneError]   = useState<string | undefined>(undefined);
-  const [summaryType, setSummaryType] = useState<SummaryType>('medium');
-  const [focusPills, setFocusPills] = useState<string[]>([]);
+  const [files, setFiles]               = useState<File[]>([]);
+  const [zoneError, setZoneError]       = useState<string | undefined>(undefined);
+  const [summaryType, setSummaryType]   = useState<SummaryType>('medium');
+  const [focusPills, setFocusPills]     = useState<string[]>([]);
   const [customIntent, setCustomIntent] = useState('');
   const [customizeOpen, setCustomizeOpen] = useState(false);
   const [briefLoading, setBriefLoading] = useState(false);
-  const [briefError, setBriefError]   = useState<string | null>(null);
+  const [briefError, setBriefError]     = useState<string | null>(null);
 
+  // Derived — no extra useState needed
+  const appState: AppState = loading ? 'processing' : summary ? 'success' : 'idle';
+  const isSplit = appState !== 'idle';
+
+  // Task 4: keep particle layer in sync with this page's processing state
   useEffect(() => {
-    if (summary) navigate('/summary', { state: summary });
-  }, [summary, navigate]);
+    updateParticleState(appState);
+  }, [appState]);
 
   const focusOn       = [...focusPills, customIntent.trim()].filter(Boolean).join(', ') || undefined;
   const canProcess    = files.length > 0 && !loading && !briefLoading;
@@ -56,6 +66,12 @@ export default function UploadPage() {
   function handleProcess() {
     if (!canProcess) return;
     trigger(files[0], summaryType, focusOn);
+  }
+
+  function handleReset() {
+    reset();
+    setFiles([]);
+    setBriefError(null);
   }
 
   async function handleGenerateBrief() {
@@ -84,43 +100,79 @@ export default function UploadPage() {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="page-shell flex flex-col items-center justify-center px-4 py-6 sm:py-8"
+      className={[
+        'page-shell px-4',
+        isSplit
+          ? 'py-4 sm:py-5 flex flex-col'
+          : 'py-6 sm:py-8 flex flex-col items-center justify-center',
+      ].join(' ')}
     >
-      <div className="w-full max-w-5xl">
+      {/* Outer container: animates max-width as layout shifts */}
+      <motion.div
+        layout
+        transition={LAYOUT_SPRING}
+        className={['w-full', isSplit ? '' : 'max-w-5xl'].join(' ')}
+      >
 
-        {/* ── Compact header ─────────────────────────────────── */}
+        {/* ── Header — exits when entering split mode ── */}
+        <AnimatePresence>
+          {!isSplit && (
+            <motion.div
+              key="header"
+              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, y: -10, height: 0, marginBottom: 0 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 26, delay: 0.04 }}
+              className="mb-5 text-center overflow-hidden"
+            >
+              <p className="section-kicker tracking-[0.22em]">Ambient Intelligence</p>
+              <h1 className="mt-2 text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-gradient">
+                Summarize a chat
+              </h1>
+              <p className="mt-2 text-sm text-slate-300">
+                Drop a WhatsApp{' '}
+                <code className="rounded-md border border-white/[0.12] bg-white/[0.07] px-1.5 py-0.5 font-mono text-xs text-slate-200">.txt</code>
+                {' '}export — get an AI summary in seconds.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Workspace: morphs from grid (idle) to flex (split) ── */}
         <motion.div
-          initial={reduced ? {} : { opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 26, delay: 0.04 }}
-          className="mb-5 text-center"
-        >
-          <p className="section-kicker tracking-[0.22em]">Ambient Intelligence</p>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-gradient">
-            Summarize a chat
-          </h1>
-          <p className="mt-2 text-sm text-slate-300">
-            Drop a WhatsApp{' '}
-            <code className="rounded-md border border-white/[0.12] bg-white/[0.07] px-1.5 py-0.5 font-mono text-xs text-slate-200">.txt</code>
-            {' '}export — get an AI summary in seconds.
-          </p>
-        </motion.div>
-
-        {/* ── Two-column workspace ────────────────────────────── */}
-        <motion.div
-          initial={reduced ? {} : { opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-[1fr_260px] lg:grid-cols-[1fr_300px] gap-4"
+          layout
+          transition={LAYOUT_SPRING}
+          className={[
+            isSplit
+              ? 'flex gap-5 items-start'
+              : 'grid grid-cols-1 md:grid-cols-[1fr_260px] lg:grid-cols-[1fr_300px] gap-4',
+          ].join(' ')}
         >
 
-          {/* ── LEFT: Upload zone ── */}
-          <div className="surface-card rounded-3xl p-6 flex flex-col">
-            {/* Zone label */}
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Upload files</p>
+          {/* ───────────────────────────────────────────────────────
+              UPLOAD ZONE CARD
+              Task 1: centered left-column when idle
+              Task 2 & 3: slides + shrinks into a sidebar with
+                          layout + layoutId to keep the animation
+                          fluid and continuous
+          ─────────────────────────────────────────────────────── */}
+          <motion.div
+            layout
+            layoutId="upload-workspace"
+            transition={LAYOUT_SPRING}
+            className={[
+              'surface-card rounded-3xl flex flex-col',
+              isSplit ? 'w-72 shrink-0 p-4' : 'p-6',
+            ].join(' ')}
+          >
+            {/* Zone label row */}
+            <motion.div layout className="flex items-center justify-between mb-4">
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                {isSplit ? 'Source file' : 'Upload files'}
+              </p>
               {files.length > 0 && (
                 <motion.span
+                  layout
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={FAST_SPRING}
@@ -129,24 +181,24 @@ export default function UploadPage() {
                   {files.length} {files.length === 1 ? 'file' : 'files'} ready
                 </motion.span>
               )}
-            </div>
+            </motion.div>
 
-            {/* Ambient glow wrapper — soft cyan emanation behind the drop zone */}
+            {/* Ambient glow + UploadZone */}
             <div className="relative flex-1">
               <div
-                className="pointer-events-none absolute inset-0 -m-3 rounded-3xl opacity-0 transition-opacity duration-700"
+                className="pointer-events-none absolute inset-0 -m-3 rounded-3xl transition-opacity duration-700"
                 style={{
                   background: 'radial-gradient(ellipse at 50% 60%, rgba(56,189,248,0.10) 0%, transparent 70%)',
-                  opacity: files.length > 0 ? 1 : undefined,
+                  opacity: files.length > 0 ? 1 : 0,
                 }}
                 aria-hidden="true"
               />
               <UploadZone files={files} setFiles={setFiles} error={zoneError} setError={setZoneError} />
             </div>
 
-            {/* Multi-file hint */}
+            {/* Multi-file hint (idle only) */}
             <AnimatePresence>
-              {files.length === 1 && (
+              {files.length === 1 && !isSplit && (
                 <motion.p
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -159,230 +211,348 @@ export default function UploadPage() {
               )}
             </AnimatePresence>
 
-            {/* Export hint */}
-            <p className="mt-3 text-center text-xs text-hint">
-              WhatsApp: open chat → ⋮ → More → Export chat → Without media
-            </p>
-          </div>
-
-          {/* ── RIGHT: Controls + CTA ── */}
-          <div className="flex flex-col gap-3">
-
-            {/* Summary length */}
-            <div className="surface-card rounded-3xl p-6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
-                Summary length
-              </p>
-              <div className="flex flex-col gap-2">
-                {SUMMARY_TYPES.map(({ value, label, desc }) => {
-                  const active = summaryType === value;
-                  return (
-                    <motion.button
-                      key={value}
-                      type="button"
-                      onClick={() => setSummaryType(value)}
-                      whileTap={reduced ? {} : { scale: 0.97 }}
-                      transition={FAST_SPRING}
-                      className={[
-                        'flex items-center justify-between rounded-xl border px-4 py-3 text-left transition-all duration-200',
-                        active
-                          ? 'radio-btn-active'
-                          : 'border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2] hover:bg-white/[0.06]',
-                      ].join(' ')}
-                    >
-                      <span className="min-w-0">
-                        <span className={`block text-sm font-semibold ${active ? 'text-[var(--accent)]' : 'text-slate-200'}`}>
-                          {label}
-                        </span>
-                        <span className="block text-xs text-slate-500 mt-0.5">{desc}</span>
-                      </span>
-                      {active && (
-                        <motion.span
-                          layoutId="summary-check"
-                          className="h-4 w-4 rounded-full border-2 border-[var(--accent)] flex items-center justify-center flex-shrink-0 ml-3"
-                          transition={FAST_SPRING}
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                        </motion.span>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Customize focus — collapsible */}
-            <div className="surface-card rounded-3xl overflow-hidden">
-              <motion.button
-                type="button"
-                onClick={() => setCustomizeOpen((o) => !o)}
-                whileTap={reduced ? {} : { scale: 0.98 }}
-                transition={FAST_SPRING}
-                className="w-full flex items-center justify-between px-6 py-4 text-left"
-              >
-                <span className="flex items-center gap-2">
-                  <svg className="h-3.5 w-3.5 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-                  </svg>
-                  <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    Customize focus
-                  </span>
-                  {hasCustomize && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_6px_rgba(56,189,248,0.8)]" />
-                  )}
-                </span>
-                <motion.svg
-                  animate={{ rotate: customizeOpen ? 180 : 0 }}
-                  transition={FAST_SPRING}
-                  className="h-4 w-4 text-slate-500"
-                  fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </motion.svg>
-              </motion.button>
-
-              <AnimatePresence initial={false}>
-                {customizeOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="border-t border-white/[0.06] px-6 pb-5 pt-4 space-y-3">
-                      <input
-                        type="text"
-                        value={customIntent}
-                        onChange={(e) => setCustomIntent(e.target.value)}
-                        placeholder="e.g. Highlight blockers and deadlines"
-                        className="input-field text-sm"
-                      />
-                      <div className="flex flex-wrap gap-1.5">
-                        {FOCUS_PILLS.map((pill) => {
-                          const active = focusPills.includes(pill);
-                          return (
-                            <motion.button
-                              key={pill}
-                              type="button"
-                              onClick={() => togglePill(pill)}
-                              whileTap={reduced ? {} : { scale: 0.91 }}
-                              transition={SPRING}
-                              className={[
-                                'pill text-xs transition-all',
-                                active
-                                  ? 'bg-[var(--accent)]/20 border-[var(--accent)]/60 text-[var(--accent)] shadow-[0_0_10px_rgba(56,189,248,0.18)]'
-                                  : 'hover:border-white/25 hover:text-slate-200',
-                              ].join(' ')}
-                            >
-                              <AnimatePresence initial={false}>
-                                {active && (
-                                  <motion.span
-                                    key="check"
-                                    initial={reduced ? {} : { opacity: 0, width: 0, marginRight: 0 }}
-                                    animate={{ opacity: 1, width: 'auto', marginRight: 4 }}
-                                    exit={{ opacity: 0, width: 0, marginRight: 0 }}
-                                    transition={FAST_SPRING}
-                                    className="inline-block text-[var(--accent)] overflow-hidden"
-                                  >
-                                    ✓
-                                  </motion.span>
-                                )}
-                              </AnimatePresence>
-                              {pill}
-                            </motion.button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Error */}
-            <AnimatePresence>
-              {combinedError && (
+            {/* Bottom area: export hint in idle, sidebar actions in split */}
+            <AnimatePresence mode="wait">
+              {isSplit ? (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={SPRING}
-                  role="alert"
-                  className="overflow-hidden rounded-2xl border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400"
+                  key="sidebar-meta"
+                  layout
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 28, delay: 0.18 }}
+                  className="mt-4 flex flex-col gap-2"
                 >
-                  {combinedError}
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-xs text-slate-500">Length</span>
+                    <span className="text-xs font-semibold text-slate-300 capitalize">{summaryType}</span>
+                  </div>
+                  {hasCustomize && (
+                    <div className="flex items-center gap-1.5 px-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                      <span className="text-xs text-slate-400">Custom focus active</span>
+                    </div>
+                  )}
+                  <motion.button
+                    type="button"
+                    onClick={handleReset}
+                    whileHover={reduced ? {} : { scale: 1.02 }}
+                    whileTap={reduced ? {} : { scale: 0.97 }}
+                    transition={FAST_SPRING}
+                    className="mt-1 w-full btn-outline text-xs py-2"
+                  >
+                    ← New analysis
+                  </motion.button>
                 </motion.div>
+              ) : (
+                <motion.p
+                  key="export-hint"
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="mt-3 text-center text-xs text-hint"
+                >
+                  WhatsApp: open chat → ⋮ → More → Export chat → Without media
+                </motion.p>
               )}
             </AnimatePresence>
+          </motion.div>
 
-            {/* CTA group — pushed to bottom */}
-            <div className="mt-auto flex flex-col gap-2.5">
-              <motion.button
-                onClick={handleProcess}
-                disabled={!canProcess}
-                aria-busy={loading}
-                whileHover={reduced ? {} : canProcess ? { scale: 1.01 } : {}}
-                whileTap={reduced ? {} : canProcess ? { scale: 0.97 } : {}}
-                transition={SPRING}
-                className={[
-                  'w-full btn-primary py-3.5 text-base',
-                  !canProcess ? 'opacity-50 cursor-not-allowed' : '',
-                ].join(' ')}
+          {/* ───────────────────────────────────────────────────────
+              CONTROLS PANEL (right column, idle only)
+              Exits left as the upload card slides left on split
+          ─────────────────────────────────────────────────────── */}
+          <AnimatePresence>
+            {!isSplit && (
+              <motion.div
+                key="controls"
+                initial={{ opacity: 1 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, x: -16, transition: { duration: 0.2 } }}
+                className="flex flex-col gap-3"
               >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2.5">
-                    <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Summarizing…
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M12 2l1.8 5.4a1 1 0 00.63.63L20 10l-5.57 1.97a1 1 0 00-.63.63L12 18l-1.8-5.4a1 1 0 00-.63-.63L4 10l5.57-1.97a1 1 0 00.63-.63L12 2z"/>
-                      <path d="M19 0l.7 2.1a.4.4 0 00.25.25L22 3l-2.05.75a.4.4 0 00-.25.25L19 6l-.7-2.1a.4.4 0 00-.25-.25L16 3l2.05-.65a.4.4 0 00.25-.25L19 0z" opacity="0.7"/>
-                    </svg>
-                    Summarize
-                  </span>
-                )}
-              </motion.button>
+                {/* Summary length */}
+                <div className="surface-card rounded-3xl p-6">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
+                    Summary length
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {SUMMARY_TYPES.map(({ value, label, desc }) => {
+                      const active = summaryType === value;
+                      return (
+                        <motion.button
+                          key={value}
+                          type="button"
+                          onClick={() => setSummaryType(value)}
+                          whileTap={reduced ? {} : { scale: 0.97 }}
+                          transition={FAST_SPRING}
+                          className={[
+                            'flex items-center justify-between rounded-xl border px-4 py-3 text-left transition-all duration-200',
+                            active
+                              ? 'radio-btn-active'
+                              : 'border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2] hover:bg-white/[0.06]',
+                          ].join(' ')}
+                        >
+                          <span className="min-w-0">
+                            <span className={`block text-sm font-semibold ${active ? 'text-[var(--accent)]' : 'text-slate-200'}`}>
+                              {label}
+                            </span>
+                            <span className="block text-xs text-slate-400 mt-0.5">{desc}</span>
+                          </span>
+                          {active && (
+                            <motion.span
+                              layoutId="summary-check"
+                              className="h-4 w-4 rounded-full border-2 border-[var(--accent)] flex items-center justify-center flex-shrink-0 ml-3"
+                              transition={FAST_SPRING}
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                            </motion.span>
+                          )}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-              <AnimatePresence>
-                {files.length >= 2 && (
+                {/* Customize focus — collapsible */}
+                <div className="surface-card rounded-3xl overflow-hidden">
                   <motion.button
-                    initial={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                    type="button"
+                    onClick={() => setCustomizeOpen((o) => !o)}
+                    whileTap={reduced ? {} : { scale: 0.98 }}
+                    transition={FAST_SPRING}
+                    className="w-full flex items-center justify-between px-6 py-4 text-left"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg className="h-3.5 w-3.5 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                      </svg>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                        Customize focus
+                      </span>
+                      {hasCustomize && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_6px_rgba(56,189,248,0.8)]" />
+                      )}
+                    </span>
+                    <motion.svg
+                      animate={{ rotate: customizeOpen ? 180 : 0 }}
+                      transition={FAST_SPRING}
+                      className="h-4 w-4 text-slate-500"
+                      fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </motion.svg>
+                  </motion.button>
+
+                  <AnimatePresence initial={false}>
+                    {customizeOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="border-t border-white/[0.06] px-6 pb-5 pt-4 space-y-3">
+                          <input
+                            type="text"
+                            value={customIntent}
+                            onChange={(e) => setCustomIntent(e.target.value)}
+                            placeholder="e.g. Highlight blockers and deadlines"
+                            className="input-field text-sm"
+                          />
+                          <div className="flex flex-wrap gap-1.5">
+                            {FOCUS_PILLS.map((pill) => {
+                              const active = focusPills.includes(pill);
+                              return (
+                                <motion.button
+                                  key={pill}
+                                  type="button"
+                                  onClick={() => togglePill(pill)}
+                                  whileTap={reduced ? {} : { scale: 0.91 }}
+                                  transition={SPRING}
+                                  className={[
+                                    'pill text-xs transition-all',
+                                    active
+                                      ? 'bg-[var(--accent)]/20 border-[var(--accent)]/60 text-[var(--accent)] shadow-[0_0_10px_rgba(56,189,248,0.18)]'
+                                      : 'hover:border-white/25 hover:text-slate-200',
+                                  ].join(' ')}
+                                >
+                                  <AnimatePresence initial={false}>
+                                    {active && (
+                                      <motion.span
+                                        key="check"
+                                        initial={reduced ? {} : { opacity: 0, width: 0, marginRight: 0 }}
+                                        animate={{ opacity: 1, width: 'auto', marginRight: 4 }}
+                                        exit={{ opacity: 0, width: 0, marginRight: 0 }}
+                                        transition={FAST_SPRING}
+                                        className="inline-block text-[var(--accent)] overflow-hidden"
+                                      >
+                                        ✓
+                                      </motion.span>
+                                    )}
+                                  </AnimatePresence>
+                                  {pill}
+                                </motion.button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Error */}
+                <AnimatePresence>
+                  {combinedError && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={SPRING}
+                      role="alert"
+                      className="overflow-hidden rounded-2xl border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400"
+                    >
+                      {combinedError}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* CTA group */}
+                <div className="mt-auto flex flex-col gap-2.5">
+                  <motion.button
+                    onClick={handleProcess}
+                    disabled={!canProcess}
+                    aria-busy={loading}
+                    whileHover={reduced ? {} : canProcess ? { scale: 1.01 } : {}}
+                    whileTap={reduced ? {} : canProcess ? { scale: 0.97 } : {}}
                     transition={SPRING}
-                    onClick={handleGenerateBrief}
-                    disabled={!canBrief}
-                    aria-busy={briefLoading}
-                    whileTap={reduced ? {} : canBrief ? { scale: 0.97 } : {}}
                     className={[
-                      'w-full btn-outline overflow-hidden',
-                      !canBrief ? 'opacity-50 cursor-not-allowed' : '',
+                      'w-full btn-primary py-3.5 text-base',
+                      files.length === 0 ? 'opacity-50 cursor-not-allowed shadow-none' : '',
                     ].join(' ')}
                   >
-                    {briefLoading ? (
-                      <span className="flex items-center justify-center gap-2">
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2.5">
                         <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                         </svg>
-                        Generating…
+                        Summarizing…
                       </span>
-                    ) : `Daily Brief · ${files.length} files`}
+                    ) : (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M12 2l1.8 5.4a1 1 0 00.63.63L20 10l-5.57 1.97a1 1 0 00-.63.63L12 18l-1.8-5.4a1 1 0 00-.63-.63L4 10l5.57-1.97a1 1 0 00.63-.63L12 2z"/>
+                          <path d="M19 0l.7 2.1a.4.4 0 00.25.25L22 3l-2.05.75a.4.4 0 00-.25.25L19 6l-.7-2.1a.4.4 0 00-.25-.25L16 3l2.05-.65a.4.4 0 00.25-.25L19 0z" opacity="0.7"/>
+                        </svg>
+                        Summarize
+                      </span>
+                    )}
                   </motion.button>
+
+                  <AnimatePresence>
+                    {files.length >= 2 && (
+                      <motion.button
+                        initial={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                        transition={SPRING}
+                        onClick={handleGenerateBrief}
+                        disabled={!canBrief}
+                        aria-busy={briefLoading}
+                        whileTap={reduced ? {} : canBrief ? { scale: 0.97 } : {}}
+                        className={[
+                          'w-full btn-outline overflow-hidden',
+                          !canBrief ? 'opacity-50 cursor-not-allowed' : '',
+                        ].join(' ')}
+                      >
+                        {briefLoading ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                            Generating…
+                          </span>
+                        ) : `Daily Brief · ${files.length} files`}
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* ───────────────────────────────────────────────────────
+              CONTENT PANEL (right side, split mode only)
+              Fades + slides in from the right while the upload
+              card is still animating to its sidebar position
+          ─────────────────────────────────────────────────────── */}
+          <AnimatePresence>
+            {isSplit && (
+              <motion.div
+                key="content-panel"
+                initial={reduced ? { opacity: 0 } : { opacity: 0, x: 28 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, x: 28 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 28, delay: 0.16 }}
+                className="flex-1 min-w-0"
+              >
+                {/* Content header */}
+                <div className="mb-5">
+                  <p className="section-kicker tracking-[0.22em]">
+                    {appState === 'processing' ? 'Processing' : 'Result'}
+                  </p>
+                  <h2 className="mt-1 text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-slate-100">
+                    {appState === 'processing' ? 'Analyzing your chat…' : 'Conversation Summary'}
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {appState === 'processing'
+                      ? 'Our AI is reading through the thread'
+                      : 'AI-generated from your WhatsApp export'}
+                  </p>
+                </div>
+
+                {/* Processing skeleton */}
+                {appState === 'processing' && (
+                  <div className="surface-card rounded-2xl overflow-hidden animate-pulse">
+                    <div
+                      className="relative border-b border-white/[0.1] px-6 py-5"
+                      style={{ background: 'linear-gradient(135deg, rgba(56,189,248,0.05) 0%, rgba(14,20,38,0.6) 100%)' }}
+                    >
+                      <div className="h-3 w-16 rounded bg-white/[0.06] mb-2" />
+                      <div className="h-5 w-2/3 rounded bg-white/[0.06]" />
+                    </div>
+                    <div className="p-6 space-y-6">
+                      <div className="space-y-2">
+                        <div className="h-3 w-24 rounded bg-white/[0.05]" />
+                        <div className="flex gap-2 flex-wrap">
+                          {[1, 2, 3].map((i) => (
+                            <div key={i} className="h-6 w-20 rounded-full bg-white/[0.04]" />
+                          ))}
+                        </div>
+                      </div>
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="space-y-2">
+                          <div className="h-3 w-28 rounded bg-white/[0.05]" />
+                          <div className="h-4 w-full rounded bg-white/[0.04]" />
+                          <div className="h-4 w-5/6 rounded bg-white/[0.04]" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </AnimatePresence>
-            </div>
 
-          </div>{/* end right column */}
+                {/* Success: summary card */}
+                {appState === 'success' && summary && (
+                  <SummaryCard data={summary} />
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
         </motion.div>
-
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

@@ -35,30 +35,30 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
   return (
     <>
       {/* Card */}
-      <motion.div
-        whileHover={reduced ? {} : { y: -4, scale: 1.01 }}
+      <motion.button
+        type="button"
+        onClick={() => setIsModalOpen(true)}
+        whileHover={reduced ? {} : { x: 1 }}
+        whileTap={reduced ? {} : { scale: 0.99 }}
         transition={CARD_SPRING}
-        className={`surface-card card-interactive w-full rounded-2xl p-5 flex flex-col gap-3 ${
+        className={`brief-chat-feed-item w-full flex flex-col gap-3 text-left ${
           chatCard.actionRequired
-            ? 'border-l-4 border-l-[var(--accent-mint)] border-r border-t border-b border-[var(--card-border)]'
+            ? 'brief-chat-card-action'
             : ''
         }`}
-        style={chatCard.actionRequired ? {
-          background: 'linear-gradient(135deg, rgba(52,211,153,0.06) 0%, rgba(14,22,44,0.6) 100%)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(52,211,153,0.08), inset 0 1px 0 rgba(255,255,255,0.07)',
-        } : undefined}
       >
         <div className="flex items-start justify-between gap-2">
-          <span className="section-kicker text-[10px]">Chat {chatCard.index}</span>
+          <span className="section-kicker text-xs tracking-wider">Chat {chatCard.index}</span>
           {chatCard.actionRequired && (
-            <motion.span
-              className="flex items-center gap-1.5 text-[10px] font-semibold text-[var(--accent-mint)]"
-              animate={reduced ? {} : { opacity: [1, 0.6, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <span className="h-2 w-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--accent-mint)]">
+              <span className="relative inline-flex h-2 w-2 flex-shrink-0">
+                {!reduced && (
+                  <span className="action-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-mint)]" />
+                )}
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+              </span>
               Action needed
-            </motion.span>
+            </span>
           )}
         </div>
 
@@ -68,16 +68,11 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
           )}
         </p>
 
-        <motion.button
-          onClick={() => setIsModalOpen(true)}
-          whileHover={reduced ? {} : { scale: 1.02 }}
-          whileTap={reduced ? {} : { scale: 0.96 }}
-          transition={CARD_SPRING}
-          className="mt-auto w-full rounded-xl border border-[var(--card-border)] bg-[var(--soft-bg)] py-2 text-xs font-semibold tracking-wide text-[var(--text-strong)] transition-all hover:bg-[var(--btn-outline-hover-bg)] hover:border-[var(--accent)]/30 hover:shadow-[0_0_16px_rgba(56,189,248,0.1)] hover:text-[var(--accent)]"
-        >
-          View Full
-        </motion.button>
-      </motion.div>
+        <div className="mt-auto flex items-center justify-end gap-1.5 text-sm font-semibold text-[var(--text-subtle)]">
+          <span className="view-thread-affordance">View thread</span>
+          <span aria-hidden="true" className="view-thread-chevron">›</span>
+        </div>
+      </motion.button>
 
       {/* Modal */}
       <AnimatePresence>

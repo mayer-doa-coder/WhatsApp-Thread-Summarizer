@@ -16,6 +16,7 @@ import ProfilePage from './pages/ProfilePage';
 import VerifyOTPPage from './pages/VerifyOTPPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ParticleBackground from './components/ParticleBackground';
 
 type ThemeMode = 'dark' | 'light';
 
@@ -69,6 +70,8 @@ export default function App() {
   return (
     <ToastProvider>
       <AuthProvider>
+        {/* Ambient particle layer — sits above CSS orbs (z:-2), below all UI (z:0) */}
+        <ParticleBackground />
         <div className="bg-orbs" aria-hidden="true">
           <div className="bg-orb bg-orb-1" />
           <div className="bg-orb bg-orb-2" />

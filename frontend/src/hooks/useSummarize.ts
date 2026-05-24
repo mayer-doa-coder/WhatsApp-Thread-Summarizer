@@ -7,6 +7,7 @@ interface UseSummarizeReturn {
   error: string | null;
   summary: SummaryResult | null;
   trigger: (file: File, summaryType: SummaryType, focusOn?: string) => Promise<void>;
+  reset: () => void;
 }
 
 export function useSummarize(): UseSummarizeReturn {
@@ -35,5 +36,10 @@ export function useSummarize(): UseSummarizeReturn {
     }
   }, []);
 
-  return { loading, error, summary, trigger };
+  const reset = useCallback(() => {
+    setSummary(null);
+    setError(null);
+  }, []);
+
+  return { loading, error, summary, trigger, reset };
 }

@@ -7,6 +7,7 @@ import { type SummaryData } from '../components/SummaryCard';
 import { type BriefResult } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import AmbientRadar from '../components/AmbientRadar';
 
 const PAGE_SPRING = { type: 'spring', stiffness: 260, damping: 28 } as const;
 
@@ -114,6 +115,14 @@ function SectionLabel({ children }: { children: ReactNode }) {
   return <p className="section-kicker mb-3">{children}</p>;
 }
 
+function parseKeyPerson(person: string): { name: string; role: string } {
+  const [name, ...rest] = person.split(':');
+  return {
+    name: name?.trim() ?? person,
+    role: rest.join(':').trim(),
+  };
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DailyBriefPage() {
@@ -209,7 +218,32 @@ export default function DailyBriefPage() {
     }
   }
 
+  const [spatialView, setSpatialView] = useState(false);
+  if (spatialView) {
+    return <AmbientRadar brief={briefData} onExit={() => setSpatialView(false)} />;
+  }
+
   const { overviewParagraph, chatCards, crossChatInsights, keyPeople } = briefData;
+
+  const briefContainerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.1 } },
+  };
+
+  const sectionEnterVariants = {
+    hidden: reduced ? { opacity: 0 } : { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] } },
+  };
+
+  const chatContainerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.075 } },
+  };
+
+  const chatItemVariants = {
+    hidden: reduced ? { opacity: 0 } : { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] } },
+  };
 
   return (
     <motion.div
@@ -223,9 +257,9 @@ export default function DailyBriefPage() {
 
         {/* ── Preview banner ── */}
         {isPreview && (
-          <div className="rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-slate-400">
-              <span className="font-medium text-slate-300">Showing example data.</span>{' '}
+          <div className="preview-banner rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="preview-banner-text text-sm">
+              <span className="font-semibold">Showing example data.</span>{' '}
               Upload 2 or more chat files on the Summarize page to generate a real brief.
             </p>
             <Link to="/" className="btn-primary text-xs shrink-0">
@@ -248,6 +282,16 @@ export default function DailyBriefPage() {
 
           <div className="flex items-center gap-3 flex-shrink-0">
             <button
+              onClick={() => setSpatialView(true)}
+              className="btn-outline text-xs tracking-wide flex items-center gap-1.5"
+              title="Enter 3D Spatial View"
+            >
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+              Spatial View
+            </button>
+            <button
               onClick={handleCopyHtml}
               className={[
                 'btn-outline text-xs tracking-wide',
@@ -267,22 +311,32 @@ export default function DailyBriefPage() {
         </div>
 
         {/* ── Serializable content (captured by Copy as HTML) ── */}
-        <div id="brief-container" ref={briefContainerRef} className="space-y-8">
+        <motion.div
+          id="brief-container"
+          ref={briefContainerRef}
+          className="space-y-8"
+          variants={briefContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
 
           {/* ── Overview ── */}
-          <section>
+          <motion.section variants={sectionEnterVariants}>
             <SectionLabel>Overview</SectionLabel>
-            <div className="surface-card rounded-xl p-5 border-l-4 border-l-[var(--accent-soft)]">
-              <p className="text-sm leading-relaxed text-[var(--text-muted)]">
+            <div className="overview-editorial py-4">
+              <p className="reading-measure text-base leading-8 text-[var(--text-muted)]">
                 {overviewParagraph}
               </p>
             </div>
-          </section>
+          </motion.section>
 
           {/* ── Chat Cards ── */}
-          <section>
+          <motion.section variants={sectionEnterVariants}>
             <SectionLabel>Chats ({chatCards.length})</SectionLabel>
-            <div className="timeline space-y-5">
+            <motion.div
+              className="timeline space-y-5"
+              variants={chatContainerVariants}
+            >
               {chatCards.map((card, idx) => {
                 const cardIndex = card.index ?? idx + 1;
                 const chatCardMeta: ChatCardMeta = {
@@ -299,27 +353,27 @@ export default function DailyBriefPage() {
                   summaryText: card.summaryText,
                 };
                 return (
-                  <div key={cardIndex} className="timeline-item">
+                  <motion.div key={cardIndex} className="timeline-item" variants={chatItemVariants}>
                     <BriefChatCardWidget
                       chatCard={chatCardMeta}
                       fullSummary={fullSummary}
                     />
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
-          </section>
+            </motion.div>
+          </motion.section>
 
           {/* ── Cross-Chat Insights ── */}
-          <section>
+          <motion.section variants={sectionEnterVariants}>
             <SectionLabel>Cross-Chat Insights</SectionLabel>
-            <div className="surface-card rounded-xl p-5">
+            <div className="insights-floating py-3">
               {crossChatInsights.length === 0 ? (
                 <p className="text-sm text-[var(--text-subtle)]">
                   No cross-chat connections identified.
                 </p>
               ) : (
-                <ul className="list-disc ml-5 space-y-2">
+                <ul className="reading-measure list-disc ml-5 space-y-2">
                   {crossChatInsights.map((insight, i) => (
                     <li key={i} className="text-sm leading-relaxed text-[var(--text-muted)]">
                       {insight}
@@ -328,10 +382,10 @@ export default function DailyBriefPage() {
                 </ul>
               )}
             </div>
-          </section>
+          </motion.section>
 
           {/* ── Key People Tag Cloud ── */}
-          <section>
+          <motion.section variants={sectionEnterVariants}>
             <SectionLabel>Key People</SectionLabel>
             {keyPeople.length === 0 ? (
               <p className="text-sm text-[var(--text-subtle)]">
@@ -339,16 +393,20 @@ export default function DailyBriefPage() {
               </p>
             ) : (
               <div className="flex flex-wrap gap-2">
-                {keyPeople.map((person, i) => (
-                  <span key={i} className="chip text-xs">
-                    {person}
-                  </span>
-                ))}
+                {keyPeople.map((person, i) => {
+                  const { name, role } = parseKeyPerson(person);
+                  return (
+                    <span key={i} className="key-person-chip">
+                      <span className="key-person-name">{name}</span>
+                      {role ? <span className="key-person-role">: {role}</span> : null}
+                    </span>
+                  );
+                })}
               </div>
             )}
-          </section>
+          </motion.section>
 
-        </div>{/* end #brief-container */}
+        </motion.div>{/* end #brief-container */}
 
       </div>
     </motion.div>
