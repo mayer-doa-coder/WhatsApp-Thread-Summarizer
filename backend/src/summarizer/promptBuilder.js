@@ -9,27 +9,25 @@ const LENGTH_CONFIG = {
   short: {
     label: 'short',
     systemModifier: `summaryText format for SHORT:
-- Write exactly 1 brief paragraph (2–3 sentences maximum) OR 3 bullet points.
-- Every other JSON field (keyDecisions, actionItems, notableFacts, participants) must still be populated but kept to 1–2 items maximum.
-- Total response must be under 150 words.`,
+ - Provide a compact, outcome-only summary. No explanation, no analysis, no insights.
+ - Keep keyDecisions, actionItems, and notableFacts to only the most critical items if present.
+ - SHORT must be noticeably briefer than MEDIUM for the same transcript.`,
   },
 
   medium: {
     label: 'medium',
     systemModifier: `summaryText format for MEDIUM:
-- Write 1 coherent paragraph of approximately 100 words.
-- Populate all 6 JSON fields with the most important items (up to 5 items per array field).
-- Balance completeness and conciseness — this is the default output.`,
+ - Provide a balanced summary with key context and rationale.
+ - Populate all fields with the most important items without going deep.
+ - MEDIUM should add more explanation than SHORT, but remain concise.`,
   },
 
   detailed: {
     label: 'detailed',
     systemModifier: `summaryText format for DETAILED:
-- Write 2–3 full paragraphs (~300 words) covering: (1) conversation arc and context, (2) key decisions and their rationale, (3) outcomes and next steps.
-- actionItems must include every identified task, each specifying the responsible person and deadline if mentioned.
-- keyDecisions and notableFacts must be exhaustive — do not truncate.
-- Where relevant, include verbatim short quotes (≤ 20 words) from the transcript to support key points.
-- notableFacts should capture granular timeline events (who said what and when) if they are consequential.`,
+ - Provide the most comprehensive summary with context, reasoning, risks, and outcomes.
+ - Include all meaningful decisions, action items, and notable facts (do not truncate).
+ - DETAILED should be the most expansive, while still scaling to the transcript length.`,
   },
 };
 
@@ -47,7 +45,7 @@ You always respond with valid JSON matching this exact schema:
   "actionItems": ["string — starts with an action verb and names the responsible person where identifiable", ...],
   "notableFacts": ["string", ...],
   "participants": ["string — display name as it appears in the chat", ...],
-  "summaryText": "string — ${config.label} prose summary in plain English"
+  "summaryText": "string — ${config.label} summary in plain English"
 }
 
 ${config.systemModifier}
@@ -58,6 +56,7 @@ General rules:
 - For actionItems, prefer the format: "[Person] will/should [action] by [deadline if mentioned]".
 - Never include PII beyond what is already present in the chat (names, numbers stay as-is).
 - If the input is a partial chunk, treat it as a segment — do not fabricate a conclusion.
+- Length should scale with the transcript: short is the briefest, detailed is the most complete.
 - Respond with valid JSON only. No markdown fences, no commentary outside the JSON object.`;
 }
 

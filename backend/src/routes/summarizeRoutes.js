@@ -11,8 +11,12 @@ const router = express.Router();
 // ---------------------------------------------------------------------------
 
 function buildSystemPrompt(summaryLength, focusOn) {
-  const focusBlock = focusOn
-    ? `\nFocus directive: The user wants special emphasis on the following aspects: ${focusOn}. Prioritise these in summaryText, keyDecisions, and actionItems — populate those fields exhaustively for the requested focus areas.`
+  const focus = typeof focusOn === 'string' ? focusOn.trim() : '';
+  const focusBlock = focus
+    ? `\nFocus directive: The user wants special emphasis on the following aspects: ${focus}.
+- Treat these as topics or keywords to search for (including close variants).
+- Promote matches in summaryText, keyDecisions, actionItems, and notableFacts.
+- Do not invent details if the focus terms are not present in the transcript.`
     : '';
 
   return `You are an expert conversation analyst specializing in WhatsApp chat summarization. Your task is to analyze exported WhatsApp chat transcripts and produce structured, actionable summaries.
@@ -31,19 +35,21 @@ Rules:
 - Extract only what is explicitly stated or clearly implied. Do not invent content.
 - If a field has no applicable content, return an empty array [] or empty string "".
 - For actionItems, prefer the format: "[Person] will/should [action] by [deadline if mentioned]".
-- summaryText length guide: short = 2–3 sentences, medium = 1 paragraph (~100 words), detailed = 2–3 paragraphs (~300 words).
+- summaryText length guide: short = outcome-only and minimal, medium = balanced detail, detailed = most complete with context and rationale.
+- Length should scale with the transcript: short is the briefest, detailed is the most expansive.
 - Never include PII beyond what is already present in the chat (names, numbers stay as-is).
 - If the input is a partial chunk, treat it as a segment — do not fabricate a conclusion.${focusBlock}`;
 }
 
-function buildUserPrompt({ summaryLength, isChunk, chunkIndex, totalChunks, transcript }) {
+function buildUserPrompt({ summaryLength, isChunk, chunkIndex, totalChunks, transcript, focusOn }) {
   const chunkNote = isChunk
     ? `\nNote: This is chunk ${chunkIndex} of ${totalChunks}. Summarize only what is present in this segment.`
     : '';
+  const focusNote = focusOn ? `\nFocus: ${focusOn}` : '';
 
   return `Summarize the following WhatsApp chat export.
 
-Summary length: ${summaryLength}${chunkNote}
+Summary length: ${summaryLength}${focusNote}${chunkNote}
 
 --- CHAT TRANSCRIPT BEGIN ---
 ${transcript}
@@ -125,6 +131,7 @@ router.post('/', async (req, res) => {
             chunkIndex: i + 1,
             totalChunks,
             transcript,
+            focusOn,
           }),
         },
       ];

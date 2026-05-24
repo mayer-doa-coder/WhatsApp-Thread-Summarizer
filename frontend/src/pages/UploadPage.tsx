@@ -11,9 +11,9 @@ import { updateParticleState } from '../components/ParticleBackground';
 type AppState = 'idle' | 'processing' | 'success';
 
 const SUMMARY_TYPES: { value: SummaryType; label: string; desc: string }[] = [
-  { value: 'short',    label: 'Short',    desc: '2–3 sentences' },
-  { value: 'medium',   label: 'Medium',   desc: '~100 words'    },
-  { value: 'detailed', label: 'Detailed', desc: '~300 words'    },
+  { value: 'short',    label: 'Short',    desc: 'Outcome only' },
+  { value: 'medium',   label: 'Medium',   desc: 'Balanced detail' },
+  { value: 'detailed', label: 'Detailed', desc: 'Deep detail + insights' },
 ];
 
 const FOCUS_PILLS = ['Decisions', 'Risks', 'Deadlines', 'Action items', 'Follow-ups'];
@@ -359,6 +359,9 @@ export default function UploadPage() {
                             placeholder="e.g. Highlight blockers and deadlines"
                             className="input-field text-sm"
                           />
+                          <p className="text-[11px] text-slate-400">
+                            Focus is applied when you run Summarize.
+                          </p>
                           <div className="flex flex-wrap gap-1.5">
                             {FOCUS_PILLS.map((pill) => {
                               const active = focusPills.includes(pill);

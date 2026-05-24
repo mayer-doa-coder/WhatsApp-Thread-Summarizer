@@ -136,19 +136,17 @@ export default function SummaryPage() {
         </div>
 
         {/* Card / skeleton */}
-        <div aria-live="polite" aria-busy={loading} className="timeline space-y-6">
-          <div className="timeline-item">
-            {loading ? (
-              <div className="surface-card rounded-2xl p-6 space-y-4 animate-pulse">
-                <div className="h-5 w-2/3 rounded-lg bg-white/[0.06]" />
-                <div className="h-4 rounded-lg bg-white/[0.04]" />
-                <div className="h-4 w-5/6 rounded-lg bg-white/[0.04]" />
-                <div className="h-4 w-3/4 rounded-lg bg-white/[0.04]" />
-              </div>
-            ) : (
-              <SummaryCard data={summary} />
-            )}
-          </div>
+        <div aria-live="polite" aria-busy={loading} className="space-y-6">
+          {loading ? (
+            <div className="surface-card rounded-2xl p-6 space-y-4 animate-pulse">
+              <div className="h-5 w-2/3 rounded-lg bg-white/[0.06]" />
+              <div className="h-4 rounded-lg bg-white/[0.04]" />
+              <div className="h-4 w-5/6 rounded-lg bg-white/[0.04]" />
+              <div className="h-4 w-3/4 rounded-lg bg-white/[0.04]" />
+            </div>
+          ) : (
+            <SummaryCard data={summary} />
+          )}
         </div>
       </div>
 

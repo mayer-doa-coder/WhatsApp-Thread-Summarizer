@@ -32,13 +32,12 @@ const SECTION_SPRING = { type: 'spring', stiffness: 320, damping: 26 } as const;
 
 function SectionHeader({ label, accent }: { label: string; accent?: string }) {
   return (
-    <div className="flex items-center gap-2 mb-3">
-      {accent && (
-        <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${accent}`} />
-      )}
+    <div className="flex items-center gap-3">
+      <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${accent ?? 'bg-slate-500'}`} />
       <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
         {label}
       </h3>
+      <span className="h-px flex-1 bg-white/[0.06]" />
     </div>
   );
 }
@@ -50,11 +49,11 @@ function EmptyNote({ text }: { text: string }) {
 function BulletItem({ text }: { text: string }) {
   return (
     <motion.li
-      className="flex items-start gap-3 group"
-      whileHover={{ x: 2 }}
+      className="flex items-start gap-3"
+      whileHover={{ x: 1 }}
       transition={SECTION_SPRING}
     >
-      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-600 group-hover:bg-[var(--accent)] transition-colors duration-200" />
+      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-600" />
       <span className="text-sm leading-relaxed text-slate-200">{text}</span>
     </motion.li>
   );
@@ -63,12 +62,8 @@ function BulletItem({ text }: { text: string }) {
 function ActionItem({ text, index }: { text: string; index: number }) {
   return (
     <motion.li
-      className={`flex items-start gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 cursor-default ${
-        index === 0
-          ? 'bg-[var(--success-bg)] border border-[var(--accent-mint)]/40 shadow-[0_0_20px_rgba(16,185,129,0.18)]'
-          : 'bg-white/[0.03] border border-white/[0.06]'
-      }`}
-      whileHover={{ scale: 1.01, x: 2 }}
+      className="flex items-start gap-3 py-1.5"
+      whileHover={{ x: 1 }}
       transition={SECTION_SPRING}
     >
       <svg
@@ -88,59 +83,34 @@ export default function SummaryCard({ data }: SummaryCardProps) {
   const itemV = reduced ? REDUCED_ITEM_VARIANTS : ITEM_VARIANTS;
 
   return (
-    <div className="surface-card rounded-2xl overflow-hidden">
-      {/* Gradient topic bar */}
+    <div className="surface-card rounded-3xl p-6 sm:p-7">
       <motion.div
         variants={itemV}
         initial="hidden"
         animate="visible"
-        className="relative border-b border-white/[0.1] px-6 py-5 overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, rgba(56,189,248,0.08) 0%, rgba(52,211,153,0.05) 50%, rgba(14,20,38,0.6) 100%)',
-        }}
+        className="flex flex-col gap-2"
       >
-        {/* Decorative blob */}
-        <div
-          className="absolute -right-6 -top-6 h-24 w-24 rounded-full opacity-20 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)' }}
-        />
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]/70 mb-1">Topic</p>
-        <p className="text-base font-semibold text-slate-100 leading-snug relative z-10">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]/80">Topic</p>
+        <p className="text-2xl font-semibold text-slate-100 leading-snug">
           {topic || <span className="text-slate-600 font-normal italic">No topic identified</span>}
         </p>
+        {participants.length > 0 && (
+          <p className="text-sm text-slate-400">
+            Participants: <span className="text-slate-200">{participants.join(', ')}</span>
+          </p>
+        )}
       </motion.div>
 
       <motion.div
         variants={CONTAINER_VARIANTS}
         initial="hidden"
         animate="visible"
-        className="p-6 space-y-7"
+        className="mt-6 space-y-6"
       >
-        {/* Participants */}
-        {participants.length > 0 && (
-          <motion.div variants={itemV}>
-            <SectionHeader label="Participants" accent="bg-[var(--accent-violet)]" />
-            <div className="flex flex-wrap gap-2">
-              {participants.map((p, i) => (
-                <motion.span
-                  key={i}
-                  initial={reduced ? {} : { opacity: 0, scale: 0.8, y: 6 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  whileHover={reduced ? {} : { scale: 1.06, y: -1 }}
-                  transition={{ type: 'spring', stiffness: 340, damping: 22, delay: i * 0.05 }}
-                  className="rounded-full border border-white/[0.12] bg-white/[0.05] px-3 py-1 text-xs text-slate-300 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 transition-colors cursor-default"
-                >
-                  {p}
-                </motion.span>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
         {/* Summary */}
         <motion.div variants={itemV}>
           <SectionHeader label="Summary" accent="bg-[var(--accent)]" />
-          <p className="text-sm leading-relaxed text-slate-300">
+          <p className="mt-3 text-base leading-relaxed text-slate-200">
             {summaryText || <EmptyNote text="No summary available" />}
           </p>
         </motion.div>
@@ -148,34 +118,40 @@ export default function SummaryCard({ data }: SummaryCardProps) {
         {/* Key Decisions */}
         <motion.div variants={itemV}>
           <SectionHeader label="Key Decisions" accent="bg-[var(--accent-warm)]" />
-          {keyDecisions.length === 0 ? (
-            <EmptyNote text="No key decisions recorded" />
-          ) : (
-            <ul className="space-y-2">
-              {keyDecisions.map((item, i) => <BulletItem key={i} text={item} />)}
-            </ul>
-          )}
+          <div className="mt-3">
+            {keyDecisions.length === 0 ? (
+              <EmptyNote text="No key decisions recorded" />
+            ) : (
+              <ul className="space-y-2">
+                {keyDecisions.map((item, i) => <BulletItem key={i} text={item} />)}
+              </ul>
+            )}
+          </div>
         </motion.div>
 
         {/* Action Items */}
         <motion.div variants={itemV}>
           <SectionHeader label="Action Items" accent="bg-[var(--accent-mint)]" />
-          {actionItems.length === 0 ? (
-            <EmptyNote text="No action items recorded" />
-          ) : (
-            <ul className="space-y-2">
-              {actionItems.map((item, i) => <ActionItem key={i} text={item} index={i} />)}
-            </ul>
-          )}
+          <div className="mt-3">
+            {actionItems.length === 0 ? (
+              <EmptyNote text="No action items recorded" />
+            ) : (
+              <ul className="space-y-1.5">
+                {actionItems.map((item, i) => <ActionItem key={i} text={item} index={i} />)}
+              </ul>
+            )}
+          </div>
         </motion.div>
 
         {/* Notable Facts */}
         {notableFacts.length > 0 && (
           <motion.div variants={itemV}>
             <SectionHeader label="Notable Facts" accent="bg-slate-500" />
-            <ul className="space-y-2">
-              {notableFacts.map((item, i) => <BulletItem key={i} text={item} />)}
-            </ul>
+            <div className="mt-3">
+              <ul className="space-y-2">
+                {notableFacts.map((item, i) => <BulletItem key={i} text={item} />)}
+              </ul>
+            </div>
           </motion.div>
         )}
       </motion.div>

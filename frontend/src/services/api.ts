@@ -24,7 +24,7 @@ export type Tone =
   | 'empathetic'
   | 'apologetic'
   | 'assertive';
-export type FocusOn = 'tasks' | 'decisions' | 'sentiment' | 'topics' | 'all';
+export type FocusOn = string;
 export type Sentiment = 'positive' | 'neutral' | 'negative' | 'mixed';
 
 export interface Message {
