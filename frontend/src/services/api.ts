@@ -218,7 +218,7 @@ export async function draftReply(payload: DraftRequest): Promise<DraftResponse> 
 
 export async function generateBrief(payload: BriefRequest): Promise<BriefResponse> {
   const form = new FormData();
-  payload.files.forEach((f) => form.append('files[]', f));
+  payload.files.forEach((f) => form.append('files', f));
   if (payload.summaryType !== undefined) form.append('summaryType', payload.summaryType);
   if (payload.prioritize !== undefined) form.append('prioritize', payload.prioritize);
   if (payload.focusOn !== undefined) form.append('focusOn', String(payload.focusOn));

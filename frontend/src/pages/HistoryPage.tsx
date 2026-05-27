@@ -4,6 +4,8 @@ import { isAxiosError } from 'axios';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { deleteHistoryItem, getHistory, type HistoryResponse } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import SummaryCard, { type SummaryData } from '../components/SummaryCard';
+import { loadHistoryDetail } from '../hooks/useActionItems';
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -244,49 +246,81 @@ export default function HistoryPage() {
         )}
       </div>
 
-      {/* Preview modal */}
+      {/* Preview modal — rich view when structured data available, text fallback otherwise */}
       <AnimatePresence>
-        {previewItem && (
-          <motion.div
-            key="preview-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            role="dialog" aria-modal="true" aria-labelledby="preview-title"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
-            onClick={() => setPreviewItem(null)}
-          >
+        {previewItem && (() => {
+          const detail = loadHistoryDetail<SummaryData>(previewItem.id);
+          return (
             <motion.div
-              initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 8 }}
-              transition={MODAL_SPRING}
-              className="surface-card w-full max-w-2xl rounded-2xl p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
+              key="preview-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              role="dialog" aria-modal="true" aria-labelledby="preview-title"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+              onClick={() => setPreviewItem(null)}
             >
-              <div className="flex items-start justify-between gap-4 mb-5">
-                <div className="min-w-0">
-                  <h2 id="preview-title" className="text-base font-semibold text-slate-100 truncate">{previewItem.filename}</h2>
-                  <p className="text-xs text-slate-500 mt-1">{formatDate(previewItem.createdAt)} · {typeLabel(previewItem.type)} · {previewItem.messageCount} messages</p>
+              <motion.div
+                initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 8 }}
+                transition={MODAL_SPRING}
+                className="w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Modal header bar */}
+                <div className="sticky top-0 z-10 flex items-center justify-between gap-4 rounded-t-2xl border-b border-white/[0.07] bg-[rgba(10,17,34,0.92)] px-5 py-3.5 backdrop-blur-md">
+                  <div className="min-w-0">
+                    <h2 id="preview-title" className="text-sm font-semibold text-slate-100 truncate">{previewItem.filename}</h2>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      {formatDate(previewItem.createdAt)}
+                      {previewItem.messageCount ? ` · ${previewItem.messageCount} messages` : ''}
+                      {' · '}
+                      <span className={previewItem.type === 'brief' ? 'text-[var(--accent-mint)]' : 'text-slate-500'}>
+                        {typeLabel(previewItem.type)}
+                      </span>
+                      {detail && (
+                        <span className="ml-2 text-[var(--accent)]/60">· full data available</span>
+                      )}
+                    </p>
+                  </div>
+                  <motion.button
+                    onClick={() => setPreviewItem(null)}
+                    whileTap={reduced ? {} : { scale: 0.88, rotate: 90 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                    aria-label="Close preview"
+                    autoFocus
+                    className="shrink-0 rounded-lg p-1.5 text-slate-500 hover:text-slate-200 hover:bg-white/[0.06] transition-colors"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </motion.button>
                 </div>
-                <motion.button
-                  onClick={() => setPreviewItem(null)}
-                  whileTap={reduced ? {} : { scale: 0.88, rotate: 90 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                  aria-label="Close preview"
-                  autoFocus
-                  className="shrink-0 rounded-lg p-1.5 text-slate-500 hover:text-slate-200 hover:bg-white/[0.06] transition-colors"
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </motion.button>
-              </div>
-              <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">{previewItem.summaryText}</p>
+
+                {/* Modal body */}
+                {detail ? (
+                  /* Rich interactive view */
+                  <SummaryCard
+                    data={detail}
+                    storageKey={previewItem.id}
+                  />
+                ) : (
+                  /* Plain text fallback for older saves */
+                  <div className="surface-card rounded-b-2xl rounded-t-none p-6">
+                    <p className="text-[11px] text-slate-600 mb-4 italic">
+                      This summary was saved before structured data was stored. Re-save after summarizing to unlock interactive features.
+                    </p>
+                    <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+                      {previewItem.summaryText}
+                    </p>
+                  </div>
+                )}
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
+          );
+        })()}
       </AnimatePresence>
 
       {/* Delete confirm modal */}

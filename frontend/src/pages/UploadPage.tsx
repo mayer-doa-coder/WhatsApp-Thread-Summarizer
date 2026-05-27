@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion, useReducedMotion, type Variants } from 'framer-motion';
 import UploadZone from '../components/UploadZone';
 import SummaryCard from '../components/SummaryCard';
-import { SummaryType, generateBrief } from '../services/api';
+import { SummaryType, generateBrief, saveToHistory } from '../services/api';
 import { useSummarize } from '../hooks/useSummarize';
 import { updateParticleState } from '../components/ParticleBackground';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { persistHistoryDetail } from '../hooks/useActionItems';
 
 type AppState = 'idle' | 'processing' | 'success';
 
@@ -32,6 +35,8 @@ export default function UploadPage() {
   const navigate = useNavigate();
   const { loading, error, summary, trigger, reset } = useSummarize();
   const reduced = useReducedMotion();
+  const { user } = useAuth();
+  const { showSuccess, showError } = useToast();
 
   const [files, setFiles]               = useState<File[]>([]);
   const [zoneError, setZoneError]       = useState<string | undefined>(undefined);
@@ -39,8 +44,14 @@ export default function UploadPage() {
   const [focusPills, setFocusPills]     = useState<string[]>([]);
   const [customIntent, setCustomIntent] = useState('');
   const [customizeOpen, setCustomizeOpen] = useState(false);
-  const [briefLoading, setBriefLoading] = useState(false);
-  const [briefError, setBriefError]     = useState<string | null>(null);
+  const [panelPos, setPanelPos]         = useState<{ bottom: number; right: number } | null>(null);
+  const customizeBtnRef                 = useRef<HTMLButtonElement>(null);
+  const customizePanelRef               = useRef<HTMLDivElement>(null);
+  const [briefLoading, setBriefLoading]   = useState(false);
+  const [briefError, setBriefError]       = useState<string | null>(null);
+  const [isSaving, setIsSaving]           = useState(false);
+  const [isSaved, setIsSaved]             = useState(false);
+  const [saveLimitReached, setSaveLimitReached] = useState(false);
 
   // Derived — no extra useState needed
   const appState: AppState = loading ? 'processing' : summary ? 'success' : 'idle';
@@ -50,6 +61,37 @@ export default function UploadPage() {
   useEffect(() => {
     updateParticleState(appState);
   }, [appState]);
+
+  // Position floating panel — opens upward, right-aligned to the trigger button
+  useEffect(() => {
+    if (customizeOpen && customizeBtnRef.current) {
+      const rect = customizeBtnRef.current.getBoundingClientRect();
+      setPanelPos({
+        bottom: window.innerHeight - rect.top + 8,
+        right: window.innerWidth - rect.right,
+      });
+    }
+  }, [customizeOpen]);
+
+  // Close panel on outside click or Escape
+  const closePanel = useCallback(() => setCustomizeOpen(false), []);
+  useEffect(() => {
+    if (!customizeOpen) return;
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') closePanel(); }
+    function onMouse(e: MouseEvent) {
+      const t = e.target as Node;
+      if (
+        customizePanelRef.current && !customizePanelRef.current.contains(t) &&
+        customizeBtnRef.current  && !customizeBtnRef.current.contains(t)
+      ) closePanel();
+    }
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onMouse);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onMouse);
+    };
+  }, [customizeOpen, closePanel]);
 
   const focusOn       = [...focusPills, customIntent.trim()].filter(Boolean).join(', ') || undefined;
   const canProcess    = files.length > 0 && !loading && !briefLoading;
@@ -72,6 +114,33 @@ export default function UploadPage() {
     reset();
     setFiles([]);
     setBriefError(null);
+    setIsSaved(false);
+    setSaveLimitReached(false);
+  }
+
+  async function handleSaveToHistory() {
+    if (!summary) return;
+    setIsSaving(true);
+    try {
+      const { summary: saved } = await saveToHistory({
+        filename: summary.topic || 'Untitled Thread',
+        type: 'thread',
+        summaryText: summary.summaryText,
+        participants: summary.participants,
+      });
+      persistHistoryDetail(saved.id, summary);
+      setIsSaved(true);
+      showSuccess('Saved to history!');
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 402) {
+        setSaveLimitReached(true);
+        showError('Free plan limit reached (10/10). Visit Profile to upgrade.');
+      } else {
+        showError(isAxiosError(err) ? (err.response?.data?.message ?? err.message) : 'Failed to save.');
+      }
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   async function handleGenerateBrief() {
@@ -312,14 +381,20 @@ export default function UploadPage() {
                   </div>
                 </div>
 
-                {/* Customize focus — collapsible */}
-                <div className="surface-card rounded-3xl overflow-hidden">
+                {/* Customize focus — floating panel trigger */}
+                <div className="surface-card rounded-3xl">
                   <motion.button
+                    ref={customizeBtnRef}
                     type="button"
                     onClick={() => setCustomizeOpen((o) => !o)}
                     whileTap={reduced ? {} : { scale: 0.98 }}
                     transition={FAST_SPRING}
-                    className="w-full flex items-center justify-between px-6 py-4 text-left"
+                    aria-haspopup="dialog"
+                    aria-expanded={customizeOpen}
+                    className={[
+                      'w-full flex items-center justify-between px-6 py-4 text-left rounded-3xl transition-all duration-200',
+                      customizeOpen ? 'bg-white/[0.04]' : 'hover:bg-white/[0.03]',
+                    ].join(' ')}
                   >
                     <span className="flex items-center gap-2">
                       <svg className="h-3.5 w-3.5 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -332,76 +407,14 @@ export default function UploadPage() {
                         <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_6px_rgba(56,189,248,0.8)]" />
                       )}
                     </span>
-                    <motion.svg
-                      animate={{ rotate: customizeOpen ? 180 : 0 }}
+                    <motion.span
+                      animate={{ rotate: customizeOpen ? 45 : 0 }}
                       transition={FAST_SPRING}
-                      className="h-4 w-4 text-slate-500"
-                      fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
+                      className="h-5 w-5 rounded-full border border-white/[0.12] flex items-center justify-center text-slate-500 text-sm leading-none"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                    </motion.svg>
+                      +
+                    </motion.span>
                   </motion.button>
-
-                  <AnimatePresence initial={false}>
-                    {customizeOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="border-t border-white/[0.06] px-6 pb-5 pt-4 space-y-3">
-                          <input
-                            type="text"
-                            value={customIntent}
-                            onChange={(e) => setCustomIntent(e.target.value)}
-                            placeholder="e.g. Highlight blockers and deadlines"
-                            className="input-field text-sm"
-                          />
-                          <p className="text-[11px] text-slate-400">
-                            Focus is applied when you run Summarize.
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {FOCUS_PILLS.map((pill) => {
-                              const active = focusPills.includes(pill);
-                              return (
-                                <motion.button
-                                  key={pill}
-                                  type="button"
-                                  onClick={() => togglePill(pill)}
-                                  whileTap={reduced ? {} : { scale: 0.91 }}
-                                  transition={SPRING}
-                                  className={[
-                                    'pill text-xs transition-all',
-                                    active
-                                      ? 'bg-[var(--accent)]/20 border-[var(--accent)]/60 text-[var(--accent)] shadow-[0_0_10px_rgba(56,189,248,0.18)]'
-                                      : 'hover:border-white/25 hover:text-slate-200',
-                                  ].join(' ')}
-                                >
-                                  <AnimatePresence initial={false}>
-                                    {active && (
-                                      <motion.span
-                                        key="check"
-                                        initial={reduced ? {} : { opacity: 0, width: 0, marginRight: 0 }}
-                                        animate={{ opacity: 1, width: 'auto', marginRight: 4 }}
-                                        exit={{ opacity: 0, width: 0, marginRight: 0 }}
-                                        transition={FAST_SPRING}
-                                        className="inline-block text-[var(--accent)] overflow-hidden"
-                                      >
-                                        ✓
-                                      </motion.span>
-                                    )}
-                                  </AnimatePresence>
-                                  {pill}
-                                </motion.button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
 
                 {/* Error */}
@@ -514,6 +527,68 @@ export default function UploadPage() {
                       ? 'Our AI is reading through the thread'
                       : 'AI-generated from your WhatsApp export'}
                   </p>
+
+                  {/* ── Action bar — visible only when result is ready ── */}
+                  {appState === 'success' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 26, delay: 0.25 }}
+                      className="mt-3 flex flex-wrap items-center gap-2"
+                    >
+                      {user ? (
+                        <button
+                          type="button"
+                          onClick={handleSaveToHistory}
+                          disabled={isSaving || isSaved || saveLimitReached}
+                          className={[
+                            'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-200',
+                            isSaved
+                              ? 'border-[var(--accent-mint)]/30 bg-[var(--success-bg)] text-[var(--accent-mint)] cursor-default'
+                              : saveLimitReached
+                              ? 'border-red-500/30 bg-red-900/10 text-red-400 cursor-not-allowed opacity-70'
+                              : 'border-white/[0.12] bg-white/[0.04] text-slate-300 hover:border-[var(--accent-mint)]/40 hover:bg-[var(--accent-mint)]/[0.06] hover:text-[var(--accent-mint)] disabled:opacity-50 disabled:cursor-not-allowed',
+                          ].join(' ')}
+                          title={saveLimitReached ? 'Free plan limit reached — visit Profile' : undefined}
+                        >
+                          {isSaving ? (
+                            <>
+                              <svg className="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                              </svg>
+                              Saving…
+                            </>
+                          ) : isSaved ? (
+                            <>
+                              <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                              </svg>
+                              Saved to History
+                            </>
+                          ) : saveLimitReached ? '✕ Limit reached' : (
+                            <>
+                              <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                              </svg>
+                              Save to History
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => navigate('/login')}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-400 hover:border-white/[0.2] hover:text-slate-200 transition-all duration-200"
+                        >
+                          <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                          </svg>
+                          Log in to save
+                        </button>
+                      )}
+                    </motion.div>
+                  )}
                 </div>
 
                 {/* Processing skeleton */}
@@ -556,6 +631,140 @@ export default function UploadPage() {
 
         </motion.div>
       </motion.div>
+
+      {/* ── Customize Focus floating mini panel ── */}
+      <AnimatePresence>
+        {customizeOpen && panelPos && (
+          <>
+            {/* Invisible backdrop — click to close */}
+            <motion.div
+              key="cf-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-0 z-40"
+              aria-hidden="true"
+            />
+
+            {/* Floating panel */}
+            <motion.div
+              ref={customizePanelRef}
+              key="cf-panel"
+              role="dialog"
+              aria-label="Customize focus options"
+              initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 6 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 6 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+              style={{ bottom: panelPos.bottom, right: panelPos.right }}
+              className="fixed z-50 w-[300px] rounded-2xl border border-white/[0.1] shadow-[0_20px_60px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden"
+              aria-modal="false"
+            >
+              {/* Glass background */}
+              <div
+                className="absolute inset-0 -z-10 rounded-2xl"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(14,22,44,0.92) 0%, rgba(8,13,28,0.96) 100%)',
+                  backdropFilter: 'blur(24px) saturate(1.6)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(1.6)',
+                }}
+                aria-hidden="true"
+              />
+
+              {/* Panel header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.07]">
+                <div className="flex items-center gap-2">
+                  <svg className="h-3.5 w-3.5 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                  </svg>
+                  <span className="text-xs font-semibold uppercase tracking-widest text-slate-300">
+                    Focus
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={closePanel}
+                  aria-label="Close focus options"
+                  className="rounded-lg p-1 text-slate-500 hover:bg-white/[0.07] hover:text-slate-300 transition-colors duration-150"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Panel body */}
+              <div className="px-4 py-4 space-y-3.5">
+                {/* Quick-select pills */}
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-2">
+                    Quick select
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {FOCUS_PILLS.map((pill) => {
+                      const active = focusPills.includes(pill);
+                      return (
+                        <motion.button
+                          key={pill}
+                          type="button"
+                          onClick={() => togglePill(pill)}
+                          whileTap={reduced ? {} : { scale: 0.91 }}
+                          transition={SPRING}
+                          className={[
+                            'pill text-xs transition-all',
+                            active
+                              ? 'bg-[var(--accent)]/20 border-[var(--accent)]/60 text-[var(--accent)] shadow-[0_0_10px_rgba(56,189,248,0.18)]'
+                              : 'hover:border-white/25 hover:text-slate-200',
+                          ].join(' ')}
+                        >
+                          <AnimatePresence initial={false}>
+                            {active && (
+                              <motion.span
+                                key="check"
+                                initial={reduced ? {} : { opacity: 0, width: 0, marginRight: 0 }}
+                                animate={{ opacity: 1, width: 'auto', marginRight: 4 }}
+                                exit={{ opacity: 0, width: 0, marginRight: 0 }}
+                                transition={FAST_SPRING}
+                                className="inline-block text-[var(--accent)] overflow-hidden"
+                              >
+                                ✓
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                          {pill}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Custom intent input */}
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-2">
+                    Custom instruction
+                  </p>
+                  <input
+                    type="text"
+                    value={customIntent}
+                    onChange={(e) => setCustomIntent(e.target.value)}
+                    placeholder="e.g. Highlight blockers and deadlines"
+                    className="input-field text-sm w-full"
+                  />
+                </div>
+
+                {/* Footer hint */}
+                <p className="text-[10px] text-slate-500 leading-relaxed">
+                  Focus is applied when you run Summarize.
+                  {hasCustomize && (
+                    <span className="ml-1 text-[var(--accent)]">Active.</span>
+                  )}
+                </p>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

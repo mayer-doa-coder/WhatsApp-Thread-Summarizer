@@ -4,6 +4,8 @@ import SummaryCard, { SummaryData } from './SummaryCard';
 
 export interface ChatCardMeta {
   index: number;
+  filename?: string;
+  topic?: string;
   oneLiner: string;
   actionRequired: boolean;
 }
@@ -14,7 +16,13 @@ interface BriefChatCardProps {
 }
 
 const MODAL_SPRING = { type: 'spring', stiffness: 380, damping: 34 } as const;
-const CARD_SPRING  = { type: 'spring', stiffness: 320, damping: 28 } as const;
+
+function cleanLabel(filename: string): string {
+  return filename
+    .replace(/\.txt$/i, '')
+    .replace(/[-_]/g, ' ')
+    .toLowerCase();
+}
 
 export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,49 +40,59 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
     return () => window.removeEventListener('keydown', onKey);
   }, [isModalOpen]);
 
+  const label = chatCard.filename
+    ? cleanLabel(chatCard.filename)
+    : `chat ${chatCard.index}`;
+
   return (
     <>
-      {/* Card */}
       <motion.button
         type="button"
         onClick={() => setIsModalOpen(true)}
-        whileHover={reduced ? {} : { x: 1 }}
-        whileTap={reduced ? {} : { scale: 0.99 }}
-        transition={CARD_SPRING}
-        className={`brief-chat-feed-item w-full flex flex-col gap-3 text-left ${
-          chatCard.actionRequired
-            ? 'brief-chat-card-action'
-            : ''
-        }`}
+        whileTap={reduced ? {} : { scale: 0.998 }}
+        className={`brief-chat-feed-item group ${chatCard.actionRequired ? 'brief-chat-card-action' : ''}`}
+        aria-label={`Open summary: ${label}`}
       >
-        <div className="flex items-start justify-between gap-2">
-          <span className="section-kicker text-xs tracking-wider">Chat {chatCard.index}</span>
-          {chatCard.actionRequired && (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--accent-mint)]">
-              <span className="relative inline-flex h-2 w-2 flex-shrink-0">
-                {!reduced && (
-                  <span className="action-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-mint)]" />
-                )}
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
-              </span>
-              Action needed
+        {/*
+          3-column editorial row:
+          [label]  [summary · constrained width]  [action dot + arrow]
+        */}
+        <div className="flex items-center gap-5 sm:gap-7 w-full">
+
+          {/* ── Column 1: Chat label (fixed width) ── */}
+          <div className="w-[6.5rem] sm:w-[8rem] shrink-0 flex flex-col gap-0.5 overflow-hidden">
+            <span className="truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500 group-hover:text-slate-400 transition-colors duration-150">
+              {label}
             </span>
-          )}
-        </div>
+            {chatCard.actionRequired && (
+              <span className="flex items-center gap-1 text-[10px] font-medium text-[var(--accent-mint)] opacity-80">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-mint)] shrink-0" />
+                action
+              </span>
+            )}
+          </div>
 
-        <p className="text-sm leading-relaxed line-clamp-3 flex-1 text-[var(--text-muted)]">
-          {chatCard.oneLiner || (
-            <span className="text-[var(--text-subtle)]">No summary available</span>
-          )}
-        </p>
+          {/* ── Column 2: Summary text (constrained, grows) ── */}
+          <p className="flex-1 min-w-0 text-[13.5px] leading-relaxed text-[var(--text-muted)] line-clamp-2 group-hover:text-[var(--text-strong)] transition-colors duration-150 max-w-[58ch]">
+            {chatCard.oneLiner || (
+              <span className="text-[var(--text-subtle)] italic">No summary available</span>
+            )}
+          </p>
 
-        <div className="mt-auto flex items-center justify-end gap-1.5 text-sm font-semibold text-[var(--text-subtle)]">
-          <span className="view-thread-affordance">View thread</span>
-          <span aria-hidden="true" className="view-thread-chevron">›</span>
+          {/* ── Column 3: Arrow affordance ── */}
+          <div className="shrink-0 ml-auto pl-2">
+            <svg
+              className="h-3.5 w-3.5 text-slate-600 group-hover:text-slate-300 group-hover:translate-x-[3px] transition-all duration-150"
+              fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </div>
         </div>
       </motion.button>
 
-      {/* Modal */}
+      {/* Full-summary modal — layout unchanged */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
@@ -86,11 +104,11 @@ export default function BriefChatCard({ chatCard, fullSummary }: BriefChatCardPr
             className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop p-4"
             role="dialog"
             aria-modal="true"
-            aria-label={`Full summary for chat ${chatCard.index}`}
+            aria-label={`Full summary for ${label}`}
             onClick={() => setIsModalOpen(false)}
           >
             <motion.div
-              initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 20 }}
+              initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.93, y: 18 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 10 }}
               transition={MODAL_SPRING}

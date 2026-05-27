@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import SummaryCard, { SummaryData } from '../components/SummaryCard';
 import ReplyDrafterPanel from '../components/ReplyDrafterPanel';
 import { saveToHistory } from '../services/api';
+import { persistHistoryDetail } from '../hooks/useActionItems';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -58,12 +59,13 @@ export default function SummaryPage() {
     if (!summary) return;
     setIsSaving(true);
     try {
-      await saveToHistory({
+      const { summary: saved } = await saveToHistory({
         filename: summary.topic || 'Untitled Thread',
         type: 'thread',
         summaryText: summary.summaryText,
         participants: summary.participants,
       });
+      persistHistoryDetail(saved.id, summary);
       setIsSaved(true);
       showSuccess('Saved to history!');
     } catch (err) {

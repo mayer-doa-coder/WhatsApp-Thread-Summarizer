@@ -616,47 +616,33 @@ code {
     z-index: -1;
   }
 
+  /* ── Editorial thread row ── */
   .brief-chat-feed-item {
     cursor: pointer;
-    padding: 1.05rem 0.25rem 1.1rem;
+    display: block;
+    padding: 0.9rem 0.5rem;
     border: 0;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.07);
+    border-radius: 0.5rem;
     background: transparent;
-    box-shadow: inset 2px 0 0 rgba(56, 189, 248, 0.15);
-    transition: background 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: none;
+    transition: background 0.16s ease;
+    text-align: left;
+    width: 100%;
   }
 
   .brief-chat-feed-item:hover {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, transparent 80%);
-    box-shadow: inset 4px 0 0 var(--accent);
+    background: rgba(255, 255, 255, 0.024);
+    box-shadow: none;
   }
 
   .timeline .timeline-item:last-child .brief-chat-feed-item {
     border-bottom-color: transparent;
   }
 
+  /* Action-required: tiny mint dot in label only, no green wash */
   .brief-chat-card-action {
-    background: linear-gradient(90deg, rgba(52, 211, 153, 0.1) 0%, transparent 55%);
-    border-bottom-color: rgba(52, 211, 153, 0.32);
-  }
-
-  .view-thread-affordance {
-    color: var(--text-subtle);
-    transition: color 0.2s ease;
-  }
-
-  .view-thread-chevron {
-    color: var(--accent);
-    transition: transform 0.2s ease;
-  }
-
-  .brief-chat-feed-item:hover .view-thread-affordance {
-    color: var(--text-strong);
-  }
-
-  .brief-chat-feed-item:hover .view-thread-chevron {
-    transform: translateX(4px);
+    background: transparent;
   }
 
   .key-person-chip {
@@ -970,37 +956,13 @@ code {
     box-shadow: 0 4px 14px rgba(56, 189, 248, 0.12);
   }
 
-  /* ── Timeline ── */
+  /* ── Thread list ── */
   .timeline {
     position: relative;
-    padding-left: 1.75rem;
-  }
-
-  .timeline::before {
-    content: "";
-    position: absolute;
-    left: 0.5rem;
-    top: 0.25rem;
-    bottom: 0.25rem;
-    width: 1px;
-    background: linear-gradient(to bottom, transparent, var(--timeline-line) 20%, var(--timeline-line) 80%, transparent);
   }
 
   .timeline-item {
     position: relative;
-    padding-left: 0.75rem;
-  }
-
-  .timeline-item::before {
-    content: "";
-    position: absolute;
-    left: -0.15rem;
-    top: 0.4rem;
-    width: 0.65rem;
-    height: 0.65rem;
-    border-radius: 999px;
-    background: var(--accent);
-    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.18), 0 0 12px rgba(56, 189, 248, 0.3);
   }
 
   /* ── Modal backdrop ── */
@@ -1163,21 +1125,17 @@ code {
 }
 
 [data-theme="light"] .brief-chat-feed-item {
-  border-bottom-color: #e2e8f0;
-}
-
-[data-theme="light"] .brief-chat-feed-item {
-  box-shadow: inset 2px 0 0 rgba(2, 132, 199, 0.18);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+  box-shadow: none;
 }
 
 [data-theme="light"] .brief-chat-feed-item:hover {
-  background: linear-gradient(90deg, rgba(14, 165, 233, 0.05) 0%, transparent 80%);
-  box-shadow: inset 4px 0 0 var(--accent);
+  background: rgba(15, 23, 42, 0.03);
+  box-shadow: none;
 }
 
 [data-theme="light"] .brief-chat-card-action {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.14) 0%, rgba(240, 253, 244, 0.5) 34%, transparent 74%);
-  border-bottom-color: rgba(16, 185, 129, 0.4);
+  background: transparent;
 }
 
 [data-theme="light"] .key-person-chip {

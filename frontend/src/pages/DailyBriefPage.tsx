@@ -330,17 +330,23 @@ export default function DailyBriefPage() {
             </div>
           </motion.section>
 
-          {/* ── Chat Cards ── */}
+          {/* ── Chat Threads ── */}
           <motion.section variants={sectionEnterVariants}>
-            <SectionLabel>Chats ({chatCards.length})</SectionLabel>
+            {/* Editorial section header: label + count inline */}
+            <div className="flex items-baseline gap-2.5 mb-1">
+              <p className="section-kicker">Threads</p>
+              <span className="text-[11px] tabular-nums text-slate-600">{chatCards.length}</span>
+            </div>
             <motion.div
-              className="timeline space-y-5"
+              className="timeline"
               variants={chatContainerVariants}
             >
               {chatCards.map((card, idx) => {
                 const cardIndex = card.index ?? idx + 1;
                 const chatCardMeta: ChatCardMeta = {
                   index: cardIndex,
+                  filename: card.filename,
+                  topic: card.topic,
                   oneLiner: card.oneLiner ?? card.topic,
                   actionRequired: card.actionRequired ?? false,
                 };
